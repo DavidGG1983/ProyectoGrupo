@@ -21,6 +21,8 @@ public class Nave extends Modelo {
     private static final String NAVE_MOVIENDOSE = "nave_moviendose";
     Map<String, Sprite> sprites;
     Sprite sprite;
+    double velocidadX;
+    double velocidadY;
 
     public Nave(Context context,int x,int y) {
         super(context, x, y, 63, 50);
@@ -40,5 +42,24 @@ public class Nave extends Modelo {
 
     public void dibujar(Canvas canvas){
         this.sprite.dibujarSprite(canvas,(int)this.x,(int)this.y);
+    }
+
+    public void procesarOrdenes(float orientacionPad,int eje) {
+        if(eje == 1)
+            velocidadX = mover(orientacionPad);
+        else if(eje == 2)
+            velocidadY = mover(orientacionPad);
+    }
+
+    private double mover(float orientacionPad){
+        double velocidad;
+        if (orientacionPad > 0) {
+            velocidad = -5;
+        } else if (orientacionPad < 0) {
+            velocidad = 5;
+        } else {
+            velocidad = 0;
+        }
+        return velocidad;
     }
 }

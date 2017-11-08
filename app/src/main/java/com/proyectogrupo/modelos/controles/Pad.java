@@ -23,16 +23,17 @@ public class Pad extends Modelo {
         imagen = CargadorGraficos.cargarDrawable(context, R.drawable.pad);
     }
 
-    public boolean estaPulsado(float clickX, float clickY) {
-        boolean estaPulsado = false;
-
-        if (clickX <= (x + ancho / 2) && clickX >= (x - ancho / 2)
-                && clickY <= (y + altura / 2) && clickY >= (y - altura / 2)
-
-                ) {
-            estaPulsado = true;
+    public int estaPulsado(float clickX, float clickY) {
+        if (clickX <= (x + ancho / 2) &&
+                clickX >= (x - ancho / 2) &&
+                clickY <= (y + altura / 2) &&
+                clickY >= (y - altura / 2)) {
+            if(Math.abs(x - clickX) > Math.abs(y - clickY))
+                return 1;
+            else
+                return 2;
         }
-        return estaPulsado;
+        return 0;
     }
 
     public int getOrientacionX(
@@ -40,4 +41,7 @@ public class Pad extends Modelo {
         return (int) (x - cliclX);
     }
 
+    public int getOrientacionY(float clickY){
+        return (int)(y - clickY);
+    }
 }

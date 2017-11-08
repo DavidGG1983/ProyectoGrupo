@@ -7,6 +7,7 @@ import android.util.Log;
 import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
+import com.proyectogrupo.gestores.Utilidades;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -19,8 +20,9 @@ public class Nivel {
     private Context context = null;
     private int numeroNivel;
     private Fondo fondo;
-    private Nave nave;
+    public Nave nave;
     public float orientacionPad = 0;
+    public int ejePad;
 
     public boolean inicializado;
 
@@ -40,9 +42,120 @@ public class Nivel {
     }
 
 
+    private void aplicarReglasMovimiento() {
+
+        int tileXnaveIzquierda
+                = (int) (nave.x - (nave.ancho / 2 - 1)) / Tile.ancho;
+        int tileXnaveDerecha
+                = (int) (nave.x + (nave.ancho / 2 - 1 )) / Tile.ancho;
+
+        int tileYnaveInferior
+                = (int) (nave.y + (nave.altura / 2 - 1))/ Tile.altura;
+        int tileYnaveCentro
+                = (int) nave.y / Tile.altura;
+        int tileYnaveSuperior
+                = (int) (nave.y - (nave.altura / 2 - 1)) / Tile.altura;
+
+// derecha o parado
+
+        if (nave.velocidadX > 0) {
+            // Tengo un tile delante y es PASABLE
+            // El tile de delante está dentro del Nivel
+            if (tileXnaveDerecha + 1 <= anchoMapaTiles() - 1 &&
+                    tileYnaveInferior <= altoMapaTiles() - 1 &&
+                    mapaTiles[tileXnaveDerecha + 1][tileYnaveInferior].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveDerecha + 1][tileYnaveCentro].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveDerecha + 1][tileYnaveSuperior].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveDerecha][tileYnaveInferior].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveDerecha][tileYnaveCentro].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveDerecha][tileYnaveSuperior].tipoDeColision ==
+                            Tile.PASABLE) {
+
+                nave.x += nave.velocidadX;
+
+                // No tengo un tile PASABLE delante
+                // o es el FINAL del nivel o es uno SOLIDO
+            } else if (tileXnaveDerecha <= anchoMapaTiles() - 1 &&
+                    tileYnaveInferior <= altoMapaTiles() - 1 &&
+                    mapaTiles[tileXnaveDerecha][tileYnaveInferior].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveDerecha][tileYnaveCentro].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveDerecha][tileYnaveSuperior].tipoDeColision ==
+                            Tile.PASABLE) {
+
+                // Si en el propio tile del nave queda espacio para
+                // avanzar más, avanzo
+                int TilenaveBordeDerecho = tileXnaveDerecha * Tile.ancho + Tile.ancho;
+                double distanciaX = TilenaveBordeDerecho - (nave.x + nave.ancho / 2);
+
+                if (distanciaX > 0) {
+                    double velocidadNecesaria = Math.min(distanciaX, nave.velocidadX);
+                    nave.x += velocidadNecesaria;
+                } else {
+                    // Opcional, corregir posición
+                    nave.x = TilenaveBordeDerecho - nave.ancho / 2;
+                }
+            }
+        }
+        // izquierda
+        if (nave.velocidadX <= 0) {
+            // Tengo un tile detrás y es PASABLE
+            // El tile de delante está dentro del Nivel
+            if (tileXnaveIzquierda - 1 >= 0 &&
+                    tileYnaveInferior < altoMapaTiles() - 1 &&
+                    mapaTiles[tileXnaveIzquierda - 1][tileYnaveInferior].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveIzquierda - 1][tileYnaveCentro].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveIzquierda - 1][tileYnaveSuperior].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveIzquierda][tileYnaveInferior].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveIzquierda][tileYnaveCentro].tipoDeColision ==
+                            Tile.PASABLE &&
+                    mapaTiles[tileXnaveIzquierda][tileYnaveSuperior].tipoDeColision ==
+                            Tile.PASABLE) {
+
+                nave.x += nave.velocidadX;
+
+                // No tengo un tile PASABLE detrás
+                // o es el INICIO del nivel o es uno SOLIDO
+            } else if (tileXnaveIzquierda >= 0 && tileYnaveInferior <= altoMapaTiles() - 1 &&
+                    mapaTiles[tileXnaveIzquierda][tileYnaveInferior].tipoDeColision
+                            == Tile.PASABLE &&
+                    mapaTiles[tileXnaveIzquierda][tileYnaveCentro].tipoDeColision
+                            == Tile.PASABLE &&
+                    mapaTiles[tileXnaveIzquierda][tileYnaveSuperior].tipoDeColision
+                            == Tile.PASABLE) {
+
+                // Si en el propio tile del nave queda espacio para
+                // avanzar más, avanzo
+                int TilenaveBordeIzquierdo = tileXnaveIzquierda * Tile.ancho;
+                double distanciaX = (nave.x - nave.ancho / 2) - TilenaveBordeIzquierdo;
+
+                if (distanciaX > 0) {
+                    double velocidadNecesaria = Utilidades.proximoACero(-distanciaX, nave.velocidadX);
+                    nave.x += velocidadNecesaria;
+                } else {
+                    // Opcional, corregir posición
+                    nave.x = TilenaveBordeIzquierdo + nave.ancho / 2;
+                }
+            }
+        }
+    }
+
+
     public void actualizar(long tiempo) {
         if (inicializado) {
+            nave.procesarOrdenes(orientacionPad,ejePad);
             nave.actualizar(tiempo);
+            this.aplicarReglasMovimiento();
         }
     }
 
