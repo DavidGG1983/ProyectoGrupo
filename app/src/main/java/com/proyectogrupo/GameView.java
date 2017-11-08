@@ -2,6 +2,7 @@ package com.proyectogrupo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -162,5 +163,36 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_UP:
+                nivel.orientacionPad = 0.5f;
+                nivel.ejePad = Pad.EJE_Y;
+                break;
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                nivel.orientacionPad = -0.5f;
+                nivel.ejePad = Pad.EJE_Y;
+                break;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                nivel.orientacionPad = 0.5f;
+                nivel.ejePad = Pad.EJE_X;
+                break;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                nivel.orientacionPad = -0.5f;
+                nivel.ejePad = Pad.EJE_X;
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN
+                || keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            nivel.orientacionPad = 0;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
 }
 

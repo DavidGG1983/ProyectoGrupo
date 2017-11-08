@@ -108,6 +108,7 @@ public class Nivel {
                 }
             }
         }
+
         // izquierda
         if (nave.velocidadX < 0) {
             // Tengo un tile detrás y es PASABLE
