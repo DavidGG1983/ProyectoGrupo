@@ -36,7 +36,6 @@ public class Nivel {
     public void inicializar() throws Exception {
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
         this.inicializarMapaTiles();
-        nave = new Nave(context);
     }
 
 
@@ -127,8 +126,9 @@ public class Nivel {
     private Tile inicializarTile(char codigoTile, int x, int y) {
         switch (codigoTile) {
             case '1':
-                return new Tile(null, Tile.PASABLE);
-            case '.':
+                int xCentroAbajoTile = x * Tile.ancho + Tile.ancho/2;
+                int yCentroAbajoTile = y * Tile.altura + Tile.altura;
+                nave = new Nave(context,xCentroAbajoTile,yCentroAbajoTile);            case '.':
                 // en blanco, sin textura
                 return new Tile(null, Tile.PASABLE);
             case '#':
