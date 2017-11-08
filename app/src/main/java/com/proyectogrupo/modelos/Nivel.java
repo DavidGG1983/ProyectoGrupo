@@ -10,6 +10,7 @@ public class Nivel {
     private Context context = null;
     private int numeroNivel;
     private Fondo fondo;
+    private Nave nave;
 
     public boolean inicializado;
 
@@ -25,12 +26,13 @@ public class Nivel {
 
     public void inicializar()throws Exception {
         fondo = new Fondo(context,CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
+        nave = new Nave(context);
     }
 
 
     public void actualizar (long tiempo){
         if (inicializado) {
-
+            nave.actualizar(tiempo);
         }
     }
 
@@ -38,6 +40,7 @@ public class Nivel {
     public void dibujar (Canvas canvas) {
         if(inicializado) {
             fondo.dibujar(canvas);
+            nave.dibujar(canvas);
         }
     }
 }
