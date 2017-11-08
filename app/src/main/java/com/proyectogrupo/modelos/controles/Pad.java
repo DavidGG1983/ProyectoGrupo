@@ -16,7 +16,6 @@ public class Pad extends Modelo {
 
     public Pad(Context context) {
         super(context, GameView.pantallaAncho*0.15 , GameView.pantallaAlto*0.8 ,
-                GameView.pantallaAlto, GameView.pantallaAncho);
 
         altura = 100;
         ancho = 100;
