@@ -18,7 +18,7 @@ import java.util.Map;
 public class Nave extends Modelo {
 
     static int posicionInicialX = (int) (GameView.pantallaAncho * 0.5);
-    static int posicionInicialY = (int) (GameView.pantallaAlto * 0.95);
+    static int posicionInicialY = (int) (GameView.pantallaAlto * 0.90);
     private static final String NAVE_MOVIENDOSE = "nave_moviendose";
     Map<String, Sprite> sprites;
     Sprite sprite;
