@@ -163,20 +163,10 @@ public class Nivel {
             // Tengo un tile delante y es PASABLE
             // El tile de delante está dentro del Nivel
             if (tileYnaveInferior + 1 <= altoMapaTiles() - 1 &&
-                    tileXnaveDerecha - 1  <= anchoMapaTiles() - 1 &&
-                    tileXnaveIzquierda - 1 >= 0 &&
-                    mapaTiles[tileXnaveDerecha-1][tileYnaveInferior + 1].tipoDeColision ==
-                            Tile.PASABLE &&
-                    mapaTiles[tileXnaveIzquierda-1][tileYnaveInferior + 1].tipoDeColision ==
-                            Tile.PASABLE &&
                     mapaTiles[tileXnaveDerecha][tileYnaveInferior + 1].tipoDeColision ==
                             Tile.PASABLE &&
                     mapaTiles[tileXnaveIzquierda][tileYnaveInferior + 1].tipoDeColision ==
-                            Tile.PASABLE &&
-                    mapaTiles[tileXnaveDerecha+1][tileYnaveInferior + 1].tipoDeColision ==
-                            Tile.PASABLE &&
-                    mapaTiles[tileXnaveDerecha+1][tileYnaveInferior + 1].tipoDeColision ==
-                            Tile.PASABLE) {
+                            Tile.PASABLE){
                 if(nave.velocidadY > 0)
                     nave.y += nave.velocidadY;
 
@@ -193,15 +183,15 @@ public class Nivel {
 
                 // Si en el propio tile de la nave queda espacio para
                 // avanzar más, avanzo
-                int TilenaveBordeDerecho = tileXnaveDerecha * Tile.ancho + Tile.ancho;
-                double distanciaX = TilenaveBordeDerecho - (nave.x + nave.ancho / 2);
+                int TilenaveBordeInferior= tileYnaveInferior * Tile.altura + Tile.altura;
+                double distanciaY = TilenaveBordeInferior - (nave.y + nave.altura / 2);
 
-                if (distanciaX > 0) {
-                    double velocidadNecesaria = Math.min(distanciaX, nave.velocidadX);
-                    nave.x += velocidadNecesaria;
+                if (distanciaY > 0) {
+                    double velocidadNecesaria = Math.min(distanciaY, nave.velocidadY);
+                    nave.y += velocidadNecesaria;
                 } else {
                     // Opcional, corregir posición
-                    nave.x = TilenaveBordeDerecho - nave.ancho / 2;
+                    nave.y = TilenaveBordeInferior - nave.altura / 2;
                 }
             }
         }
@@ -210,18 +200,10 @@ public class Nivel {
             // Tengo un tile detrás y es PASABLE
             // El tile de delante está dentro del Nivel
             if (tileYnaveSuperior - 1 >= 0 &&
-                    mapaTiles[tileXnaveDerecha-1][tileYnaveSuperior - 1].tipoDeColision ==
-                            Tile.PASABLE &&
-                    mapaTiles[tileXnaveIzquierda-1][tileYnaveSuperior - 1].tipoDeColision ==
-                            Tile.PASABLE &&
                     mapaTiles[tileXnaveDerecha][tileYnaveSuperior - 1].tipoDeColision ==
                             Tile.PASABLE &&
                     mapaTiles[tileXnaveIzquierda][tileYnaveSuperior - 1].tipoDeColision ==
-                            Tile.PASABLE &&
-                    mapaTiles[tileXnaveDerecha+1][tileYnaveSuperior - 1].tipoDeColision ==
-                            Tile.PASABLE &&
-                    mapaTiles[tileXnaveIzquierda+1][tileYnaveSuperior - 1].tipoDeColision ==
-                            Tile.PASABLE) {
+                            Tile.PASABLE ){
 
                 if(nave.velocidadY < 0)
                     nave.y += nave.velocidadY;
@@ -238,15 +220,15 @@ public class Nivel {
 
                 // Si en el propio tile del nave queda espacio para
                 // avanzar más, avanzo
-                int TilenaveBordeIzquierdo = tileXnaveIzquierda * Tile.ancho;
-                double distanciaX = (nave.x - nave.ancho / 2) - TilenaveBordeIzquierdo;
+                int TilenaveBordeSuperior= tileYnaveInferior * Tile.altura;
+                double distanciaY = (nave.y - nave.altura / 2) - TilenaveBordeSuperior;
 
-                if (distanciaX > 0) {
-                    double velocidadNecesaria = Utilidades.proximoACero(-distanciaX, nave.velocidadX);
-                    nave.x += velocidadNecesaria;
+                if (distanciaY > 0) {
+                    double velocidadNecesaria = Utilidades.proximoACero(-distanciaY,nave.velocidadY);
+                    nave.y += velocidadNecesaria;
                 } else {
                     // Opcional, corregir posición
-                    nave.x = TilenaveBordeIzquierdo + nave.ancho / 2;
+                    nave.y = TilenaveBordeSuperior + nave.altura / 2;
                 }
             }
         }

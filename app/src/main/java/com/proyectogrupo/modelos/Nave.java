@@ -25,7 +25,8 @@ public class Nave extends Modelo {
     double velocidadY;
 
     public Nave(Context context,int x,int y) {
-        super(context, x, y, 63, 50);
+        //super(context, x, y, 63, 50);
+        super(context, x, y, 32, 40);
         this.y = y - this.altura/2;
         this.xInicial = x;
         this.yInicial = y;
