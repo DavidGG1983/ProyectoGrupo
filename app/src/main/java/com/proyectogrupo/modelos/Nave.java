@@ -8,6 +8,7 @@ import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.graficos.Sprite;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,6 +29,7 @@ public class Nave extends Modelo {
         this.y = posicionInicialY;
         Sprite moviendose = new Sprite(CargadorGraficos.cargarDrawable(context,
                 R.drawable.animacion_nave), 50, 63, 4, 4, true);
+        sprites = new HashMap<>();
         sprites.put(NAVE_MOVIENDOSE,moviendose);
         this.sprite  = moviendose;
     }
