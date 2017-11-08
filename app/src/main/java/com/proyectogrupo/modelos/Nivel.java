@@ -163,18 +163,19 @@ public class Nivel {
             // Tengo un tile delante y es PASABLE
             // El tile de delante está dentro del Nivel
             if (tileYnaveInferior + 1 <= altoMapaTiles() - 1 &&
-                    tileXnaveDerecha  <= anchoMapaTiles() - 1 &&
-                    mapaTiles[tileYnaveInferior + 1][tileXnaveDerecha-1].tipoDeColision ==
+                    tileXnaveDerecha - 1  <= anchoMapaTiles() - 1 &&
+                    tileXnaveIzquierda - 1 >= 0 &&
+                    mapaTiles[tileXnaveDerecha-1][tileYnaveInferior + 1].tipoDeColision ==
                             Tile.PASABLE &&
-                    mapaTiles[tileYnaveInferior + 1][tileXnaveIzquierda-1].tipoDeColision ==
+                    mapaTiles[tileXnaveIzquierda-1][tileYnaveInferior + 1].tipoDeColision ==
                             Tile.PASABLE &&
-                    mapaTiles[tileYnaveInferior + 1][tileXnaveDerecha].tipoDeColision ==
+                    mapaTiles[tileXnaveDerecha][tileYnaveInferior + 1].tipoDeColision ==
                             Tile.PASABLE &&
-                    mapaTiles[tileYnaveInferior + 1][tileXnaveIzquierda].tipoDeColision ==
+                    mapaTiles[tileXnaveIzquierda][tileYnaveInferior + 1].tipoDeColision ==
                             Tile.PASABLE &&
-                    mapaTiles[tileYnaveInferior + 1][tileXnaveDerecha+1].tipoDeColision ==
+                    mapaTiles[tileXnaveDerecha+1][tileYnaveInferior + 1].tipoDeColision ==
                             Tile.PASABLE &&
-                    mapaTiles[tileXnaveIzquierda][tileXnaveDerecha-1].tipoDeColision ==
+                    mapaTiles[tileXnaveDerecha+1][tileYnaveInferior + 1].tipoDeColision ==
                             Tile.PASABLE) {
                 if(nave.velocidadY > 0)
                     nave.y += nave.velocidadY;
@@ -209,18 +210,17 @@ public class Nivel {
             // Tengo un tile detrás y es PASABLE
             // El tile de delante está dentro del Nivel
             if (tileYnaveSuperior - 1 >= 0 &&
-                    tileXnaveDerecha  <= anchoMapaTiles() - 1 &&
-                    mapaTiles[tileYnaveInferior - 1][tileXnaveDerecha].tipoDeColision ==
+                    mapaTiles[tileXnaveDerecha-1][tileYnaveSuperior - 1].tipoDeColision ==
                             Tile.PASABLE &&
-                    mapaTiles[tileYnaveInferior - 1][tileXnaveIzquierda].tipoDeColision ==
+                    mapaTiles[tileXnaveIzquierda-1][tileYnaveSuperior - 1].tipoDeColision ==
                             Tile.PASABLE &&
-                    mapaTiles[tileYnaveInferior - 1][tileXnaveDerecha].tipoDeColision ==
+                    mapaTiles[tileXnaveDerecha][tileYnaveSuperior - 1].tipoDeColision ==
                             Tile.PASABLE &&
-                    mapaTiles[tileYnaveInferior-1][tileXnaveIzquierda].tipoDeColision ==
+                    mapaTiles[tileXnaveIzquierda][tileYnaveSuperior - 1].tipoDeColision ==
                             Tile.PASABLE &&
-                    mapaTiles[tileYnaveInferior-1][tileXnaveDerecha].tipoDeColision ==
+                    mapaTiles[tileXnaveDerecha+1][tileYnaveSuperior - 1].tipoDeColision ==
                             Tile.PASABLE &&
-                    mapaTiles[tileYnaveInferior-1][tileXnaveIzquierda].tipoDeColision ==
+                    mapaTiles[tileXnaveIzquierda+1][tileYnaveSuperior - 1].tipoDeColision ==
                             Tile.PASABLE) {
 
                 if(nave.velocidadY < 0)
