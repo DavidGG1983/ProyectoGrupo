@@ -7,7 +7,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.proyectogrupo.GameLoop;
+import com.proyectogrupo.graficos.Sprite;
 import com.proyectogrupo.modelos.Nivel;
+import com.proyectogrupo.modelos.controles.Pad;
 
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
@@ -21,6 +23,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     private Nivel nivel;
     public int numeroNivel = 0;
+    private Pad pad;
 
     public GameView(Context context) {
         super(context);
@@ -88,6 +91,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     protected void inicializar() throws Exception {
         nivel = new Nivel(context,numeroNivel);
+        pad = new Pad(context);
     }
 
     public void actualizar(long tiempo) throws Exception {
@@ -96,6 +100,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     protected void dibujar(Canvas canvas) {
         nivel.dibujar(canvas);
+        pad.dibujar(canvas);
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
