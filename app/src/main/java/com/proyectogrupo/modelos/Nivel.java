@@ -104,11 +104,11 @@ public class Nivel {
             }
         }
         // izquierda
-        if (nave.velocidadX <= 0) {
+        if (nave.velocidadX < 0) {
             // Tengo un tile detrás y es PASABLE
             // El tile de delante está dentro del Nivel
             if (tileXnaveIzquierda - 1 >= 0 &&
-                    tileYnaveInferior < altoMapaTiles() - 1 &&
+                    tileYnaveInferior <= altoMapaTiles() - 1 &&
                     mapaTiles[tileXnaveIzquierda - 1][tileYnaveInferior].tipoDeColision ==
                             Tile.PASABLE &&
                     mapaTiles[tileXnaveIzquierda - 1][tileYnaveCentro].tipoDeColision ==
