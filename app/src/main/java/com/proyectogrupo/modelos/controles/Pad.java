@@ -15,11 +15,11 @@ import com.proyectogrupo.modelos.Modelo;
 public class Pad extends Modelo {
 
     public Pad(Context context) {
-        super(context, GameView.pantallaAncho * 0.15, GameView.pantallaAlto * 0.8, GameView.pantallaAlto,
+        super(context, GameView.pantallaAncho * 0.15, GameView.pantallaAlto * 0.9, GameView.pantallaAlto,
                 GameView.pantallaAncho);
 
-        altura = 100;
-        ancho = 100;
+        altura = 75;
+        ancho = 75;
         imagen = CargadorGraficos.cargarDrawable(context, R.drawable.pad);
     }
 
