@@ -20,6 +20,7 @@ public class Nivel {
     private int numeroNivel;
     private Fondo fondo;
     private Nave nave;
+    public float orientacionPad = 0;
 
     public boolean inicializado;
 
