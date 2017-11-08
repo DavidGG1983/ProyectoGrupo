@@ -14,6 +14,9 @@ import com.proyectogrupo.modelos.Modelo;
 
 public class Pad extends Modelo {
 
+    public static final int EJE_X = 1;
+    public static final int EJE_Y = 2;
+
     public Pad(Context context) {
         super(context, GameView.pantallaAncho * 0.15, GameView.pantallaAlto * 0.9, GameView.pantallaAlto,
                 GameView.pantallaAncho);
@@ -29,9 +32,9 @@ public class Pad extends Modelo {
                 clickY <= (y + altura / 2) &&
                 clickY >= (y - altura / 2)) {
             if(Math.abs(x - clickX) > Math.abs(y - clickY))
-                return 1;
+                return EJE_X;
             else
-                return 2;
+                return EJE_Y;
         }
         return 0;
     }
