@@ -2,6 +2,7 @@ package com.proyectogrupo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -87,7 +88,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     float y[] = new float[6];
 
     public void procesarEventosTouch(){
-        boolean pulsacionPadMover = false;
+        boolean pulsacionPadMoverX = false;
+        boolean pulsacionPadMoverY = false;
 
         for(int i=0; i < 6; i++){
             if(accion[i] != NO_ACTION ) {
@@ -95,20 +97,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                 if (pulsacion != 0) {
                     float orientacion =
                             pulsacion == 1 ? pad.getOrientacionX(x[i]) : pad.getOrientacionY(y[i]);
-                    nivel.ejePad = pulsacion;
-                    // Si almenosuna pulsacion está en el pad
+                    // Si al menosuna pulsacion está en el pad
                     if (accion[i] != ACTION_UP) {
-                        pulsacionPadMover = true;
-                        nivel.orientacionPad = orientacion;
+                        if (pulsacion == Pad.EJE_X) {
+                            nivel.orientacionPadX = orientacion;
+                            pulsacionPadMoverX = true;
+                        } else {
+                            nivel.orientacionPadY = orientacion;
+                            pulsacionPadMoverY = true;
+                        }
                     }
                 }
             }
         }
-        if(!pulsacionPadMover) {
-            nivel.orientacionPad = 0;
+        if(!pulsacionPadMoverX) {
+            nivel.orientacionPadX = 0;
+        }
+        if (!pulsacionPadMoverY) {
+            nivel.orientacionPadY = 0;
         }
     }
-
 
     protected void inicializar() throws Exception {
         nivel = new Nivel(context,numeroNivel);
@@ -167,20 +175,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_UP:
-                nivel.orientacionPad = 0.5f;
-                nivel.ejePad = Pad.EJE_Y;
+                nivel.orientacionPadY = 0.5f;
                 break;
             case KeyEvent.KEYCODE_DPAD_DOWN:
-                nivel.orientacionPad = -0.5f;
-                nivel.ejePad = Pad.EJE_Y;
+                nivel.orientacionPadY = -0.5f;
                 break;
             case KeyEvent.KEYCODE_DPAD_LEFT:
-                nivel.orientacionPad = 0.5f;
-                nivel.ejePad = Pad.EJE_X;
+                nivel.orientacionPadX = 0.5f;
                 break;
             case KeyEvent.KEYCODE_DPAD_RIGHT:
-                nivel.orientacionPad = -0.5f;
-                nivel.ejePad = Pad.EJE_X;
+                nivel.orientacionPadX = -0.5f;
                 break;
         }
         return super.onKeyDown(keyCode, event);
@@ -188,9 +192,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN
-                || keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            nivel.orientacionPad = 0;
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_UP:
+                nivel.orientacionPadY = 0;
+                break;
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                nivel.orientacionPadY = 0;
+                break;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                nivel.orientacionPadX = 0;
+                break;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                nivel.orientacionPadX = 0;
+                break;
         }
         return super.onKeyUp(keyCode, event);
     }

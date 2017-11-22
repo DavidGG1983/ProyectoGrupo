@@ -21,8 +21,8 @@ public class Nivel {
     private int numeroNivel;
     private Fondo fondo;
     public Nave nave;
-    public float orientacionPad = 0;
-    public int ejePad;
+    public float orientacionPadX = 0;
+    public float orientacionPadY = 0;
 
     public boolean inicializado;
 
@@ -238,7 +238,7 @@ public class Nivel {
 
     public void actualizar(long tiempo) {
         if (inicializado) {
-            nave.procesarOrdenes(orientacionPad,ejePad);
+            nave.procesarOrdenes(orientacionPadX,orientacionPadY);
             nave.actualizar(tiempo);
             this.aplicarReglasMovimiento();
         }
