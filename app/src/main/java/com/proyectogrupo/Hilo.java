@@ -1,9 +1,5 @@
 package com.proyectogrupo;
 
-
-import android.os.Handler;
-import android.os.Looper;
-
 /**
  * Created by Daniel on 02/12/2017.
  */
