@@ -10,11 +10,13 @@ import android.view.SurfaceView;
 
 import com.proyectogrupo.GameLoop;
 import com.proyectogrupo.graficos.Sprite;
+import com.proyectogrupo.modelos.IconoVida;
+import com.proyectogrupo.modelos.Nave;
 import com.proyectogrupo.modelos.Nivel;
 import com.proyectogrupo.modelos.controles.Pad;
 
 
-public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
+public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     boolean iniciado = false;
     Context context;
@@ -25,6 +27,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
 
     private Nivel nivel;
     public int numeroNivel = 0;
+    private IconoVida[] iconosVida;
     private Pad pad;
 
     public GameView(Context context) {
@@ -40,7 +43,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     }
 
 
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // valor a Binario
@@ -48,7 +50,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
         // Indice del puntero
         int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
 
-        int pointerId  = event.getPointerId(pointerIndex);
+        int pointerId = event.getPointerId(pointerIndex);
         switch (action) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -65,9 +67,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                 break;
             case MotionEvent.ACTION_MOVE:
                 int pointerCount = event.getPointerCount();
-                for(int i =0; i < pointerCount; i++){
+                for (int i = 0; i < pointerCount; i++) {
                     pointerIndex = i;
-                    pointerId  = event.getPointerId(pointerIndex);
+                    pointerId = event.getPointerId(pointerIndex);
                     accion[pointerId] = ACTION_MOVE;
                     x[pointerId] = event.getX(pointerIndex);
                     y[pointerId] = event.getY(pointerIndex);
@@ -87,13 +89,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     float x[] = new float[6];
     float y[] = new float[6];
 
-    public void procesarEventosTouch(){
+    public void procesarEventosTouch() {
         boolean pulsacionPadMoverX = false;
         boolean pulsacionPadMoverY = false;
 
-        for(int i=0; i < 6; i++){
-            if(accion[i] != NO_ACTION ) {
-                int pulsacion = pad.estaPulsado(x[i],y[i]);
+        for (int i = 0; i < 6; i++) {
+            if (accion[i] != NO_ACTION) {
+                int pulsacion = pad.estaPulsado(x[i], y[i]);
                 if (pulsacion != 0) {
                     float orientacion =
                             pulsacion == 1 ? pad.getOrientacionX(x[i]) : pad.getOrientacionY(y[i]);
@@ -110,7 +112,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
                 }
             }
         }
-        if(!pulsacionPadMoverX) {
+        if (!pulsacionPadMoverX) {
             nivel.orientacionPadX = 0;
         }
         if (!pulsacionPadMoverY) {
@@ -119,8 +121,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     }
 
     protected void inicializar() throws Exception {
-        nivel = new Nivel(context,numeroNivel);
+        nivel = new Nivel(context, numeroNivel);
         pad = new Pad(context);
+        iconosVida = new IconoVida[3];
+
+        iconosVida[0] = new IconoVida(context, GameView.pantallaAncho * 0.08,
+                GameView.pantallaAlto * 0.05);
+        iconosVida[1] = new IconoVida(context, GameView.pantallaAncho * 0.18,
+                GameView.pantallaAlto * 0.05);
+        iconosVida[2] = new IconoVida(context, GameView.pantallaAncho * 0.28,
+                GameView.pantallaAlto * 0.05);
     }
 
     public void actualizar(long tiempo) throws Exception {
@@ -130,6 +140,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
     protected void dibujar(Canvas canvas) {
         nivel.dibujar(canvas);
         pad.dibujar(canvas);
+        for (int i = 0; i < nivel.nave.getVida(); i++)
+            iconosVida[i].dibujar(canvas);
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
@@ -165,8 +177,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback  {
             try {
                 gameloop.join();
                 intentarDeNuevo = false;
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
             }
         }
     }

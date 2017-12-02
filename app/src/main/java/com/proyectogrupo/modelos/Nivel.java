@@ -9,6 +9,9 @@ import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.modelos.controles.EnemigoBasico;
+import com.proyectogrupo.powerups.CajaBomba;
+import com.proyectogrupo.powerups.MonedaRecolectable;
+import com.proyectogrupo.powerups.PowerUp;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -20,6 +23,7 @@ import java.util.List;
 public class Nivel {
     public static int scrollEjeY = 0;
     private Tile[][] mapaTiles;
+    public List<PowerUp> powerups;
     private Context context = null;
     private int numeroNivel;
     private Fondo fondo;
@@ -29,6 +33,8 @@ public class Nivel {
     public List<Enemigo> enemigos = new ArrayList<>();
 
     public boolean inicializado;
+    public int monedasRecogidas;
+
 
     public Nivel(Context context, int numeroNivel) throws Exception {
         inicializado = false;
@@ -42,6 +48,8 @@ public class Nivel {
 
     public void inicializar() throws Exception {
         scrollEjeY = 0;
+        monedasRecogidas = 0;
+        powerups = new LinkedList<>();
 
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
         this.inicializarMapaTiles();
@@ -270,6 +278,7 @@ public class Nivel {
         if (inicializado) {
             nave.procesarOrdenes(orientacionPadX,orientacionPadY);
             nave.actualizar(tiempo);
+
             this.aplicarReglasMovimiento();
             for(Enemigo e: this.enemigos)
                 e.actualizar(tiempo);
@@ -283,6 +292,8 @@ public class Nivel {
             nave.dibujar(canvas);
             for(Enemigo e : this.enemigos)
                 e.dibujar(canvas);
+            for(PowerUp p :powerups)
+                p.dibujar(canvas);
         }
     }
 
@@ -373,6 +384,11 @@ public class Nivel {
         switch (codigoTile) {
             case '1':
                 nave = new Nave(context,xCentroAbajoTile,yCentroAbajoTile);
+                return new Tile(null,Tile.PASABLE);
+            case 'M':
+                Log.d("MONEDA POSICION","x: "+xCentroAbajoTile+", y: "+yCentroAbajoTile);
+                powerups.add(new MonedaRecolectable(context,xCentroAbajoTile,yCentroAbajoTile));
+                return new Tile(null,Tile.PASABLE);
             case '.':
                 // en blanco, sin textura
                 return new Tile(null, Tile.PASABLE);
@@ -383,6 +399,10 @@ public class Nivel {
             case 'B':
                 this.enemigos.add(new EnemigoBasico
                         (context,xCentroAbajoTile,yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'X':
+                powerups.add(new CajaBomba(context, xCentroAbajoTile,yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso
                 return new Tile(null, Tile.PASABLE);
