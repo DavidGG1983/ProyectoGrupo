@@ -12,7 +12,6 @@ import com.proyectogrupo.modelos.controles.EnemigoBasico;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.MonedaRecolectable;
 import com.proyectogrupo.powerups.PowerUp;
-import com.proyectogrupo.modelos.controles.EnemigoBasico;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -75,6 +74,32 @@ public class Nivel {
         this.moverNaveVertical(tileXnaveIzquierda,tileXnaveDerecha,tileYnaveInferior,
                 tileYnaveCentro,tileYnaveSuperior);
         this.moverEnemigos();
+        this.colisionesPowerUps();
+        this.colisionaEnemigos();
+    }
+
+    private void colisionaEnemigos() {
+        Enemigo eliminar = null;
+        for (Enemigo e:enemigos) {
+            if(e.colisiona(nave)){
+                if(!nave.esInvulnerable()){
+                    nave.setVida(nave.getVida()-1);
+                    nave.activarInvunerabilidad();
+                }
+            }
+
+        }
+    }
+
+    private void colisionesPowerUps(){
+        PowerUp eliminar = null;
+        for (PowerUp p: powerups) {
+            if(p.colisiona(nave)){
+                p.efecto(this);
+                eliminar = p;
+            }
+        }
+        powerups.remove(eliminar);
     }
 
     private void moverEnemigos(){

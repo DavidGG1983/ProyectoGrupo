@@ -2,13 +2,10 @@ package com.proyectogrupo.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.Log;
 
-import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.graficos.Sprite;
-import com.proyectogrupo.modelos.controles.Pad;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +25,8 @@ public class Nave extends Modelo {
     public int vida;
     public boolean invulnerable;
 
+    long t1;
+
     public Nave(Context context, int x, int y) {
         //super(context, x, y, 63, 50);
         super(context, x, y, 32, 40);
@@ -45,6 +44,10 @@ public class Nave extends Modelo {
 
     public void actualizar(long tiempo) {
         this.sprite.actualizar(tiempo);
+
+        if(tiempo - t1 > 5000){ // 5 mililisegundos
+            invulnerable = false;
+        }
     }
 
     public void dibujar(Canvas canvas) {
@@ -79,5 +82,15 @@ public class Nave extends Modelo {
 
     public void setVida(int vida) {
         this.vida = vida;
+    }
+
+    public void activarInvunerabilidad(){
+        invulnerable = true;
+        t1 = System.currentTimeMillis();
+
+    }
+
+    public boolean esInvulnerable(){
+        return invulnerable;
     }
 }
