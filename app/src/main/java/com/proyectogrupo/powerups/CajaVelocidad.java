@@ -2,6 +2,7 @@ package com.proyectogrupo.powerups;
 
 import android.content.Context;
 
+import com.proyectogrupo.Hilo;
 import com.proyectogrupo.modelos.Modelo;
 import com.proyectogrupo.modelos.Nave;
 import com.proyectogrupo.modelos.Nivel;
@@ -19,7 +20,14 @@ public class CajaVelocidad extends PowerUp {
 
     @Override
     public void efecto(Nivel nivel) {
-        Nave nave = nivel.nave;
-        nave.setVelocidad(2);
+        final Nave nave = nivel.nave;
+        nave.aumentarVelocidad(2);
+        Runnable action = new Runnable() {
+            @Override
+            public void run() {
+                nave.recuperarVelocidad();
+            }
+        };
+        new Hilo(5000, action).start();
     }
 }

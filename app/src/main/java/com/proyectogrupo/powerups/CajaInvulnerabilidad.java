@@ -2,6 +2,7 @@ package com.proyectogrupo.powerups;
 
 import android.content.Context;
 
+import com.proyectogrupo.Hilo;
 import com.proyectogrupo.modelos.Modelo;
 import com.proyectogrupo.modelos.Nave;
 import com.proyectogrupo.modelos.Nivel;
@@ -19,7 +20,14 @@ public class CajaInvulnerabilidad extends PowerUp {
 
     @Override
     public void efecto(Nivel nivel) {
-        Nave nave = nivel.nave;
+        final Nave nave = nivel.nave;
         nave.invulnerable = true;
+        Runnable action = new Runnable() {
+            @Override
+            public void run() {
+                nave.desactivarInvunerabilidad();
+            }
+        };
+        new Hilo(5000, action).start();
     }
 }

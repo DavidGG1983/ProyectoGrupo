@@ -20,12 +20,13 @@ public class Nave extends Modelo {
     private static final String NAVE_MOVIENDOSE = "nave_moviendose";
     Map<String, Sprite> sprites;
     Sprite sprite;
-    double velocidadX;
-    double velocidadY;
+    final double velocidadInicial = 5;
+    double velocidadNave;
+    double velocidadXActual;
+    double velocidadYActual;
     public int vida;
     public boolean invulnerable;
 
-    long t1;
 
     public Nave(Context context, int x, int y) {
         //super(context, x, y, 63, 50);
@@ -34,6 +35,7 @@ public class Nave extends Modelo {
         this.xInicial = x;
         this.yInicial = y;
         this.vida = 3;
+        this.velocidadNave = velocidadInicial;
         this.invulnerable = false;
         Sprite moviendose = new Sprite(CargadorGraficos.cargarDrawable(context,
                 R.drawable.animacion_nave), 50, 63, 4, 4, true);
@@ -44,10 +46,6 @@ public class Nave extends Modelo {
 
     public void actualizar(long tiempo) {
         this.sprite.actualizar(tiempo);
-
-        if(tiempo - t1 > 5000){ // 5 mililisegundos
-            invulnerable = false;
-        }
     }
 
     public void dibujar(Canvas canvas) {
@@ -55,25 +53,28 @@ public class Nave extends Modelo {
     }
 
     public void procesarOrdenes(float orientacionPadX, float orientacionPadY) {
-        velocidadX = mover(orientacionPadX);
-        velocidadY = mover(orientacionPadY);
+        velocidadXActual = mover(orientacionPadX);
+        velocidadYActual = mover(orientacionPadY);
     }
 
     private double mover(float orientacionPad) {
         double velocidad;
         if (orientacionPad > 0) {
-            velocidad = -5;
+            velocidad = -velocidadNave;
         } else if (orientacionPad < 0) {
-            velocidad = 5;
+            velocidad = velocidadNave;
         } else {
             velocidad = 0;
         }
         return velocidad;
     }
 
-    public void setVelocidad(int multiplicador) {
-        velocidadX *= multiplicador;
-        velocidadY *= multiplicador;
+    public void aumentarVelocidad(int multiplicador) {
+        velocidadNave *= multiplicador;
+    }
+
+    public void recuperarVelocidad() {
+        velocidadNave = velocidadInicial;
     }
 
     public int getVida() {
@@ -84,13 +85,15 @@ public class Nave extends Modelo {
         this.vida = vida;
     }
 
-    public void activarInvunerabilidad(){
+    public void activarInvunerabilidad() {
         invulnerable = true;
-        t1 = System.currentTimeMillis();
-
     }
 
-    public boolean esInvulnerable(){
+    public void desactivarInvunerabilidad() {
+        invulnerable = false;
+    }
+
+    public boolean esInvulnerable() {
         return invulnerable;
     }
 }
