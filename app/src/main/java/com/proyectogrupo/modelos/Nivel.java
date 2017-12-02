@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Nivel {
+    public static int scrollEjeY = 0;
     private Tile[][] mapaTiles;
     private Context context = null;
     private int numeroNivel;
@@ -37,6 +38,8 @@ public class Nivel {
     }
 
     public void inicializar() throws Exception {
+        scrollEjeY = 0;
+
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
         this.inicializarMapaTiles();
     }
@@ -220,7 +223,7 @@ public class Nivel {
 
                 // Si en el propio tile del nave queda espacio para
                 // avanzar más, avanzo
-                int TilenaveBordeSuperior= tileYnaveInferior * Tile.altura;
+                int TilenaveBordeSuperior= tileYnaveSuperior * Tile.altura;
                 double distanciaY = (nave.y - nave.altura / 2) - TilenaveBordeSuperior;
 
                 if (distanciaY > 0) {
@@ -256,10 +259,21 @@ public class Nivel {
         // Calcular que tiles serán visibles en la pantalla
         // La matriz de tiles es más grande que la pantalla
 
+        int tileYNave = (int) nave.y / Tile.altura;
         int izquierda = 0; //El primer tile
 
         int derecha = izquierda +
                 (GameView.pantallaAncho / Tile.ancho) + 1;
+
+        if (nave.y < altoMapaTiles() * Tile.altura + GameView.pantallaAlto * 0.3)
+            if (nave.y + scrollEjeY > GameView.pantallaAlto * 0.7) {
+                scrollEjeY = (int) ((nave.y) - GameView.pantallaAlto * 0.7);
+            }
+
+        if (nave.y > GameView.pantallaAlto * 0.3)
+            if (nave.y + scrollEjeY < GameView.pantallaAlto * 0.3) {
+                scrollEjeY = (int) (nave.y - GameView.pantallaAlto * 0.3);
+            }
 
         // el ultimo tile visible
         derecha = Math.min(derecha, anchoMapaTiles() - 1);
@@ -272,9 +286,9 @@ public class Nivel {
 
                     mapaTiles[x][y].imagen.setBounds(
                             x * Tile.ancho,
-                            y * Tile.altura,
+                            y * Tile.altura - scrollEjeY,
                             x * Tile.ancho + Tile.ancho,
-                            y * Tile.altura + Tile.altura);
+                            y * Tile.altura + Tile.altura - scrollEjeY);
 
                     mapaTiles[x][y].imagen.draw(canvas);
                 }
@@ -340,5 +354,8 @@ public class Nivel {
         }
     }
 
+    private float tilesEnDistanciaY(double distanciaY) {
+        return (float) distanciaY / Tile.altura;
+    }
 }
 
