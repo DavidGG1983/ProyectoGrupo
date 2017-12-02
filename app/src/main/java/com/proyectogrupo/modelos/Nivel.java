@@ -71,12 +71,24 @@ public class Nivel {
     private void moverEnemigos(){
         for(Enemigo enemigo : enemigos) {
             enemigo.mover();
-            int tileX = (int)((enemigo.x + enemigo.ancho / 2) / Tile.ancho);
-            if (tileX < anchoMapaTiles()) {
-                if (mapaTiles[tileX]
+            int tileXDerecha = (int)((enemigo.x + enemigo.ancho / 2) / Tile.ancho);
+            int tileXIzquierda = (int)((enemigo.x - enemigo.ancho / 2) / Tile.ancho);
+
+            if (tileXDerecha < anchoMapaTiles()) {
+                if (mapaTiles[tileXDerecha]
                         [(int) (enemigo.y / Tile.altura)].tipoDeColision
                         != Tile.PASABLE) {
                     enemigo.x = enemigo.xAnterior;
+                    enemigo.girar();
+                }
+            }
+
+            if (tileXIzquierda >= 0) {
+                if (mapaTiles[tileXIzquierda]
+                        [(int) (enemigo.y / Tile.altura)].tipoDeColision
+                        != Tile.PASABLE) {
+                    enemigo.x = enemigo.xAnterior;
+                    enemigo.girar();
                 }
             }
         }

@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import com.proyectogrupo.graficos.Sprite;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by davidgarcia on 2/12/17.
@@ -15,7 +16,7 @@ public abstract class Enemigo extends Modelo {
 
     public double xAnterior;
     public Sprite sprite;
-    public HashMap<String,Sprite> sprites;
+    public Map<String,Sprite> sprites = new HashMap<>();
 
     public double velocidadX;
 

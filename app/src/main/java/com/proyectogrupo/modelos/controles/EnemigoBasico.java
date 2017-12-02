@@ -14,17 +14,25 @@ import com.proyectogrupo.modelos.Enemigo;
 
 public class EnemigoBasico extends Enemigo {
 
-    public final static String BASICO = "moviendose";
+    public final static String MOVER_DERECHA = "mover_derecha";
+    public final static String MOVER_IZQUIERDA = "mover_izquierda";
+
 
     public EnemigoBasico(Context context, double x, double y) {
         super(context, x, y);
         this.velocidadX = 3;
+        this.inicializar();
     }
 
     @Override
     public void inicializar() {
-        this.sprite = new Sprite(CargadorGraficos.cargarDrawable
-                (this.context, R.drawable.enemigo_basico),ancho,altura,4,4,true);
+        Sprite moverDerecha = new Sprite(CargadorGraficos.cargarDrawable
+                (this.context, R.drawable.enemigo_basico_derecha),ancho,altura,4,4,true);
+        Sprite moverIzquierda = new Sprite(CargadorGraficos.cargarDrawable
+                (this.context, R.drawable.enemigo_basico_izquierda),ancho,altura,4,4,true);
+        sprites.put(MOVER_DERECHA,moverDerecha);
+        sprites.put(MOVER_IZQUIERDA,moverIzquierda);
+        this.sprite = moverDerecha;
     }
 
     public void mover(){
@@ -32,6 +40,8 @@ public class EnemigoBasico extends Enemigo {
         this.x += velocidadX;
         if(x > GameView.pantallaAncho)
             x = 0;
+        if(x < 0)
+            x = GameView.pantallaAncho;
     }
 
     public void actualizar(long tiempo){
@@ -40,5 +50,9 @@ public class EnemigoBasico extends Enemigo {
 
     public void girar(){
         this.velocidadX *= -1;
+        if(sprite == sprites.get(MOVER_DERECHA))
+            sprite = sprites.get(MOVER_IZQUIERDA);
+        else
+            sprite = sprites.get(MOVER_DERECHA);
     }
 }
