@@ -28,6 +28,10 @@ public abstract class Enemigo extends Modelo {
         this.inicializar();
     }
 
+    public void girar(){
+
+    }
+
     public abstract void mover();
 
     public abstract void inicializar();

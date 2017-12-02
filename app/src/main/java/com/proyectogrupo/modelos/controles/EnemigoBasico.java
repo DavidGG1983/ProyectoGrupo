@@ -37,4 +37,8 @@ public class EnemigoBasico extends Enemigo {
     public void actualizar(long tiempo){
         sprite.actualizar(tiempo);
     }
+
+    public void girar(){
+        this.velocidadX *= -1;
+    }
 }
