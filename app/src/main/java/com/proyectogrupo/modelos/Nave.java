@@ -25,6 +25,8 @@ public class Nave extends Modelo {
     Sprite sprite;
     double velocidadX;
     double velocidadY;
+    public int vida;
+    public boolean invulnerable;
 
     public Nave(Context context, int x, int y) {
         //super(context, x, y, 63, 50);
@@ -32,6 +34,8 @@ public class Nave extends Modelo {
         this.y = y - this.altura / 2;
         this.xInicial = x;
         this.yInicial = y;
+        this.vida = 3;
+        this.invulnerable = false;
         Sprite moviendose = new Sprite(CargadorGraficos.cargarDrawable(context,
                 R.drawable.animacion_nave), 50, 63, 4, 4, true);
         sprites = new HashMap<>();
@@ -62,5 +66,10 @@ public class Nave extends Modelo {
             velocidad = 0;
         }
         return velocidad;
+    }
+
+    public void setVelocidad(int multiplicador) {
+        velocidadX *= multiplicador;
+        velocidadY *= multiplicador;
     }
 }
