@@ -10,7 +10,7 @@ import com.proyectogrupo.modelos.Nivel;
  * Created by CMUAmerica on 02/12/2017.
  */
 
-public class CajaInvulnerabilidad extends Modelo implements PowerUp {
+public class CajaInvulnerabilidad extends PowerUp {
 
     public CajaInvulnerabilidad(Context context, double x, double y) {
         super(context, x, y, 0, 0);

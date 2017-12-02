@@ -8,7 +8,9 @@ import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
+import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.MonedaRecolectable;
+import com.proyectogrupo.powerups.PowerUp;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -19,6 +21,7 @@ import java.util.List;
 public class Nivel {
     public static int scrollEjeY = 0;
     private Tile[][] mapaTiles;
+    public List<PowerUp> powerups;
     private Context context = null;
     private int numeroNivel;
     private Fondo fondo;
@@ -29,7 +32,6 @@ public class Nivel {
     public boolean inicializado;
     public int monedasRecogidas;
 
-    List<MonedaRecolectable> monedas;
 
     public Nivel(Context context, int numeroNivel) throws Exception {
         inicializado = false;
@@ -44,7 +46,7 @@ public class Nivel {
     public void inicializar() throws Exception {
         scrollEjeY = 0;
         monedasRecogidas = 0;
-        monedas = new LinkedList<>();
+        powerups = new LinkedList<>();
 
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
         this.inicializarMapaTiles();
@@ -258,6 +260,8 @@ public class Nivel {
             fondo.dibujar(canvas);
             dibujarTiles(canvas);
             nave.dibujar(canvas);
+            for(PowerUp p :powerups)
+                p.dibujar(canvas);
         }
     }
 
@@ -357,6 +361,8 @@ public class Nivel {
                 // bloque de musgo, no se puede pasar
                 return new Tile(CargadorGraficos.cargarDrawable(context,
                         R.drawable.blocka2), Tile.SOLIDO);
+            case 'B':
+                powerups.add(new CajaBomba(context, x,y));
             default:
                 //cualquier otro caso
                 return new Tile(null, Tile.PASABLE);

@@ -11,7 +11,7 @@ import com.proyectogrupo.modelos.Nivel;
  * Created by miguel on 02/12/2017.
  */
 
-public class MonedaRecolectable extends Modelo implements PowerUp {
+public class MonedaRecolectable extends PowerUp {
 
 
     public MonedaRecolectable(Context context, double x, double y, int altura, int ancho) {

@@ -12,7 +12,7 @@ import com.proyectogrupo.modelos.Nivel;
  * Created by CMUAmerica on 02/12/2017.
  */
 
-public class CajaBomba extends Modelo implements PowerUp {
+public class CajaBomba extends PowerUp {
     public CajaBomba(Context context, double x, double y){
         super(context, x,y, 30,30);
         imagen = CargadorGraficos.cargarDrawable(context, R.drawable.bomba);
