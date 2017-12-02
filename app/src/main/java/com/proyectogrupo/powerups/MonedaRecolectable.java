@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
-import com.proyectogrupo.modelos.Modelo;
 import com.proyectogrupo.modelos.Nivel;
 
 /**
@@ -14,8 +13,9 @@ import com.proyectogrupo.modelos.Nivel;
 public class MonedaRecolectable extends PowerUp {
 
 
-    public MonedaRecolectable(Context context, double x, double y, int altura, int ancho) {
-        super(context, x, y, altura, ancho);
+    public MonedaRecolectable(Context context, double x, double y) {
+        super(context, x, y, 40, 40);
+        this.y = y - altura/2;
         imagen = CargadorGraficos.cargarDrawable(context, R.drawable.moneda1);
 
     }

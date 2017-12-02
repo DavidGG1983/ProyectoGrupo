@@ -353,7 +353,10 @@ public class Nivel {
                 int yCentroAbajoTile = y * Tile.altura + Tile.altura;
                 nave = new Nave(context,xCentroAbajoTile,yCentroAbajoTile);
             case 'm':
-
+                int xCentroAbajoTileMoneda= x * Tile.ancho + Tile.ancho/2;
+                int yCentroAbajoTileMoneda = y * Tile.altura + Tile.altura;
+                Log.d("MONEDA POSICION","x: "+xCentroAbajoTileMoneda+", y: "+yCentroAbajoTileMoneda);
+                powerups.add(new MonedaRecolectable(context,xCentroAbajoTileMoneda,yCentroAbajoTileMoneda));
             case '.':
                 // en blanco, sin textura
                 return new Tile(null, Tile.PASABLE);
