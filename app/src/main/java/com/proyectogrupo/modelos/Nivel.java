@@ -26,6 +26,7 @@ public class Nivel {
     public float orientacionPadY = 0;
 
     public boolean inicializado;
+    public int monedasRecogidas;
 
     public Nivel(Context context, int numeroNivel) throws Exception {
         inicializado = false;
@@ -39,6 +40,7 @@ public class Nivel {
 
     public void inicializar() throws Exception {
         scrollEjeY = 0;
+        monedasRecogidas = 0;
 
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
         this.inicializarMapaTiles();
