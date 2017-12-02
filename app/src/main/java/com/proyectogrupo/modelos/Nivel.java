@@ -347,16 +347,16 @@ public class Nivel {
     }
 
     private Tile inicializarTile(char codigoTile, int x, int y) {
+        int xCentroAbajoTile = x * Tile.ancho + Tile.ancho/2;
+        int yCentroAbajoTile = y * Tile.altura + Tile.altura;
         switch (codigoTile) {
             case '1':
-                int xCentroAbajoTile = x * Tile.ancho + Tile.ancho/2;
-                int yCentroAbajoTile = y * Tile.altura + Tile.altura;
                 nave = new Nave(context,xCentroAbajoTile,yCentroAbajoTile);
-            case 'm':
-                int xCentroAbajoTileMoneda= x * Tile.ancho + Tile.ancho/2;
-                int yCentroAbajoTileMoneda = y * Tile.altura + Tile.altura;
-                Log.d("MONEDA POSICION","x: "+xCentroAbajoTileMoneda+", y: "+yCentroAbajoTileMoneda);
-                powerups.add(new MonedaRecolectable(context,xCentroAbajoTileMoneda,yCentroAbajoTileMoneda));
+                return new Tile(null,Tile.PASABLE);
+            case 'M':
+                Log.d("MONEDA POSICION","x: "+xCentroAbajoTile+", y: "+yCentroAbajoTile);
+                powerups.add(new MonedaRecolectable(context,xCentroAbajoTile,yCentroAbajoTile));
+                return new Tile(null,Tile.PASABLE);
             case '.':
                 // en blanco, sin textura
                 return new Tile(null, Tile.PASABLE);
