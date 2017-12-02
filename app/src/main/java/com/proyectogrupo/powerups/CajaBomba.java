@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.proyectogrupo.modelos.Modelo;
 import com.proyectogrupo.modelos.Nave;
+import com.proyectogrupo.modelos.Nivel;
 
 /**
  * Created by CMUAmerica on 02/12/2017.
@@ -16,7 +17,8 @@ public class CajaBomba extends Modelo implements PowerUp {
     }
 
     @Override
-    public void efecto(Nave nave){
-        nave.vida--;
+    public void efecto(Nivel nivel){
+        Nave nave = nivel.nave;
+        nave.setVida(nave.getVida() - 1);
     }
 }

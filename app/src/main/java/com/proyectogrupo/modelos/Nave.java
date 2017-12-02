@@ -72,4 +72,12 @@ public class Nave extends Modelo {
         velocidadX *= multiplicador;
         velocidadY *= multiplicador;
     }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
+    }
 }

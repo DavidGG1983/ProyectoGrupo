@@ -10,9 +10,9 @@ import com.proyectogrupo.modelos.Nivel;
  * Created by CMUAmerica on 02/12/2017.
  */
 
-public class CajaVelocidad extends Modelo implements PowerUp {
+public class CajaInvulnerabilidad extends Modelo implements PowerUp {
 
-    public CajaVelocidad(Context context, double x, double y) {
+    public CajaInvulnerabilidad(Context context, double x, double y) {
         super(context, x, y, 0, 0);
         //Falta meter sprite
     }
@@ -20,6 +20,6 @@ public class CajaVelocidad extends Modelo implements PowerUp {
     @Override
     public void efecto(Nivel nivel) {
         Nave nave = nivel.nave;
-        nave.setVelocidad(2);
+        nave.invulnerable = true;
     }
 }
