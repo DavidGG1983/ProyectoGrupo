@@ -11,6 +11,9 @@ import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.modelos.controles.EnemigoBasico;
 import com.proyectogrupo.powerups.CajaBomba;
+import com.proyectogrupo.powerups.CajaInvulnerabilidad;
+import com.proyectogrupo.powerups.CajaVelocidad;
+import com.proyectogrupo.powerups.CajaVidaExtra;
 import com.proyectogrupo.powerups.MonedaRecolectable;
 import com.proyectogrupo.powerups.PowerUp;
 
@@ -436,6 +439,16 @@ public class Nivel {
             case 'B':
                 this.enemigos.add(new EnemigoBasico
                         (context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'H':
+                powerups.add(new CajaVidaExtra(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'S':
+                powerups.add(new CajaVelocidad(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'I':
+                powerups.add(new CajaInvulnerabilidad(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso
                 return new Tile(null, Tile.PASABLE);
