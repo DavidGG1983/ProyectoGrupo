@@ -251,6 +251,7 @@ public class Nivel {
         if (inicializado) {
             nave.procesarOrdenes(orientacionPadX,orientacionPadY);
             nave.actualizar(tiempo);
+
             this.aplicarReglasMovimiento();
         }
     }
@@ -365,7 +366,7 @@ public class Nivel {
                 return new Tile(CargadorGraficos.cargarDrawable(context,
                         R.drawable.blocka2), Tile.SOLIDO);
             case 'B':
-                powerups.add(new CajaBomba(context, x,y));
+                powerups.add(new CajaBomba(context, xCentroAbajoTile,yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso

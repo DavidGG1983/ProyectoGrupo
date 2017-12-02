@@ -1,9 +1,9 @@
 package com.proyectogrupo.powerups;
 
 import android.content.Context;
+import android.graphics.Canvas;
 
 import com.proyectogrupo.modelos.Modelo;
-import com.proyectogrupo.modelos.Nave;
 import com.proyectogrupo.modelos.Nivel;
 
 /**
@@ -16,4 +16,15 @@ public abstract class PowerUp extends Modelo{
     }
 
     public abstract void efecto(Nivel nivel);
+
+    @Override
+    public void dibujar(Canvas canvas) {
+        int yArriba = (int)  y - altura / 2;
+        int xIzquierda = (int) x - ancho / 2;
+
+        imagen.setBounds(xIzquierda, yArriba - Nivel.scrollEjeY , xIzquierda
+                + ancho, yArriba - Nivel.scrollEjeY + altura);
+        imagen.draw(canvas);
+
+    }
 }
