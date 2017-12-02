@@ -8,13 +8,16 @@ import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
+import com.proyectogrupo.modelos.controles.EnemigoBasico;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.MonedaRecolectable;
 import com.proyectogrupo.powerups.PowerUp;
+import com.proyectogrupo.modelos.controles.EnemigoBasico;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,6 +31,7 @@ public class Nivel {
     public Nave nave;
     public float orientacionPadX = 0;
     public float orientacionPadY = 0;
+    public List<Enemigo> enemigos = new ArrayList<>();
 
     public boolean inicializado;
     public int monedasRecogidas;
@@ -70,6 +74,33 @@ public class Nivel {
                 tileYnaveCentro,tileYnaveSuperior);
         this.moverNaveVertical(tileXnaveIzquierda,tileXnaveDerecha,tileYnaveInferior,
                 tileYnaveCentro,tileYnaveSuperior);
+        this.moverEnemigos();
+    }
+
+    private void moverEnemigos(){
+        for(Enemigo enemigo : enemigos) {
+            enemigo.mover();
+            int tileXDerecha = (int)((enemigo.x + enemigo.ancho / 2) / Tile.ancho);
+            int tileXIzquierda = (int)((enemigo.x - enemigo.ancho / 2) / Tile.ancho);
+
+            if (tileXDerecha < anchoMapaTiles()) {
+                if (mapaTiles[tileXDerecha]
+                        [(int) (enemigo.y / Tile.altura)].tipoDeColision
+                        != Tile.PASABLE) {
+                    enemigo.x = enemigo.xAnterior;
+                    enemigo.girar();
+                }
+            }
+
+            if (tileXIzquierda >= 0) {
+                if (mapaTiles[tileXIzquierda]
+                        [(int) (enemigo.y / Tile.altura)].tipoDeColision
+                        != Tile.PASABLE) {
+                    enemigo.x = enemigo.xAnterior;
+                    enemigo.girar();
+                }
+            }
+        }
     }
 
     private void moverNaveHorizontal(int tileXnaveIzquierda,int tileXnaveDerecha,
@@ -206,14 +237,13 @@ public class Nivel {
                 }
             }
         }
-        // izquierda
+        // arriba
         if (nave.velocidadY < 0) {
-            // Tengo un tile detrás y es PASABLE
-            // El tile de delante está dentro del Nivel
+
             if (tileYnaveSuperior - 1 >= 0 &&
-                    mapaTiles[tileXnaveDerecha][tileYnaveSuperior - 1].tipoDeColision ==
+                    mapaTiles[tileXnaveDerecha][tileYnaveSuperior].tipoDeColision ==
                             Tile.PASABLE &&
-                    mapaTiles[tileXnaveIzquierda][tileYnaveSuperior - 1].tipoDeColision ==
+                    mapaTiles[tileXnaveIzquierda][tileYnaveSuperior].tipoDeColision ==
                             Tile.PASABLE ){
 
                 if(nave.velocidadY < 0)
@@ -239,13 +269,11 @@ public class Nivel {
                     nave.y += velocidadNecesaria;
                 } else {
                     // Opcional, corregir posición
-                    nave.y = TilenaveBordeSuperior + nave.altura / 2;
+                    //nave.y = TilenaveBordeSuperior + nave.altura / 2;
                 }
             }
         }
     }
-
-
 
     public void actualizar(long tiempo) {
         if (inicializado) {
@@ -253,6 +281,8 @@ public class Nivel {
             nave.actualizar(tiempo);
 
             this.aplicarReglasMovimiento();
+            for(Enemigo e: this.enemigos)
+                e.actualizar(tiempo);
         }
     }
 
@@ -261,6 +291,8 @@ public class Nivel {
             fondo.dibujar(canvas);
             dibujarTiles(canvas);
             nave.dibujar(canvas);
+            for(Enemigo e : this.enemigos)
+                e.dibujar(canvas);
             for(PowerUp p :powerups)
                 p.dibujar(canvas);
         }
@@ -365,9 +397,12 @@ public class Nivel {
                 // bloque de musgo, no se puede pasar
                 return new Tile(CargadorGraficos.cargarDrawable(context,
                         R.drawable.blocka2), Tile.SOLIDO);
-            case 'B':
+            case 'X':
                 powerups.add(new CajaBomba(context, xCentroAbajoTile,yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
+            case 'B':
+                this.enemigos.add(new EnemigoBasico
+                        (context,xCentroAbajoTile,yCentroAbajoTile));
             default:
                 //cualquier otro caso
                 return new Tile(null, Tile.PASABLE);
