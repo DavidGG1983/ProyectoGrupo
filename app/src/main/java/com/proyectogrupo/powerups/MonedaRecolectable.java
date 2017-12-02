@@ -1,6 +1,7 @@
 package com.proyectogrupo.powerups;
 
 import android.content.Context;
+import android.graphics.Canvas;
 
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
@@ -25,4 +26,9 @@ public class MonedaRecolectable extends PowerUp {
         nivel.monedasRecogidas += 1;
     }
 
+    @Override
+    public void dibujar(Canvas canvas) {
+
+        super.dibujar(canvas);
+    }
 }

@@ -366,6 +366,7 @@ public class Nivel {
                         R.drawable.blocka2), Tile.SOLIDO);
             case 'B':
                 powerups.add(new CajaBomba(context, x,y));
+                return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso
                 return new Tile(null, Tile.PASABLE);
