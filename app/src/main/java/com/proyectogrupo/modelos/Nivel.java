@@ -8,6 +8,7 @@ import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
+import com.proyectogrupo.powerups.MonedaRecolectable;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -28,6 +29,8 @@ public class Nivel {
     public boolean inicializado;
     public int monedasRecogidas;
 
+    List<MonedaRecolectable> monedas;
+
     public Nivel(Context context, int numeroNivel) throws Exception {
         inicializado = false;
 
@@ -41,6 +44,7 @@ public class Nivel {
     public void inicializar() throws Exception {
         scrollEjeY = 0;
         monedasRecogidas = 0;
+        monedas = new LinkedList<>();
 
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
         this.inicializarMapaTiles();
@@ -343,7 +347,10 @@ public class Nivel {
             case '1':
                 int xCentroAbajoTile = x * Tile.ancho + Tile.ancho/2;
                 int yCentroAbajoTile = y * Tile.altura + Tile.altura;
-                nave = new Nave(context,xCentroAbajoTile,yCentroAbajoTile);            case '.':
+                nave = new Nave(context,xCentroAbajoTile,yCentroAbajoTile);
+            case 'm':
+
+            case '.':
                 // en blanco, sin textura
                 return new Tile(null, Tile.PASABLE);
             case '#':
