@@ -12,6 +12,7 @@ import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.modelos.controles.EnemigoBasico;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
+import com.proyectogrupo.powerups.CajaSemiInvulnerabilidad;
 import com.proyectogrupo.powerups.CajaVelocidad;
 import com.proyectogrupo.powerups.CajaVidaExtra;
 import com.proyectogrupo.powerups.MonedaRecolectable;
@@ -83,7 +84,7 @@ public class Nivel {
     }
 
     private void colisionaEnemigos() {
-        Enemigo eliminar = null;
+        //Enemigo eliminar = null;
         for (Enemigo e : enemigos) {
             if (e.colisiona(nave)) {
                 if (!nave.esInvulnerable()) {
@@ -95,7 +96,15 @@ public class Nivel {
                             nave.desactivarInvunerabilidad();
                         }
                     };
-                    new Hilo(5000, action).start();
+                    new Hilo(1000, action).start();
+                } else if (nave.esInvulnerable() && nave.getShield() > 0) {
+                    Runnable action = new Runnable() {
+                        @Override
+                        public void run() {
+                            nave.decreaseShield(1);
+                        }
+                    };
+                    new Hilo(1000, action).start();
                 }
             }
 
@@ -448,6 +457,9 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'I':
                 powerups.add(new CajaInvulnerabilidad(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'F':
+                powerups.add(new CajaSemiInvulnerabilidad(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso
