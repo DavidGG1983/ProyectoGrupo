@@ -1,4 +1,4 @@
-package com.proyectogrupo.modelos.controles;
+package com.proyectogrupo.modelos;
 
 import android.content.Context;
 
@@ -19,9 +19,8 @@ public class EnemigoBasico extends Enemigo {
 
 
     public EnemigoBasico(Context context, double x, double y) {
-        super(context, x, y);
-        this.velocidadX = 3;
-        this.inicializar();
+        super(context, x, y,3,0);
+        //this.inicializar();
     }
 
     @Override
