@@ -74,6 +74,9 @@ public class Nave extends Modelo {
     public void aumentarVelocidad(int multiplicador) {
         velocidadNave *= multiplicador;
     }
+    public void reducirVelocidad(int divisor) {
+        velocidadNave /= divisor;
+    }
 
     public void recuperarVelocidad() {
         velocidadNave = velocidadInicial;
