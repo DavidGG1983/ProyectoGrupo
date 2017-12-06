@@ -49,7 +49,7 @@ public class Nave extends Modelo {
     }
 
     public void dibujar(Canvas canvas) {
-        this.sprite.dibujarSprite(canvas, (int) this.x, (int) this.y);
+        this.sprite.dibujarSprite(canvas, (int) this.x, (int) this.y - Nivel.scrollEjeY);
     }
 
     public void procesarOrdenes(float orientacionPadX, float orientacionPadY) {
