@@ -5,11 +5,15 @@ import android.graphics.Canvas;
 import android.util.Log;
 
 import com.proyectogrupo.GameView;
+import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.modelos.controles.EnemigoBasico;
 import com.proyectogrupo.powerups.CajaBomba;
+import com.proyectogrupo.powerups.CajaInvulnerabilidad;
+import com.proyectogrupo.powerups.CajaVelocidad;
+import com.proyectogrupo.powerups.CajaVidaExtra;
 import com.proyectogrupo.powerups.MonedaRecolectable;
 import com.proyectogrupo.powerups.PowerUp;
 
@@ -60,19 +64,19 @@ public class Nivel {
         int tileXnaveIzquierda
                 = (int) (nave.x - (nave.ancho / 2 - 1)) / Tile.ancho;
         int tileXnaveDerecha
-                = (int) (nave.x + (nave.ancho / 2 - 1 )) / Tile.ancho;
+                = (int) (nave.x + (nave.ancho / 2 - 1)) / Tile.ancho;
 
         int tileYnaveInferior
-                = (int) (nave.y + (nave.altura / 2 - 1))/ Tile.altura;
+                = (int) (nave.y + (nave.altura / 2 - 1)) / Tile.altura;
         int tileYnaveCentro
                 = (int) nave.y / Tile.altura;
         int tileYnaveSuperior
                 = (int) (nave.y - (nave.altura / 2 - 1)) / Tile.altura;
 
-        this.moverNaveHorizontal(tileXnaveIzquierda,tileXnaveDerecha,tileYnaveInferior,
-                tileYnaveCentro,tileYnaveSuperior);
-        this.moverNaveVertical(tileXnaveIzquierda,tileXnaveDerecha,tileYnaveInferior,
-                tileYnaveCentro,tileYnaveSuperior);
+        this.moverNaveHorizontal(tileXnaveIzquierda, tileXnaveDerecha, tileYnaveInferior,
+                tileYnaveCentro, tileYnaveSuperior);
+        this.moverNaveVertical(tileXnaveIzquierda, tileXnaveDerecha, tileYnaveInferior,
+                tileYnaveCentro, tileYnaveSuperior);
         this.moverEnemigos();
         this.colisionesPowerUps();
         this.colisionaEnemigos();
@@ -80,21 +84,28 @@ public class Nivel {
 
     private void colisionaEnemigos() {
         Enemigo eliminar = null;
-        for (Enemigo e:enemigos) {
-            if(e.colisiona(nave)){
-                if(!nave.esInvulnerable()){
-                    nave.setVida(nave.getVida()-1);
+        for (Enemigo e : enemigos) {
+            if (e.colisiona(nave)) {
+                if (!nave.esInvulnerable()) {
+                    nave.setVida(nave.getVida() - 1);
                     nave.activarInvunerabilidad();
+                    Runnable action = new Runnable() {
+                        @Override
+                        public void run() {
+                            nave.desactivarInvunerabilidad();
+                        }
+                    };
+                    new Hilo(5000, action).start();
                 }
             }
 
         }
     }
 
-    private void colisionesPowerUps(){
+    private void colisionesPowerUps() {
         PowerUp eliminar = null;
-        for (PowerUp p: powerups) {
-            if(p.colisiona(nave)){
+        for (PowerUp p : powerups) {
+            if (p.colisiona(nave)) {
                 p.efecto(this);
                 eliminar = p;
             }
@@ -102,11 +113,11 @@ public class Nivel {
         powerups.remove(eliminar);
     }
 
-    private void moverEnemigos(){
-        for(Enemigo enemigo : enemigos) {
+    private void moverEnemigos() {
+        for (Enemigo enemigo : enemigos) {
             enemigo.mover();
-            int tileXDerecha = (int)((enemigo.x + enemigo.ancho / 2) / Tile.ancho);
-            int tileXIzquierda = (int)((enemigo.x - enemigo.ancho / 2) / Tile.ancho);
+            int tileXDerecha = (int) ((enemigo.x + enemigo.ancho / 2) / Tile.ancho);
+            int tileXIzquierda = (int) ((enemigo.x - enemigo.ancho / 2) / Tile.ancho);
 
             if (tileXDerecha < anchoMapaTiles()) {
                 if (mapaTiles[tileXDerecha]
@@ -128,9 +139,9 @@ public class Nivel {
         }
     }
 
-    private void moverNaveHorizontal(int tileXnaveIzquierda,int tileXnaveDerecha,
-                                     int tileYnaveInferior,int tileYnaveCentro,int tileYnaveSuperior){
-        if (nave.velocidadX > 0) {
+    private void moverNaveHorizontal(int tileXnaveIzquierda, int tileXnaveDerecha,
+                                     int tileYnaveInferior, int tileYnaveCentro, int tileYnaveSuperior) {
+        if (nave.velocidadXActual > 0) {
             // Tengo un tile delante y es PASABLE
             // El tile de delante está dentro del Nivel
             if (tileXnaveDerecha + 1 <= anchoMapaTiles() - 1 &&
@@ -147,8 +158,8 @@ public class Nivel {
                             Tile.PASABLE &&
                     mapaTiles[tileXnaveDerecha][tileYnaveSuperior].tipoDeColision ==
                             Tile.PASABLE) {
-                if(nave.velocidadX > 0)
-                    nave.x += nave.velocidadX;
+                if (nave.velocidadXActual > 0)
+                    nave.x += nave.velocidadXActual;
 
                 // No tengo un tile PASABLE delante
                 // o es el FINAL del nivel o es uno SOLIDO
@@ -167,7 +178,7 @@ public class Nivel {
                 double distanciaX = TilenaveBordeDerecho - (nave.x + nave.ancho / 2);
 
                 if (distanciaX > 0) {
-                    double velocidadNecesaria = Math.min(distanciaX, nave.velocidadX);
+                    double velocidadNecesaria = Math.min(distanciaX, nave.velocidadXActual);
                     nave.x += velocidadNecesaria;
                 } else {
                     // Opcional, corregir posición
@@ -177,7 +188,7 @@ public class Nivel {
         }
 
         // izquierda
-        if (nave.velocidadX < 0) {
+        if (nave.velocidadXActual < 0) {
             // Tengo un tile detrás y es PASABLE
             // El tile de delante está dentro del Nivel
             if (tileXnaveIzquierda - 1 >= 0 &&
@@ -195,8 +206,8 @@ public class Nivel {
                     mapaTiles[tileXnaveIzquierda][tileYnaveSuperior].tipoDeColision ==
                             Tile.PASABLE) {
 
-                if(nave.velocidadX < 0)
-                    nave.x += nave.velocidadX;
+                if (nave.velocidadXActual < 0)
+                    nave.x += nave.velocidadXActual;
 
                 // No tengo un tile PASABLE detrás
                 // o es el INICIO del nivel o es uno SOLIDO
@@ -214,7 +225,7 @@ public class Nivel {
                 double distanciaX = (nave.x - nave.ancho / 2) - TilenaveBordeIzquierdo;
 
                 if (distanciaX > 0) {
-                    double velocidadNecesaria = Utilidades.proximoACero(-distanciaX, nave.velocidadX);
+                    double velocidadNecesaria = Utilidades.proximoACero(-distanciaX, nave.velocidadXActual);
                     nave.x += velocidadNecesaria;
                 } else {
                     // Opcional, corregir posición
@@ -224,18 +235,18 @@ public class Nivel {
         }
     }
 
-    private void moverNaveVertical(int tileXnaveIzquierda,int tileXnaveDerecha,
-                                     int tileYnaveInferior,int tileYnaveCentro,int tileYnaveSuperior){
-        if (nave.velocidadY > 0) {
+    private void moverNaveVertical(int tileXnaveIzquierda, int tileXnaveDerecha,
+                                   int tileYnaveInferior, int tileYnaveCentro, int tileYnaveSuperior) {
+        if (nave.velocidadYActual > 0) {
             // Tengo un tile delante y es PASABLE
             // El tile de delante está dentro del Nivel
             if (tileYnaveInferior + 1 <= altoMapaTiles() - 1 &&
                     mapaTiles[tileXnaveDerecha][tileYnaveInferior + 1].tipoDeColision ==
                             Tile.PASABLE &&
                     mapaTiles[tileXnaveIzquierda][tileYnaveInferior + 1].tipoDeColision ==
-                            Tile.PASABLE){
-                if(nave.velocidadY > 0)
-                    nave.y += nave.velocidadY;
+                            Tile.PASABLE) {
+                if (nave.velocidadYActual > 0)
+                    nave.y += nave.velocidadYActual;
 
                 // No tengo un tile PASABLE delante
                 // o es el FINAL del nivel o es uno SOLIDO
@@ -250,11 +261,11 @@ public class Nivel {
 
                 // Si en el propio tile de la nave queda espacio para
                 // avanzar más, avanzo
-                int TilenaveBordeInferior= tileYnaveInferior * Tile.altura + Tile.altura;
+                int TilenaveBordeInferior = tileYnaveInferior * Tile.altura + Tile.altura;
                 double distanciaY = TilenaveBordeInferior - (nave.y + nave.altura / 2);
 
                 if (distanciaY > 0) {
-                    double velocidadNecesaria = Math.min(distanciaY, nave.velocidadY);
+                    double velocidadNecesaria = Math.min(distanciaY, nave.velocidadYActual);
                     nave.y += velocidadNecesaria;
                 } else {
                     // Opcional, corregir posición
@@ -263,16 +274,16 @@ public class Nivel {
             }
         }
         // arriba
-        if (nave.velocidadY < 0) {
+        if (nave.velocidadYActual < 0) {
 
             if (tileYnaveSuperior - 1 >= 0 &&
                     mapaTiles[tileXnaveDerecha][tileYnaveSuperior].tipoDeColision ==
                             Tile.PASABLE &&
                     mapaTiles[tileXnaveIzquierda][tileYnaveSuperior].tipoDeColision ==
-                            Tile.PASABLE ){
+                            Tile.PASABLE) {
 
-                if(nave.velocidadY < 0)
-                    nave.y += nave.velocidadY;
+                if (nave.velocidadYActual < 0)
+                    nave.y += nave.velocidadYActual;
 
                 // No tengo un tile PASABLE detrás
                 // o es el INICIO del nivel o es uno SOLIDO
@@ -286,11 +297,11 @@ public class Nivel {
 
                 // Si en el propio tile del nave queda espacio para
                 // avanzar más, avanzo
-                int TilenaveBordeSuperior= tileYnaveSuperior * Tile.altura;
+                int TilenaveBordeSuperior = tileYnaveSuperior * Tile.altura;
                 double distanciaY = (nave.y - nave.altura / 2) - TilenaveBordeSuperior;
 
                 if (distanciaY > 0) {
-                    double velocidadNecesaria = Utilidades.proximoACero(-distanciaY,nave.velocidadY);
+                    double velocidadNecesaria = Utilidades.proximoACero(-distanciaY, nave.velocidadYActual);
                     nave.y += velocidadNecesaria;
                 } else {
                     // Opcional, corregir posición
@@ -302,11 +313,11 @@ public class Nivel {
 
     public void actualizar(long tiempo) {
         if (inicializado) {
-            nave.procesarOrdenes(orientacionPadX,orientacionPadY);
+            nave.procesarOrdenes(orientacionPadX, orientacionPadY);
             nave.actualizar(tiempo);
 
             this.aplicarReglasMovimiento();
-            for(Enemigo e: this.enemigos)
+            for (Enemigo e : this.enemigos)
                 e.actualizar(tiempo);
         }
     }
@@ -316,9 +327,9 @@ public class Nivel {
             fondo.dibujar(canvas);
             dibujarTiles(canvas);
             nave.dibujar(canvas);
-            for(Enemigo e : this.enemigos)
+            for (Enemigo e : this.enemigos)
                 e.dibujar(canvas);
-            for(PowerUp p :powerups)
+            for (PowerUp p : powerups)
                 p.dibujar(canvas);
         }
     }
@@ -405,16 +416,16 @@ public class Nivel {
     }
 
     private Tile inicializarTile(char codigoTile, int x, int y) {
-        int xCentroAbajoTile = x * Tile.ancho + Tile.ancho/2;
+        int xCentroAbajoTile = x * Tile.ancho + Tile.ancho / 2;
         int yCentroAbajoTile = y * Tile.altura + Tile.altura;
         switch (codigoTile) {
             case '1':
-                nave = new Nave(context,xCentroAbajoTile,yCentroAbajoTile);
-                return new Tile(null,Tile.PASABLE);
+                nave = new Nave(context, xCentroAbajoTile, yCentroAbajoTile);
+                return new Tile(null, Tile.PASABLE);
             case 'M':
-                Log.d("MONEDA POSICION","x: "+xCentroAbajoTile+", y: "+yCentroAbajoTile);
-                powerups.add(new MonedaRecolectable(context,xCentroAbajoTile,yCentroAbajoTile));
-                return new Tile(null,Tile.PASABLE);
+                Log.d("MONEDA POSICION", "x: " + xCentroAbajoTile + ", y: " + yCentroAbajoTile);
+                powerups.add(new MonedaRecolectable(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
             case '.':
                 // en blanco, sin textura
                 return new Tile(null, Tile.PASABLE);
@@ -424,6 +435,17 @@ public class Nivel {
                         R.drawable.blocka2), Tile.SOLIDO);
             case 'B':
                 this.enemigos.add(new EnemigoBasico
+                        (context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'H':
+                powerups.add(new CajaVidaExtra(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'S':
+                powerups.add(new CajaVelocidad(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'I':
+                powerups.add(new CajaInvulnerabilidad(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
                         (context,xCentroAbajoTile,yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'X':
