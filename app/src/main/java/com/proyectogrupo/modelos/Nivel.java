@@ -11,6 +11,7 @@ import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
+import com.proyectogrupo.powerups.CajaDestruccion;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
 import com.proyectogrupo.powerups.CajaLentitud;
 import com.proyectogrupo.powerups.CajaVelocidad;
@@ -475,6 +476,9 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'L':
                 powerups.add(new CajaLentitud(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'D':
+                powerups.add(new CajaDestruccion(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso
