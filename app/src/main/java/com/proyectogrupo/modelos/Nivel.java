@@ -85,7 +85,7 @@ public class Nivel {
     }
 
     private void colisionaEnemigos() {
-        //Enemigo eliminar = null;
+        Enemigo eliminar = null;
         for (Enemigo e : enemigos) {
             if (e.colisiona(nave)) {
                 if (!nave.esInvulnerable()) {
@@ -354,7 +354,7 @@ public class Nivel {
         int derecha = izquierda +
                 (GameView.pantallaAncho / Tile.ancho) + 1;
 
-        if (nave.y < altoMapaTiles() * Tile.altura + GameView.pantallaAlto * 0.3)
+        if (nave.y < altoMapaTiles() * Tile.altura - GameView.pantallaAlto * 0.3)
             if (nave.y + scrollEjeY > GameView.pantallaAlto * 0.7) {
                 scrollEjeY = (int) ((nave.y) - GameView.pantallaAlto * 0.7);
             }
@@ -431,6 +431,7 @@ public class Nivel {
         switch (codigoTile) {
             case '1':
                 nave = new Nave(context, xCentroAbajoTile, yCentroAbajoTile);
+                scrollEjeY = (int) altoMapaTiles() * Tile.altura - GameView.pantallaAlto;
                 return new Tile(null, Tile.PASABLE);
             case 'M':
                 Log.d("MONEDA POSICION", "x: " + xCentroAbajoTile + ", y: " + yCentroAbajoTile);
@@ -443,9 +444,6 @@ public class Nivel {
                 // bloque de musgo, no se puede pasar
                 return new Tile(CargadorGraficos.cargarDrawable(context,
                         R.drawable.blocka2), Tile.SOLIDO);
-            case 'X':
-                powerups.add(new CajaBomba(context, xCentroAbajoTile, yCentroAbajoTile));
-                return new Tile(null, Tile.PASABLE);
             case 'B':
                 this.enemigos.add(new EnemigoBasico
                         (context, xCentroAbajoTile, yCentroAbajoTile));
@@ -458,6 +456,9 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'I':
                 powerups.add(new CajaInvulnerabilidad(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'X':
+                powerups.add(new CajaBomba(context, xCentroAbajoTile,yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'F':
                 powerups.add(new CajaSemiInvulnerabilidad(context, xCentroAbajoTile, yCentroAbajoTile));

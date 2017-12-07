@@ -2,7 +2,10 @@ package com.proyectogrupo.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v7.graphics.Palette;
 
 public class Modelo {
 
@@ -18,6 +21,8 @@ public class Modelo {
     public int cArriba;
     public int cAbajo;
 
+    private int dominantColor = -1;
+
     public Modelo(Context context, double x, double y, int altura, int ancho){;
         this.context = context;
         this.x = x;
@@ -32,6 +37,9 @@ public class Modelo {
     }
 
     public void dibujar(Canvas canvas){
+        if (dominantColor == -1) {
+            dominantColor = Palette.from(((BitmapDrawable)imagen).getBitmap()).generate().getDominantColor(Color.GRAY);
+        }
         int yArriba = (int)  y - altura / 2;
         int xIzquierda = (int) x - ancho / 2;
 
@@ -56,6 +64,10 @@ public class Modelo {
             colisiona = true;
         }
         return colisiona;
+    }
+
+    public int getColor() {
+        return dominantColor;
     }
 }
 
