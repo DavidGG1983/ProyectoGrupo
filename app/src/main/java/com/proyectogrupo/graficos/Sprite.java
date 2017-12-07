@@ -2,9 +2,12 @@ package com.proyectogrupo.graficos;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v7.graphics.Palette;
+import android.util.Log;
 
 /**
  * Created by Jordan on 14/08/2015.
@@ -35,6 +38,8 @@ public class Sprite {
 
     private boolean bucle;
 
+    private int dominantColor;
+
     public Sprite(Drawable drawable, int modeloAncho, int modeloAltura, int fps, int framesTotales
             , boolean bucle) {
         this.bitmap = ((BitmapDrawable)drawable).getBitmap();;
@@ -49,6 +54,8 @@ public class Sprite {
         rectanguloDibujo = new Rect(0, 0, spriteAncho, spriteAltura);
         interavaloEntreFrames = 1000 / fps;
         tiempoUltimaActualizacion = 0l;
+
+        dominantColor = Palette.from(getBitmapAtFrame(0)).generate().getDominantColor(Color.GRAY);
     }
 
     public boolean actualizar (long tiempo) {
@@ -87,5 +94,14 @@ public class Sprite {
 		// definir el rectangulo
         this.rectanguloDibujo.left = frameActual * spriteAncho;
         this.rectanguloDibujo.right = this.rectanguloDibujo.left + spriteAncho;
+    }
+
+    private Bitmap getBitmapAtFrame(int frame) {
+        int x = frame * spriteAncho;
+        return Bitmap.createBitmap(bitmap, x, 0, spriteAncho, spriteAltura);
+    }
+
+    public int getDominantColor() {
+        return dominantColor;
     }
 }

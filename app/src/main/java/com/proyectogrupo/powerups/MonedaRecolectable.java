@@ -1,7 +1,13 @@
 package com.proyectogrupo.powerups;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.support.v7.graphics.Palette;
+import android.util.Log;
 
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
@@ -18,7 +24,6 @@ public class MonedaRecolectable extends PowerUp {
         super(context, x, y, 40, 40);
         this.y = y - altura/2;
         imagen = CargadorGraficos.cargarDrawable(context, R.drawable.moneda1);
-
     }
 
     @Override
