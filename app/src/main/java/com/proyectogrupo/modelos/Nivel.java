@@ -39,6 +39,8 @@ public class Nivel {
     public float orientacionPadY = 0;
     public List<Enemigo> enemigos = new ArrayList<>();
     public List<Integer> coloresCajas = new ArrayList<>();
+    private Enemigo enemigoColorCaja;
+
     private MarcadorPuntos marcadorPuntos;
 
     public boolean inicializado;
@@ -91,30 +93,32 @@ public class Nivel {
     private void colisionaEnemigos() {
         Enemigo eliminar = null;
         for (Enemigo e : enemigos) {
-            Log.d("enemigo", String.format("#%06X", (0xFFFFFF & e.getColor())));
             if (e.colisiona(nave)) {
                 if (!nave.esInvulnerable()) {
                     if (coloresCajas.size() > 0) {
                         int colorCaja = coloresCajas.get(coloresCajas.size() - 1);
                         int colorEnemigo = e.getColor();
 
-                        if (colorEnemigo == colorCaja && colorEnemigo == nave.getColor()) {
+                        if (colorEnemigo == colorCaja && enemigoColorCaja == null) {
                             nave.puntos++;
-                            continue;
+                            enemigoColorCaja = e;
                         }
+                    } else {
+                        nave.setVida(nave.getVida() - 1);
+                        nave.activarInvunerabilidad();
+                        Runnable action = new Runnable() {
+                            @Override
+                            public void run() {
+                                nave.desactivarInvunerabilidad();
+                            }
+                        };
+                        new Hilo(5000, action).start();
                     }
-                    nave.setVida(nave.getVida() - 1);
-                    nave.activarInvunerabilidad();
-                    Runnable action = new Runnable() {
-                        @Override
-                        public void run() {
-                            nave.desactivarInvunerabilidad();
-                        }
-                    };
-                    new Hilo(5000, action).start();
                 }
+            } else {
+                if (e == enemigoColorCaja)
+                    enemigoColorCaja = null;
             }
-
         }
     }
 

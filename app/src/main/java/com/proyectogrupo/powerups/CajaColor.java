@@ -16,8 +16,7 @@ import com.proyectogrupo.modelos.Nivel;
 
 public class CajaColor extends PowerUp {
     private static final int[] colores = {
-        Color.RED, Color.BLUE, Color.GREEN,
-        Color.GRAY
+        Color.parseColor("#C8D0D0")
     };
 
     private int color;
@@ -38,7 +37,7 @@ public class CajaColor extends PowerUp {
                 nivel.coloresCajas.remove(Integer.valueOf(colorActual));
             }
         };
-        new Hilo(5000, action).start();
+        new Hilo(10000, action).start();
     }
 
     @Override
