@@ -11,6 +11,7 @@ import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.modelos.controles.EnemigoBasico;
 import com.proyectogrupo.powerups.CajaBomba;
+import com.proyectogrupo.powerups.CajaColor;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
 import com.proyectogrupo.powerups.CajaVelocidad;
 import com.proyectogrupo.powerups.CajaVidaExtra;
@@ -20,7 +21,9 @@ import com.proyectogrupo.powerups.PowerUp;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,6 +38,7 @@ public class Nivel {
     public float orientacionPadX = 0;
     public float orientacionPadY = 0;
     public List<Enemigo> enemigos = new ArrayList<>();
+    public List<Integer> coloresCajas = new ArrayList<>();
 
     public boolean inicializado;
     public int monedasRecogidas;
@@ -87,6 +91,15 @@ public class Nivel {
         for (Enemigo e : enemigos) {
             if (e.colisiona(nave)) {
                 if (!nave.esInvulnerable()) {
+                    if (coloresCajas.size() > 0) {
+                        int colorCaja = coloresCajas.get(coloresCajas.size() - 1);
+                        int colorEnemigo = e.getColor();
+
+                        if (colorEnemigo == colorCaja && colorEnemigo == nave.getColor()) {
+                            nave.puntos++;
+                            continue;
+                        }
+                    }
                     nave.setVida(nave.getVida() - 1);
                     nave.activarInvunerabilidad();
                     Runnable action = new Runnable() {
@@ -449,6 +462,9 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'X':
                 powerups.add(new CajaBomba(context, xCentroAbajoTile,yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'C':
+                powerups.add(new CajaColor(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso

@@ -28,7 +28,7 @@ public class MonedaRecolectable extends PowerUp {
 
     @Override
     public void efecto(Nivel nivel) {
-        nivel.monedasRecogidas += 1;
+        nivel.nave.puntos++;
     }
 
     @Override
