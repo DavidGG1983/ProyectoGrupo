@@ -39,6 +39,7 @@ public class Nivel {
     public float orientacionPadY = 0;
     public List<Enemigo> enemigos = new ArrayList<>();
     public List<Integer> coloresCajas = new ArrayList<>();
+    private MarcadorPuntos marcadorPuntos;
 
     public boolean inicializado;
     public int monedasRecogidas;
@@ -60,6 +61,7 @@ public class Nivel {
         powerups = new LinkedList<>();
 
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
+        marcadorPuntos = new MarcadorPuntos(context, 0.85 * GameView.pantallaAncho, 0.07 * GameView.pantallaAlto);
         this.inicializarMapaTiles();
     }
 
@@ -89,6 +91,7 @@ public class Nivel {
     private void colisionaEnemigos() {
         Enemigo eliminar = null;
         for (Enemigo e : enemigos) {
+            Log.d("enemigo", String.format("#%06X", (0xFFFFFF & e.getColor())));
             if (e.colisiona(nave)) {
                 if (!nave.esInvulnerable()) {
                     if (coloresCajas.size() > 0) {
@@ -332,6 +335,7 @@ public class Nivel {
             this.aplicarReglasMovimiento();
             for (Enemigo e : this.enemigos)
                 e.actualizar(tiempo);
+            marcadorPuntos.puntos = nave.puntos;
         }
     }
 
@@ -344,6 +348,7 @@ public class Nivel {
                 e.dibujar(canvas);
             for (PowerUp p : powerups)
                 p.dibujar(canvas);
+            marcadorPuntos.dibujar(canvas);
         }
     }
 
