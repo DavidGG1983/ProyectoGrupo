@@ -2,6 +2,7 @@ package com.proyectogrupo.powerups;
 
 import android.content.Context;
 
+import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.Nivel;
@@ -29,9 +30,15 @@ public class Teletransporte extends PowerUp {
         do {
             avanzar = (int) (Math.random() * 5 + 4);
         }
-        while(nivel.nave.y - avanzar <= 0
+        while(nivel.nave.y - (avanzar * Tile.altura) <= 0
                 || nivel.getTile((int)nivel.nave.x/Tile.ancho,
-                (int)(nivel.nave.y - avanzar)/Tile.altura) != Tile.PASABLE);
-        nivel.nave.y -= avanzar * Tile.altura;
+                (int)(nivel.nave.y - avanzar * Tile.altura)/Tile.altura) != Tile.PASABLE);
+
+        double yFinal = nivel.nave.y - avanzar * Tile.altura;
+
+        while (nivel.nave.y > yFinal) {
+            nivel.nave.y--;
+            nivel.aplicarScroll();
+        }
     }
 }

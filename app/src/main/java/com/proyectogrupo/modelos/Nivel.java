@@ -367,15 +367,7 @@ public class Nivel {
         int derecha = izquierda +
                 (GameView.pantallaAncho / Tile.ancho) + 1;
 
-        if (nave.y < altoMapaTiles() * Tile.altura - GameView.pantallaAlto * 0.3)
-            if (nave.y + scrollEjeY > GameView.pantallaAlto * 0.7) {
-                scrollEjeY = (int) ((nave.y) - GameView.pantallaAlto * 0.7);
-            }
-
-        if (nave.y > GameView.pantallaAlto * 0.3)
-            if (nave.y + scrollEjeY < GameView.pantallaAlto * 0.3) {
-                scrollEjeY = (int) (nave.y - GameView.pantallaAlto * 0.3);
-            }
+        aplicarScroll();
 
         // el ultimo tile visible
         derecha = Math.min(derecha, anchoMapaTiles() - 1);
@@ -479,7 +471,7 @@ public class Nivel {
             case 'T':
                 powerups.add(new Teletransporte(context,xCentroAbajoTile,yCentroAbajoTile));
                 return new Tile(null,Tile.PASABLE);
-                default:
+            default:
                 //cualquier otro caso
                 return new Tile(null, Tile.PASABLE);
         }
@@ -491,6 +483,18 @@ public class Nivel {
 
     public int getTile(int x, int y) {
         return this.mapaTiles[x][y].tipoDeColision;
+    }
+
+    public void aplicarScroll() {
+        if (nave.y < altoMapaTiles() * Tile.altura - GameView.pantallaAlto * 0.3)
+            if (nave.y + scrollEjeY > GameView.pantallaAlto * 0.7) {
+                scrollEjeY = (int) ((nave.y) - GameView.pantallaAlto * 0.7);
+            }
+
+        if (nave.y > GameView.pantallaAlto * 0.3)
+            if (nave.y + scrollEjeY < GameView.pantallaAlto * 0.3) {
+                scrollEjeY = (int) (nave.y - GameView.pantallaAlto * 0.3);
+            }
     }
 }
 
