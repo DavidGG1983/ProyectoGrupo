@@ -10,6 +10,7 @@ import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.powerups.CajaBomba;
+import com.proyectogrupo.powerups.CajaColor;
 import com.proyectogrupo.powerups.CajaDestruccion;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
 import com.proyectogrupo.powerups.CajaLentitud;
@@ -37,6 +38,10 @@ public class Nivel {
     public float orientacionPadX = 0;
     public float orientacionPadY = 0;
     public List<Enemigo> enemigos = new ArrayList<>();
+    public List<Integer> coloresCajas = new ArrayList<>();
+    private Enemigo enemigoColorCaja;
+
+    private MarcadorPuntos marcadorPuntos;
 
     public boolean inicializado;
     public int monedasRecogidas;
@@ -58,6 +63,7 @@ public class Nivel {
         powerups = new LinkedList<>();
 
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
+        marcadorPuntos = new MarcadorPuntos(context, 0.85 * GameView.pantallaAncho, 0.07 * GameView.pantallaAlto);
         this.inicializarMapaTiles();
     }
 
@@ -89,26 +95,38 @@ public class Nivel {
         for (Enemigo e : enemigos) {
             if (e.colisiona(nave)) {
                 if (!nave.esInvulnerable()) {
-                    nave.setVida(nave.getVida() - 1);
-                    nave.activarInvunerabilidad();
-                    Runnable action = new Runnable() {
-                        @Override
-                        public void run() {
-                            nave.desactivarInvunerabilidad();
-                        }
-                    };
-                    new Hilo(1000, action).start();
-                } else if (nave.esInvulnerable() && nave.getShield() > 0) {
-                    Runnable action = new Runnable() {
-                        @Override
-                        public void run() {
-                            nave.decreaseShield(1);
-                        }
-                    };
-                    new Hilo(1000, action).start();
-                }
-            }
+                    if (coloresCajas.size() > 0) {
+                        int colorCaja = coloresCajas.get(coloresCajas.size() - 1);
+                        int colorEnemigo = e.getColor();
 
+                        if (colorEnemigo == colorCaja && enemigoColorCaja == null) {
+                            nave.puntos++;
+                            enemigoColorCaja = e;
+                        }
+                    } else {
+                        nave.setVida(nave.getVida() - 1);
+                        nave.activarInvunerabilidad();
+                        Runnable action = new Runnable() {
+                            @Override
+                            public void run() {
+                                nave.desactivarInvunerabilidad();
+                            }
+                        };
+                        new Hilo(5000, action).start();
+                    }
+                } else if (nave.esInvulnerable() && nave.getShield() > 0) {
+                        Runnable action = new Runnable() {
+                            @Override
+                            public void run() {
+                                nave.decreaseShield(1);
+                            }
+                        };
+                        new Hilo(1000, action).start();
+                }
+            } else {
+                if (e == enemigoColorCaja)
+                    enemigoColorCaja = null;
+            }
         }
     }
 
@@ -329,6 +347,7 @@ public class Nivel {
             this.aplicarReglasMovimiento();
             for (Enemigo e : this.enemigos)
                 e.actualizar(tiempo);
+            marcadorPuntos.puntos = nave.puntos;
         }
     }
 
@@ -341,6 +360,7 @@ public class Nivel {
                 e.dibujar(canvas);
             for (PowerUp p : powerups)
                 p.dibujar(canvas);
+            marcadorPuntos.dibujar(canvas);
         }
     }
 
@@ -459,6 +479,9 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'X':
                 powerups.add(new CajaBomba(context, xCentroAbajoTile,yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'C':
+                powerups.add(new CajaColor(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'F':
                 powerups.add(new CajaSemiInvulnerabilidad(context, xCentroAbajoTile, yCentroAbajoTile));

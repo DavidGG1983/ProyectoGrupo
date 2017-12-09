@@ -26,6 +26,7 @@ public class Nave extends Modelo {
     double velocidadNave;
     double velocidadXActual;
     double velocidadYActual;
+    public int puntos;
     public int vida;
     public boolean invulnerable;
 
