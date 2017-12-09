@@ -18,6 +18,7 @@ public class Teletransporte extends PowerUp {
 
     public Teletransporte(Context context, double x, double y) {
         super(context, x, y, 30, 30);
+        this.y = y - altura / 2;
         this.imagen = CargadorGraficos.cargarDrawable(context,
                 R.drawable.go);
     }
@@ -31,6 +32,6 @@ public class Teletransporte extends PowerUp {
         while(nivel.nave.y - avanzar <= 0
                 || nivel.getTile((int)nivel.nave.x/Tile.ancho,
                 (int)(nivel.nave.y - avanzar)/Tile.altura) != Tile.PASABLE);
-        nivel.nave.y -= avanzar * Tile.ancho;
+        nivel.nave.y -= avanzar * Tile.altura;
     }
 }
