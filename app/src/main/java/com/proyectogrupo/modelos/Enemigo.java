@@ -20,7 +20,8 @@ public abstract class Enemigo extends Modelo {
     public Sprite sprite;
     public Map<String,Sprite> sprites = new HashMap<>();
 
-    public double velocidadX;
+    public double velocidadX = 4;
+    private double velocidadXCopia = velocidadX;
 
     public Enemigo(Context context, double x, double y) {
         super(context, 0, 0, 40, 40);
@@ -50,5 +51,13 @@ public abstract class Enemigo extends Modelo {
     @Override
     public int getColor() {
         return sprite.getDominantColor();
+    }
+
+    public void recuperarVelocidad() {
+        this.velocidadX = velocidadXCopia;
+    }
+
+    public void reducirVelocidad(int i) {
+        this.velocidadX -= i;
     }
 }

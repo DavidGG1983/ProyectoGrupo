@@ -19,7 +19,7 @@ public class EnemigoBasico extends Enemigo {
 
 
     public EnemigoBasico(Context context, double x, double y) {
-        super(context, x, y,3,0);
+        super(context, x, y);
         //this.inicializar();
     }
 
