@@ -2,6 +2,8 @@ package com.proyectogrupo.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.support.v7.graphics.Palette;
 
 import com.proyectogrupo.graficos.Sprite;
 
@@ -38,7 +40,7 @@ public abstract class Enemigo extends Modelo {
     public abstract void inicializar();
 
     public void dibujar(Canvas canvas){
-        this.sprite.dibujarSprite(canvas, (int)x, (int)y - Nivel.scrollEjeY, false);
+        this.sprite.dibujarSprite(canvas, (int)x, (int)y - Nivel.scrollEjeY);
     }
 
     public void actualizar (long tiempo){

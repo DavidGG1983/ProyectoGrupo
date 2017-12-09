@@ -21,6 +21,7 @@ public class Nave extends Modelo {
     Map<String, Sprite> sprites;
     Sprite sprite;
     final double velocidadInicial = 5;
+    int shield;
     double velocidadNave;
     double velocidadXActual;
     double velocidadYActual;
@@ -30,12 +31,12 @@ public class Nave extends Modelo {
 
 
     public Nave(Context context, int x, int y) {
-        //super(context, x, y, 63, 50);
         super(context, x, y, 32, 40);
         this.y = y - this.altura / 2;
         this.xInicial = x;
         this.yInicial = y;
         this.vida = 3;
+        this.shield = 0;
         this.velocidadNave = velocidadInicial;
         this.invulnerable = false;
         Sprite moviendose = new Sprite(CargadorGraficos.cargarDrawable(context,
@@ -73,6 +74,9 @@ public class Nave extends Modelo {
     public void aumentarVelocidad(int multiplicador) {
         velocidadNave *= multiplicador;
     }
+    public void reducirVelocidad(int divisor) {
+        velocidadNave /= divisor;
+    }
 
     public void recuperarVelocidad() {
         velocidadNave = velocidadInicial;
@@ -96,5 +100,25 @@ public class Nave extends Modelo {
 
     public boolean esInvulnerable() {
         return invulnerable;
+    }
+
+    public int getShield() {
+        return shield;
+    }
+
+    public void decreaseShield(int value) {
+        if (value < 0)
+            value = 0;
+        this.shield -= value;
+        if (this.shield == 0)
+            desactivarInvunerabilidad();
+    }
+
+    public void increaseShield(int value) {
+        if (value < 0)
+            value = 0;
+        this.shield += value;
+        if (this.shield > 0)
+            activarInvunerabilidad();
     }
 }
