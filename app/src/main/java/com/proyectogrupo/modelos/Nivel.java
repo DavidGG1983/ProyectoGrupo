@@ -17,6 +17,7 @@ import com.proyectogrupo.powerups.CajaVelocidad;
 import com.proyectogrupo.powerups.CajaVidaExtra;
 import com.proyectogrupo.powerups.MonedaRecolectable;
 import com.proyectogrupo.powerups.PowerUp;
+import com.proyectogrupo.powerups.Teletransporte;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -340,6 +341,9 @@ public class Nivel {
             for (Enemigo e : this.enemigos)
                 e.actualizar(tiempo);
             marcadorPuntos.puntos = nave.puntos;
+            for(PowerUp p : this.powerups)
+                if(p instanceof MonedaRecolectable)
+                    p.actualizar(tiempo);
         }
     }
 
@@ -475,10 +479,17 @@ public class Nivel {
             case 'C':
                 powerups.add(new CajaColor(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
+            case 'T':
+                powerups.add(new Teletransporte(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile( null, Tile.PASABLE);
             default:
                 //cualquier otro caso
                 return new Tile(null, Tile.PASABLE);
         }
+    }
+
+    public int getTile(int x,int y){
+        return this.mapaTiles[x][y].tipoDeColision;
     }
 
     private float tilesEnDistanciaY(double distanciaY) {

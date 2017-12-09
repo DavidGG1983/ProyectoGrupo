@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
+import com.proyectogrupo.graficos.Sprite;
 import com.proyectogrupo.modelos.Nivel;
 
 /**
@@ -19,11 +20,14 @@ import com.proyectogrupo.modelos.Nivel;
 
 public class MonedaRecolectable extends PowerUp {
 
+    private Sprite sprite;
 
     public MonedaRecolectable(Context context, double x, double y) {
-        super(context, x, y, 40, 40);
+        super(context, x, y, 25, 25);
         this.y = y - altura/2;
-        imagen = CargadorGraficos.cargarDrawable(context, R.drawable.moneda1);
+        sprite = new Sprite(CargadorGraficos.cargarDrawable
+                (context,R.drawable.animacion_moneda),ancho,altura,
+                4,14,true);
     }
 
     @Override
@@ -31,9 +35,11 @@ public class MonedaRecolectable extends PowerUp {
         nivel.nave.puntos++;
     }
 
-    @Override
-    public void dibujar(Canvas canvas) {
+    public void dibujar(Canvas canvas){
+        sprite.dibujarSprite(canvas,(int)x,(int)y - Nivel.scrollEjeY,true);
+    }
 
-        super.dibujar(canvas);
+    public void actualizar(long tiempo){
+        sprite.actualizar(tiempo);
     }
 }

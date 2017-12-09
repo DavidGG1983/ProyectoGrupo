@@ -2,7 +2,6 @@ package com.proyectogrupo.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.Log;
 
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
@@ -51,7 +50,7 @@ public class Nave extends Modelo {
     }
 
     public void dibujar(Canvas canvas) {
-        this.sprite.dibujarSprite(canvas, (int) this.x, (int) this.y - Nivel.scrollEjeY);
+        this.sprite.dibujarSprite(canvas, (int) this.x, (int) this.y - Nivel.scrollEjeY, false);
     }
 
     public void procesarOrdenes(float orientacionPadX, float orientacionPadY) {
