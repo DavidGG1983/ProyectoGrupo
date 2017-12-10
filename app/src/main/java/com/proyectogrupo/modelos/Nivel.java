@@ -65,7 +65,7 @@ public class Nivel {
         powerups = new LinkedList<>();
 
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
-        marcadorPuntos = new MarcadorPuntos(context, 0.85 * GameView.pantallaAncho, 0.07 * GameView.pantallaAlto);
+        marcadorPuntos = new MarcadorPuntos(context, 0.95 * GameView.pantallaAncho, 0.07 * GameView.pantallaAlto);
         this.inicializarMapaTiles();
     }
 
