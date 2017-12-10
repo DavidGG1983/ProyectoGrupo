@@ -27,6 +27,8 @@ import java.util.List;
 
 public class Nivel {
     public static int scrollEjeY = 0;
+    private int maxScrollEjeY = 0;
+
     private Tile[][] mapaTiles;
     public List<PowerUp> powerups;
     private Context context = null;
@@ -57,6 +59,7 @@ public class Nivel {
 
     public void inicializar() throws Exception {
         scrollEjeY = 0;
+        maxScrollEjeY = 0;
         monedasRecogidas = 0;
         powerups = new LinkedList<>();
 
@@ -495,6 +498,11 @@ public class Nivel {
             if (nave.y + scrollEjeY < GameView.pantallaAlto * 0.3) {
                 scrollEjeY = (int) (nave.y - GameView.pantallaAlto * 0.3);
             }
+
+        if (scrollEjeY > maxScrollEjeY) {
+            nave.puntos += scrollEjeY - maxScrollEjeY;
+            maxScrollEjeY = scrollEjeY;
+        }
     }
 }
 
