@@ -3,6 +3,8 @@ package com.proyectogrupo.powerups;
 import android.content.Context;
 
 import com.proyectogrupo.Hilo;
+import com.proyectogrupo.R;
+import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.Nave;
 import com.proyectogrupo.modelos.Nivel;
 
@@ -13,7 +15,8 @@ import com.proyectogrupo.modelos.Nivel;
 public class CajaPuntosExtra extends PowerUp {
 
     public CajaPuntosExtra(Context context, double x, double y) {
-        super(context, x, y, 0, 0);
+        super(context, x, y, 33, 34);
+        imagen = CargadorGraficos.cargarDrawable(context, R.drawable.points_icon);
     }
 
     @Override

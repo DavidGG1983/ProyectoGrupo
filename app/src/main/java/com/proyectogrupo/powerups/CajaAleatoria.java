@@ -3,6 +3,8 @@ package com.proyectogrupo.powerups;
 import android.content.Context;
 import android.graphics.Canvas;
 
+import com.proyectogrupo.R;
+import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.Nivel;
 
 import java.util.Random;
@@ -17,15 +19,14 @@ public class CajaAleatoria extends PowerUp {
     PowerUp powerup;
 
     public CajaAleatoria(Context context, double x, double y) {
-        super(context, x, y, 0, 0);
+        super(context, x, y, 21, 21);
         selectPowerUp();
-        //Imagen
-
+        imagen = CargadorGraficos.cargarDrawable(context, R.drawable.random);
     }
 
     private void selectPowerUp() {
         Random rdn = new Random();
-        int value = rdn.nextInt(10); //Sumar 1 al bound al añadir powerUp
+        int value = rdn.nextInt(11); //Sumar 1 al bound al añadir powerUp
         switch (value) { // Añadir un case con el nuevo PowerUp
             case 0:
                 powerup = new CajaBomba(context, x, y);

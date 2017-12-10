@@ -32,7 +32,7 @@ public class MonedaRecolectable extends PowerUp {
 
     @Override
     public void efecto(Nivel nivel) {
-        nivel.nave.puntos++;
+        nivel.nave.sumarPuntos(1);
     }
 
     public void dibujar(Canvas canvas){
