@@ -9,6 +9,7 @@ import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
+import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
@@ -339,8 +340,8 @@ public class Nivel {
             for (Enemigo e : this.enemigos)
                 e.actualizar(tiempo);
             marcadorPuntos.puntos = nave.getPuntos();
-            for(PowerUp p : powerups)
-                if(p instanceof MonedaRecolectable)
+            for (PowerUp p : powerups)
+                if (p instanceof MonedaRecolectable)
                     p.actualizar(tiempo);
         }
     }
@@ -464,17 +465,20 @@ public class Nivel {
                 powerups.add(new CajaInvulnerabilidad(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'X':
-                powerups.add(new CajaBomba(context, xCentroAbajoTile,yCentroAbajoTile));
+                powerups.add(new CajaBomba(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'C':
                 powerups.add(new CajaColor(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'T':
-                powerups.add(new Teletransporte(context,xCentroAbajoTile,yCentroAbajoTile));
-                return new Tile(null,Tile.PASABLE);
+                powerups.add(new Teletransporte(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
             case 'P':
-                powerups.add(new CajaPuntosExtra(context,xCentroAbajoTile,yCentroAbajoTile));
-                return new Tile(null,Tile.PASABLE);
+                powerups.add(new CajaPuntosExtra(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'R':
+                powerups.add(new CajaAleatoria(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso
                 return new Tile(null, Tile.PASABLE);
