@@ -12,6 +12,7 @@ import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
+import com.proyectogrupo.powerups.CajaPuntosExtra;
 import com.proyectogrupo.powerups.CajaVelocidad;
 import com.proyectogrupo.powerups.CajaVidaExtra;
 import com.proyectogrupo.powerups.MonedaRecolectable;
@@ -98,7 +99,7 @@ public class Nivel {
                         int colorEnemigo = e.getColor();
 
                         if (colorEnemigo == colorCaja && enemigoColorCaja == null) {
-                            nave.puntos++;
+                            nave.sumarPuntos(1);
                             enemigoColorCaja = e;
                         }
                     } else {
@@ -337,7 +338,7 @@ public class Nivel {
             this.aplicarReglasMovimiento();
             for (Enemigo e : this.enemigos)
                 e.actualizar(tiempo);
-            marcadorPuntos.puntos = nave.puntos;
+            marcadorPuntos.puntos = nave.getPuntos();
             for(PowerUp p : powerups)
                 if(p instanceof MonedaRecolectable)
                     p.actualizar(tiempo);
@@ -470,6 +471,9 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'T':
                 powerups.add(new Teletransporte(context,xCentroAbajoTile,yCentroAbajoTile));
+                return new Tile(null,Tile.PASABLE);
+            case 'P':
+                powerups.add(new CajaPuntosExtra(context,xCentroAbajoTile,yCentroAbajoTile));
                 return new Tile(null,Tile.PASABLE);
             default:
                 //cualquier otro caso

@@ -25,7 +25,8 @@ public class Nave extends Modelo {
     double velocidadNave;
     double velocidadXActual;
     double velocidadYActual;
-    public int puntos;
+    int puntos;
+    public int multiplicadorPuntos = 1;
     public int vida;
     public boolean invulnerable;
 
@@ -74,6 +75,7 @@ public class Nave extends Modelo {
     public void aumentarVelocidad(int multiplicador) {
         velocidadNave *= multiplicador;
     }
+
     public void reducirVelocidad(int divisor) {
         velocidadNave /= divisor;
     }
@@ -120,5 +122,13 @@ public class Nave extends Modelo {
         this.shield += value;
         if (this.shield > 0)
             activarInvunerabilidad();
+    }
+
+    public void sumarPuntos(int puntos) {
+        this.puntos = puntos * multiplicadorPuntos;
+    }
+
+    public int getPuntos() {
+        return puntos;
     }
 }
