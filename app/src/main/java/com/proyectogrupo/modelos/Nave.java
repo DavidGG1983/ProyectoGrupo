@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class Nave extends Modelo {
 
-    int xInicial, yInicial;
+    double xInicial, yInicial;
     private static final String NAVE_MOVIENDOSE = "nave_moviendose";
     Map<String, Sprite> sprites;
     Sprite sprite;
@@ -35,7 +35,7 @@ public class Nave extends Modelo {
         super(context, x, y, 32, 40);
         this.y = y - this.altura / 2;
         this.xInicial = x;
-        this.yInicial = y;
+        this.yInicial = this.y;
         this.vida = 3;
         this.shield = 0;
         this.velocidadNave = velocidadInicial;
