@@ -29,6 +29,7 @@ import java.util.List;
 
 public class Nivel {
     public static int scrollEjeY = 0;
+
     private Tile[][] mapaTiles;
     public List<PowerUp> powerups;
     private Context context = null;
@@ -46,6 +47,7 @@ public class Nivel {
     public boolean inicializado;
     public int monedasRecogidas;
 
+    private double minPosNaveY;
 
     public Nivel(Context context, int numeroNivel) throws Exception {
         inicializado = false;
@@ -55,15 +57,17 @@ public class Nivel {
         inicializar();
 
         inicializado = true;
+        minPosNaveY = nave.y;
     }
 
     public void inicializar() throws Exception {
         scrollEjeY = 0;
+        minPosNaveY = 0;
         monedasRecogidas = 0;
         powerups = new LinkedList<>();
 
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
-        marcadorPuntos = new MarcadorPuntos(context, 0.85 * GameView.pantallaAncho, 0.07 * GameView.pantallaAlto);
+        marcadorPuntos = new MarcadorPuntos(context, 0.95 * GameView.pantallaAncho, 0.07 * GameView.pantallaAlto);
         this.inicializarMapaTiles();
     }
 
@@ -503,6 +507,11 @@ public class Nivel {
             if (nave.y + scrollEjeY < GameView.pantallaAlto * 0.3) {
                 scrollEjeY = (int) (nave.y - GameView.pantallaAlto * 0.3);
             }
+
+        if (nave.y < minPosNaveY) {
+            nave.puntos += (minPosNaveY - nave.y) / 4;
+            minPosNaveY = nave.y;
+        }
     }
 }
 
