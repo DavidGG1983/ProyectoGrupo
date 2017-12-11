@@ -39,6 +39,7 @@ public abstract class Enemigo extends Modelo {
     public abstract void mover();
 
     public abstract void inicializar();
+    public abstract DisparoEnemigo disparar(long milisegundos);
 
     public void dibujar(Canvas canvas){
         this.sprite.dibujarSprite(canvas, (int)x, (int)y - Nivel.scrollEjeY,true);

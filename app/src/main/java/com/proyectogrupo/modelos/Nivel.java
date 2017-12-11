@@ -31,7 +31,7 @@ public class Nivel {
     public static int scrollEjeY = 0;
 
     private Tile[][] mapaTiles;
-    public List<PowerUp> powerups;
+    public List<PowerUp> powerups = new ArrayList<>();
     private Context context = null;
     private int numeroNivel;
     private Fondo fondo;
@@ -41,6 +41,7 @@ public class Nivel {
     public List<Enemigo> enemigos = new ArrayList<>();
     public List<Integer> coloresCajas = new ArrayList<>();
     private Enemigo enemigoColorCaja;
+    private List<DisparoEnemigo> disparosEnemigos = new ArrayList<>();
 
     private MarcadorPuntos marcadorPuntos;
 
@@ -64,8 +65,6 @@ public class Nivel {
         scrollEjeY = 0;
         minPosNaveY = 0;
         monedasRecogidas = 0;
-        powerups = new LinkedList<>();
-
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
         marcadorPuntos = new MarcadorPuntos(context, 0.95 * GameView.pantallaAncho, 0.07 * GameView.pantallaAlto);
         this.inicializarMapaTiles();
@@ -90,8 +89,30 @@ public class Nivel {
         this.moverNaveVertical(tileXnaveIzquierda, tileXnaveDerecha, tileYnaveInferior,
                 tileYnaveCentro, tileYnaveSuperior);
         this.moverEnemigos();
+        this.moverDisparos();
         this.colisionesPowerUps();
         this.colisionaEnemigos();
+        this.colisionesDisparos();
+    }
+
+    private void colisionesDisparos() {
+        DisparoEnemigo aBorrar = null;
+        for (DisparoEnemigo d : disparosEnemigos) {
+            if (d.colisiona(nave)) {
+                nave.setVida(nave.getVida() - 1);
+                nave.activarInvunerabilidad();
+                Runnable action = new Runnable() {
+                    @Override
+                    public void run() {
+                        nave.desactivarInvunerabilidad();
+                    }
+                };
+                new Hilo(2000, action).start();
+                aBorrar = d;
+                break;
+            }
+        }
+        disparosEnemigos.remove(aBorrar);
     }
 
     private void colisionaEnemigos() {
@@ -137,6 +158,17 @@ public class Nivel {
         powerups.remove(eliminar);
     }
 
+    public void comprobarDisparos() {
+        DisparoEnemigo disparo = null;
+        long tiempo = System.currentTimeMillis();
+        for (Enemigo e : enemigos) {
+            disparo = e.disparar(tiempo);
+            if (disparo != null)
+                disparosEnemigos.add(disparo);
+        }
+    }
+
+
     private void moverEnemigos() {
         for (Enemigo enemigo : enemigos) {
             enemigo.mover();
@@ -161,6 +193,36 @@ public class Nivel {
                 }
             }
         }
+    }
+
+    private void moverDisparos() {
+        List<DisparoEnemigo> aBorrar = new ArrayList<>();
+        for (DisparoEnemigo d : disparosEnemigos) {
+            d.moverAutomaticamente();
+            int tileXDerecha = (int) ((d.x + d.ancho / 2) / Tile.ancho);
+            int tileXIzquierda = (int) ((d.x - d.ancho / 2) / Tile.ancho);
+
+            if (d.orientacion) {
+                if (tileXDerecha < anchoMapaTiles()) {
+                    if (mapaTiles[tileXDerecha]
+                            [(int) (d.y / Tile.altura)].tipoDeColision
+                            != Tile.PASABLE) {
+                        aBorrar.add(d);
+                    }
+                }
+            } else {
+                if (tileXIzquierda >= 0) {
+                    if (mapaTiles[tileXIzquierda]
+                            [(int) (d.y / Tile.altura)].tipoDeColision
+                            != Tile.PASABLE) {
+                        aBorrar.add(d);
+                    }
+                }
+            }
+        }
+
+        for (DisparoEnemigo d : aBorrar)
+            disparosEnemigos.remove(d);
     }
 
     private void moverNaveHorizontal(int tileXnaveIzquierda, int tileXnaveDerecha,
@@ -335,12 +397,13 @@ public class Nivel {
         }
     }
 
+
     public void actualizar(long tiempo) {
         if (inicializado) {
             nave.procesarOrdenes(orientacionPadX, orientacionPadY);
             nave.actualizar(tiempo);
-
             this.aplicarReglasMovimiento();
+            this.comprobarDisparos();
             for (Enemigo e : this.enemigos)
                 e.actualizar(tiempo);
             marcadorPuntos.puntos = nave.getPuntos();
@@ -350,15 +413,18 @@ public class Nivel {
         }
     }
 
+
     public void dibujar(Canvas canvas) {
         if (inicializado) {
             fondo.dibujar(canvas);
             dibujarTiles(canvas);
             nave.dibujar(canvas);
-            for (Enemigo e : this.enemigos)
+            for (Enemigo e : enemigos)
                 e.dibujar(canvas);
             for (PowerUp p : powerups)
                 p.dibujar(canvas);
+            for (DisparoEnemigo d : disparosEnemigos)
+                d.dibujar(canvas);
             marcadorPuntos.dibujar(canvas);
         }
     }
