@@ -28,7 +28,8 @@ public class Nave extends Modelo {
     int puntos;
     public int multiplicadorPuntos = 1;
     public int vida;
-    public boolean invulnerable;
+    boolean invulnerable;
+    boolean contrataque;
 
 
     public Nave(Context context, int x, int y) {
@@ -40,6 +41,7 @@ public class Nave extends Modelo {
         this.shield = 0;
         this.velocidadNave = velocidadInicial;
         this.invulnerable = false;
+        this.contrataque = false;
         Sprite moviendose = new Sprite(CargadorGraficos.cargarDrawable(context,
                 R.drawable.animacion_nave), 50, 63, 4, 4, true);
         sprites = new HashMap<>();
@@ -100,6 +102,14 @@ public class Nave extends Modelo {
         invulnerable = false;
     }
 
+    public void activarContraataque() {
+        contrataque = true;
+    }
+
+    public void desactivarContraataque() {
+        contrataque = false;
+    }
+    
     public boolean esInvulnerable() {
         return invulnerable;
     }

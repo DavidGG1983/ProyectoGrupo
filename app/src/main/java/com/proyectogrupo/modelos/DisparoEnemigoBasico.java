@@ -11,8 +11,8 @@ import com.proyectogrupo.gestores.CargadorGraficos;
 
 public class DisparoEnemigoBasico extends DisparoEnemigo {
 
-    public DisparoEnemigoBasico(Context context, double x, double y, boolean orientacion) {
-        super(context, x, y, orientacion, 6, 20, 26);
+    public DisparoEnemigoBasico(Context context, double x, double y, boolean orientacion, Enemigo enemigo) {
+        super(context, x, y, orientacion, 6, enemigo, 20, 26);
         imagen =
                 CargadorGraficos.cargarDrawable(context, R.drawable.disparo_enemigo);
     }

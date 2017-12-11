@@ -12,6 +12,7 @@ import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
+import com.proyectogrupo.powerups.CajaContraEnemigos;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
 import com.proyectogrupo.powerups.CajaPuntosExtra;
 import com.proyectogrupo.powerups.CajaVelocidad;
@@ -99,17 +100,22 @@ public class Nivel {
         DisparoEnemigo aBorrar = null;
         for (DisparoEnemigo d : disparosEnemigos) {
             if (d.colisiona(nave)) {
-                nave.setVida(nave.getVida() - 1);
-                nave.activarInvunerabilidad();
-                Runnable action = new Runnable() {
-                    @Override
-                    public void run() {
-                        nave.desactivarInvunerabilidad();
-                    }
-                };
-                new Hilo(2000, action).start();
-                aBorrar = d;
-                break;
+                if (!nave.contrataque) {
+                    nave.setVida(nave.getVida() - 1);
+                    nave.activarInvunerabilidad();
+                    Runnable action = new Runnable() {
+                        @Override
+                        public void run() {
+                            nave.desactivarInvunerabilidad();
+                        }
+                    };
+                    new Hilo(2000, action).start();
+                    aBorrar = d;
+                    break;
+                } else {
+                    //Matar al enemigo que disparo
+                    enemigos.remove(d.enemigo);
+                }
             }
         }
         disparosEnemigos.remove(aBorrar);
@@ -120,31 +126,37 @@ public class Nivel {
         for (Enemigo e : enemigos) {
             if (e.colisiona(nave)) {
                 if (!nave.esInvulnerable()) {
-                    if (coloresCajas.size() > 0) {
-                        int colorCaja = coloresCajas.get(coloresCajas.size() - 1);
-                        int colorEnemigo = e.getColor();
+                    if (!nave.contrataque) {
+                        if (coloresCajas.size() > 0) {
+                            int colorCaja = coloresCajas.get(coloresCajas.size() - 1);
+                            int colorEnemigo = e.getColor();
 
-                        if (colorEnemigo == colorCaja && enemigoColorCaja == null) {
-                            nave.sumarPuntos(1);
-                            enemigoColorCaja = e;
+                            if (colorEnemigo == colorCaja && enemigoColorCaja == null) {
+                                nave.sumarPuntos(1);
+                                enemigoColorCaja = e;
+                            }
+                        } else {
+                            nave.setVida(nave.getVida() - 1);
+                            nave.activarInvunerabilidad();
+                            Runnable action = new Runnable() {
+                                @Override
+                                public void run() {
+                                    nave.desactivarInvunerabilidad();
+                                }
+                            };
+                            new Hilo(5000, action).start();
                         }
                     } else {
-                        nave.setVida(nave.getVida() - 1);
-                        nave.activarInvunerabilidad();
-                        Runnable action = new Runnable() {
-                            @Override
-                            public void run() {
-                                nave.desactivarInvunerabilidad();
-                            }
-                        };
-                        new Hilo(5000, action).start();
+                        eliminar = e;
                     }
+                } else {
+                    if (e == enemigoColorCaja)
+                        enemigoColorCaja = null;
                 }
-            } else {
-                if (e == enemigoColorCaja)
-                    enemigoColorCaja = null;
             }
         }
+        if (eliminar != null)
+            enemigos.remove(eliminar);
     }
 
     private void colisionesPowerUps() {
@@ -548,6 +560,9 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'R':
                 powerups.add(new CajaAleatoria(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'F':
+                powerups.add(new CajaContraEnemigos(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso

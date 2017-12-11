@@ -47,7 +47,7 @@ public class EnemigoBasico extends Enemigo {
     public DisparoEnemigo disparar(long milisegundos) {
         if (milisegundos - tiempoDisparo > 4000 + Math.random() * 4000) {
             tiempoDisparo = System.currentTimeMillis();
-            return new DisparoEnemigoBasico(context, x, y - Nivel.scrollEjeY, sprite.equals(sprites.get(MOVER_DERECHA)));
+            return new DisparoEnemigoBasico(context, x, y - Nivel.scrollEjeY, sprite.equals(sprites.get(MOVER_DERECHA)), this);
         }
         return null;
     }
