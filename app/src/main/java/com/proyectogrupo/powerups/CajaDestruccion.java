@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
-import com.proyectogrupo.modelos.Enemigo;
+import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.Nivel;
 
 import java.util.ArrayList;
