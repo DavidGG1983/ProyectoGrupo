@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.Log;
 
+import com.proyectogrupo.Dificultad;
 import com.proyectogrupo.GameView;
 import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
@@ -11,8 +12,10 @@ import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
+import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
-import com.proyectogrupo.modelos.enemigos.EnemigoBasico;
+import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
+import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
@@ -33,12 +36,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Nivel {
+    public static Dificultad dificultad;
     public static int scrollEjeY = 0;
 
     private Tile[][] mapaTiles;
     public List<PowerUp> powerups = new ArrayList<>();
     private Context context = null;
-    private int numeroNivel;
+    public static int numeroNivel;
     private Fondo fondo;
     public Nave nave;
     public float orientacionPadX = 0;
@@ -55,11 +59,13 @@ public class Nivel {
 
     private double minPosNaveY;
 
-    public Nivel(Context context, int numeroNivel) throws Exception {
+    private long tiempoUltimoMovimientoNave = -1;
+    private double ultimaPosYNave = -1;
+
+    public Nivel(Context context) throws Exception {
         inicializado = false;
 
         this.context = context;
-        this.numeroNivel = numeroNivel;
         inicializar();
 
         inicializado = true;
@@ -101,6 +107,7 @@ public class Nivel {
     }
 
     private void colisionesDisparos() {
+
         DisparoEnemigo aBorrar = null;
         for (DisparoEnemigo d : disparosEnemigos) {
             if (d.colisiona(nave)) {
@@ -114,9 +121,11 @@ public class Nivel {
                         }
                     };
                     new Hilo(2000, action).start();
-                    aBorrar = d;
+
                     if (d instanceof DisparoEnemigoRalentizador) {
+                        Log.d("DISPARO-RALENTIADOR","HOLA; ESTOY AQUI");
                         nave.detenerNave();
+
                         Runnable action2 = new Runnable() {
                             @Override
                             public void run() {
@@ -125,11 +134,12 @@ public class Nivel {
                         };
                         new Hilo(1000, action2).start();
                     }
+                    aBorrar = d;
                     break;
+                } else {
+                    //Matar al enemigo que disparo
+                    enemigos.remove(d.enemigo);
                 }
-            } else {
-                //Matar al enemigo que disparo
-                enemigos.remove(d.enemigo);
             }
         }
         disparosEnemigos.remove(aBorrar);
@@ -188,9 +198,12 @@ public class Nivel {
         DisparoEnemigo disparo = null;
         long tiempo = System.currentTimeMillis();
         for (Enemigo e : enemigos) {
-            disparo = e.disparar(tiempo);
-            if (disparo != null)
-                disparosEnemigos.add(disparo);
+            if(e instanceof Disparador){
+                Disparador disparador = (Disparador) e;
+                disparo = disparador.disparar(tiempo);
+                if (disparo != null)
+                    disparosEnemigos.add(disparo);
+            }
         }
     }
 
@@ -436,6 +449,8 @@ public class Nivel {
             for (PowerUp p : powerups)
                 if (p instanceof MonedaRecolectable)
                     p.actualizar(tiempo);
+
+            comprobarMaxTiempoQuieta();
         }
     }
 
@@ -548,8 +563,12 @@ public class Nivel {
                 return new Tile(CargadorGraficos.cargarDrawable(context,
                         R.drawable.blocka2), Tile.SOLIDO);
             case 'B':
-                this.enemigos.add(new EnemigoBasico
+                this.enemigos.add(new EnemigoDisparador
                         (context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'Z':
+                this.enemigos.add(new EnemigoRalentizador(
+                        context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'H':
                 powerups.add(new CajaVidaExtra(context, xCentroAbajoTile, yCentroAbajoTile));
@@ -604,9 +623,28 @@ public class Nivel {
             }
 
         if (nave.y < minPosNaveY) {
-            nave.puntos += (minPosNaveY - nave.y) / 4;
+            nave.sumarPuntos((int) ((minPosNaveY - nave.y) / 4));
             minPosNaveY = nave.y;
         }
     }
-}
 
+    private void comprobarMaxTiempoQuieta() {
+        if (ultimaPosYNave > -1) {
+            if (nave.y != ultimaPosYNave) {
+                ultimaPosYNave = nave.y;
+                tiempoUltimoMovimientoNave = System.currentTimeMillis();
+            }
+        } else {
+            if (nave.y != nave.yInicial) {
+                ultimaPosYNave = nave.y;
+                tiempoUltimoMovimientoNave = System.currentTimeMillis();
+            }
+        }
+
+        if (tiempoUltimoMovimientoNave > -1) {
+            if (System.currentTimeMillis() - tiempoUltimoMovimientoNave >= (dificultad.getMaxSegundosQuieto() * 1000)) {
+                nave.vida = 0;
+            }
+        }
+    }
+}

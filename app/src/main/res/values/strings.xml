@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Plataformas</string>
+    <string name="facil">Fácil</string>
+    <string name="medio">Medio</string>
+    <string name="dificil">Difícil</string>
+    <string name="extremo">Extremo</string>
 </resources>

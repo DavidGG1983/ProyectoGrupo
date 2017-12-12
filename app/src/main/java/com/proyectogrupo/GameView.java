@@ -26,7 +26,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public static int pantallaAlto;
 
     private Nivel nivel;
-    public int numeroNivel = 0;
     private IconoVida[] iconosVida;
     private Pad pad;
 
@@ -121,7 +120,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     protected void inicializar() throws Exception {
-        nivel = new Nivel(context, numeroNivel);
+        nivel = new Nivel(context);
         pad = new Pad(context);
         iconosVida = new IconoVida[3];
 

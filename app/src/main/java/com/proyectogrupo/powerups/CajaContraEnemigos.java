@@ -14,8 +14,8 @@ import com.proyectogrupo.modelos.Nivel;
 
 public class CajaContraEnemigos extends PowerUp {
     public CajaContraEnemigos(Context context, double x, double y) {
-        super(context, x, y, 0, 0);
-        imagen = null;
+        super(context, x, y, 30, 30);
+        imagen = CargadorGraficos.cargarDrawable(context, R.mipmap.ic_launcher);
     }
 
     @Override

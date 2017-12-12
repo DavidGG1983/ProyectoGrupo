@@ -5,14 +5,16 @@ import android.content.Context;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.graficos.Sprite;
+import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
+import com.proyectogrupo.modelos.disparos.DisparoEnemigoBasico;
 
 /**
  * Created by davidgarcia on 2/12/17.
  */
 
-public class EnemigoBasico extends Enemigo{
+public class EnemigoDisparador extends Enemigo implements Disparador{
 
-    public EnemigoBasico(Context context, double x, double y) {
+    public EnemigoDisparador(Context context, double x, double y) {
         super(context, x, y);
     }
 
@@ -27,4 +29,12 @@ public class EnemigoBasico extends Enemigo{
         this.sprite = moverDerecha;
     }
 
+    @Override
+    public DisparoEnemigo disparar(long milisegundos) {
+        if (milisegundos - tiempoDisparo > 4000 + Math.random() * 4000) {
+            tiempoDisparo = System.currentTimeMillis();
+            return new DisparoEnemigoBasico(context, x, y, sprite.equals(sprites.get(MOVER_DERECHA)), this);
+        }
+        return null;
+    }
 }
