@@ -35,7 +35,7 @@ public class Nivel {
     private Tile[][] mapaTiles;
     public List<PowerUp> powerups;
     private Context context = null;
-    private int numeroNivel;
+    public static int numeroNivel;
     private Fondo fondo;
     public Nave nave;
     public float orientacionPadX = 0;
@@ -54,11 +54,10 @@ public class Nivel {
     private long tiempoUltimoMovimientoNave = -1;
     private double ultimaPosYNave = -1;
 
-    public Nivel(Context context, int numeroNivel) throws Exception {
+    public Nivel(Context context) throws Exception {
         inicializado = false;
 
         this.context = context;
-        this.numeroNivel = numeroNivel;
         inicializar();
 
         inicializado = true;

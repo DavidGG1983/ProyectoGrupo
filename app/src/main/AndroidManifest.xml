@@ -21,13 +21,34 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".DificultadActivity"
-            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".DificultadActivity"
+            android:parentActivityName=".SeleccionNivelActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".SeleccionNivelActivity" />
+        </activity>
+        <activity
+            android:name=".SeleccionNivelActivity"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".NivelActivity"
+            android:parentActivityName=".DificultadActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DificultadActivity" />
         </activity>
     </application>
 

@@ -41,6 +41,6 @@ public class DificultadActivity extends Activity {
 
     private void dificultadSeleccionada(Dificultad dificultad) {
         Nivel.dificultad = dificultad;
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, NivelActivity.class));
     }
 }
