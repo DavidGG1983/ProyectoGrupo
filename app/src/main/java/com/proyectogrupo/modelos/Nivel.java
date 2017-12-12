@@ -123,6 +123,18 @@ public class Nivel {
         if (helicopteroAEliminar != null) {
             helicopteros.remove(helicopteroAEliminar);
         }
+
+        DisparoHelicoptero disparoABorrar = null;
+
+        for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
+            if (disparoHelicoptero.y - Nivel.scrollEjeY >= GameView.pantallaAlto) {
+                disparoABorrar = disparoHelicoptero;
+            }
+        }
+
+        if (disparoABorrar != null) {
+            disparosHelicopteros.remove(disparoABorrar);
+        }
     }
 
     private void colisionesDisparos() {
@@ -162,6 +174,25 @@ public class Nivel {
             }
         }
         disparosEnemigos.remove(aBorrar);
+
+        DisparoHelicoptero disparoHelicopteroBorrar = null;
+        for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
+            if (disparoHelicoptero.colisiona(nave)) {
+                nave.setVida(nave.getVida() - 1);
+                nave.activarInvunerabilidad();
+                Runnable action = new Runnable() {
+                    @Override
+                    public void run() {
+                        nave.desactivarInvunerabilidad();
+                    }
+                };
+                new Hilo(2000, action).start();
+                disparoHelicopteroBorrar = disparoHelicoptero;
+            }
+        }
+
+        if (disparoHelicopteroBorrar != null)
+            disparosHelicopteros.remove(disparoHelicopteroBorrar);
     }
 
     private void colisionaEnemigos() {
