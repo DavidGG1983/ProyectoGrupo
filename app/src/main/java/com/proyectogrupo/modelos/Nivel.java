@@ -9,15 +9,17 @@ import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
+import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
-import com.proyectogrupo.powerups.CajaDestruccion;
+import com.proyectogrupo.powerups.CajaColor;
+import com.proyectogrupo.powerups.CajaContraEnemigos;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
-import com.proyectogrupo.powerups.CajaLentitud;
-import com.proyectogrupo.powerups.CajaSemiInvulnerabilidad;
+import com.proyectogrupo.powerups.CajaPuntosExtra;
 import com.proyectogrupo.powerups.CajaVelocidad;
 import com.proyectogrupo.powerups.CajaVidaExtra;
 import com.proyectogrupo.powerups.MonedaRecolectable;
 import com.proyectogrupo.powerups.PowerUp;
+import com.proyectogrupo.powerups.Teletransporte;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -28,8 +30,9 @@ import java.util.List;
 
 public class Nivel {
     public static int scrollEjeY = 0;
+
     private Tile[][] mapaTiles;
-    public List<PowerUp> powerups;
+    public List<PowerUp> powerups = new ArrayList<>();
     private Context context = null;
     private int numeroNivel;
     private Fondo fondo;
@@ -37,10 +40,16 @@ public class Nivel {
     public float orientacionPadX = 0;
     public float orientacionPadY = 0;
     public List<Enemigo> enemigos = new ArrayList<>();
+    public List<Integer> coloresCajas = new ArrayList<>();
+    private Enemigo enemigoColorCaja;
+    private List<DisparoEnemigo> disparosEnemigos = new ArrayList<>();
+
+    private MarcadorPuntos marcadorPuntos;
 
     public boolean inicializado;
     public int monedasRecogidas;
 
+    private double minPosNaveY;
 
     public Nivel(Context context, int numeroNivel) throws Exception {
         inicializado = false;
@@ -50,14 +59,15 @@ public class Nivel {
         inicializar();
 
         inicializado = true;
+        minPosNaveY = nave.y;
     }
 
     public void inicializar() throws Exception {
         scrollEjeY = 0;
+        minPosNaveY = 0;
         monedasRecogidas = 0;
-        powerups = new LinkedList<>();
-
         fondo = new Fondo(context, CargadorGraficos.cargarDrawable(context, R.drawable.fondo));
+        marcadorPuntos = new MarcadorPuntos(context, 0.95 * GameView.pantallaAncho, 0.07 * GameView.pantallaAlto);
         this.inicializarMapaTiles();
     }
 
@@ -80,15 +90,17 @@ public class Nivel {
         this.moverNaveVertical(tileXnaveIzquierda, tileXnaveDerecha, tileYnaveInferior,
                 tileYnaveCentro, tileYnaveSuperior);
         this.moverEnemigos();
+        this.moverDisparos();
         this.colisionesPowerUps();
         this.colisionaEnemigos();
+        this.colisionesDisparos();
     }
 
-    private void colisionaEnemigos() {
-        Enemigo eliminar = null;
-        for (Enemigo e : enemigos) {
-            if (e.colisiona(nave)) {
-                if (!nave.esInvulnerable()) {
+    private void colisionesDisparos() {
+        DisparoEnemigo aBorrar = null;
+        for (DisparoEnemigo d : disparosEnemigos) {
+            if (d.colisiona(nave)) {
+                if (!nave.contrataque) {
                     nave.setVida(nave.getVida() - 1);
                     nave.activarInvunerabilidad();
                     Runnable action = new Runnable() {
@@ -97,19 +109,54 @@ public class Nivel {
                             nave.desactivarInvunerabilidad();
                         }
                     };
-                    new Hilo(1000, action).start();
-                } else if (nave.esInvulnerable() && nave.getShield() > 0) {
-                    Runnable action = new Runnable() {
-                        @Override
-                        public void run() {
-                            nave.decreaseShield(1);
-                        }
-                    };
-                    new Hilo(1000, action).start();
+                    new Hilo(2000, action).start();
+                    aBorrar = d;
+                    break;
+                } else {
+                    //Matar al enemigo que disparo
+                    enemigos.remove(d.enemigo);
                 }
             }
-
         }
+        disparosEnemigos.remove(aBorrar);
+    }
+
+    private void colisionaEnemigos() {
+        Enemigo eliminar = null;
+        for (Enemigo e : enemigos) {
+            if (e.colisiona(nave)) {
+                if (!nave.esInvulnerable()) {
+                    if (!nave.contrataque) {
+                        if (coloresCajas.size() > 0) {
+                            int colorCaja = coloresCajas.get(coloresCajas.size() - 1);
+                            int colorEnemigo = e.getColor();
+
+                            if (colorEnemigo == colorCaja && enemigoColorCaja == null) {
+                                nave.sumarPuntos(1);
+                                enemigoColorCaja = e;
+                            }
+                        } else {
+                            nave.setVida(nave.getVida() - 1);
+                            nave.activarInvunerabilidad();
+                            Runnable action = new Runnable() {
+                                @Override
+                                public void run() {
+                                    nave.desactivarInvunerabilidad();
+                                }
+                            };
+                            new Hilo(5000, action).start();
+                        }
+                    } else {
+                        eliminar = e;
+                    }
+                } else {
+                    if (e == enemigoColorCaja)
+                        enemigoColorCaja = null;
+                }
+            }
+        }
+        if (eliminar != null)
+            enemigos.remove(eliminar);
     }
 
     private void colisionesPowerUps() {
@@ -122,6 +169,17 @@ public class Nivel {
         }
         powerups.remove(eliminar);
     }
+
+    public void comprobarDisparos() {
+        DisparoEnemigo disparo = null;
+        long tiempo = System.currentTimeMillis();
+        for (Enemigo e : enemigos) {
+            disparo = e.disparar(tiempo);
+            if (disparo != null)
+                disparosEnemigos.add(disparo);
+        }
+    }
+
 
     private void moverEnemigos() {
         for (Enemigo enemigo : enemigos) {
@@ -147,6 +205,36 @@ public class Nivel {
                 }
             }
         }
+    }
+
+    private void moverDisparos() {
+        List<DisparoEnemigo> aBorrar = new ArrayList<>();
+        for (DisparoEnemigo d : disparosEnemigos) {
+            d.moverAutomaticamente();
+            int tileXDerecha = (int) ((d.x + d.ancho / 2) / Tile.ancho);
+            int tileXIzquierda = (int) ((d.x - d.ancho / 2) / Tile.ancho);
+
+            if (d.orientacion) {
+                if (tileXDerecha < anchoMapaTiles()) {
+                    if (mapaTiles[tileXDerecha]
+                            [(int) (d.y / Tile.altura)].tipoDeColision
+                            != Tile.PASABLE) {
+                        aBorrar.add(d);
+                    }
+                }
+            } else {
+                if (tileXIzquierda >= 0) {
+                    if (mapaTiles[tileXIzquierda]
+                            [(int) (d.y / Tile.altura)].tipoDeColision
+                            != Tile.PASABLE) {
+                        aBorrar.add(d);
+                    }
+                }
+            }
+        }
+
+        for (DisparoEnemigo d : aBorrar)
+            disparosEnemigos.remove(d);
     }
 
     private void moverNaveHorizontal(int tileXnaveIzquierda, int tileXnaveDerecha,
@@ -321,26 +409,35 @@ public class Nivel {
         }
     }
 
+
     public void actualizar(long tiempo) {
         if (inicializado) {
             nave.procesarOrdenes(orientacionPadX, orientacionPadY);
             nave.actualizar(tiempo);
-
             this.aplicarReglasMovimiento();
+            this.comprobarDisparos();
             for (Enemigo e : this.enemigos)
                 e.actualizar(tiempo);
+            marcadorPuntos.puntos = nave.getPuntos();
+            for (PowerUp p : powerups)
+                if (p instanceof MonedaRecolectable)
+                    p.actualizar(tiempo);
         }
     }
+
 
     public void dibujar(Canvas canvas) {
         if (inicializado) {
             fondo.dibujar(canvas);
             dibujarTiles(canvas);
             nave.dibujar(canvas);
-            for (Enemigo e : this.enemigos)
+            for (Enemigo e : enemigos)
                 e.dibujar(canvas);
             for (PowerUp p : powerups)
                 p.dibujar(canvas);
+            for (DisparoEnemigo d : disparosEnemigos)
+                d.dibujar(canvas);
+            marcadorPuntos.dibujar(canvas);
         }
     }
 
@@ -354,15 +451,7 @@ public class Nivel {
         int derecha = izquierda +
                 (GameView.pantallaAncho / Tile.ancho) + 1;
 
-        if (nave.y < altoMapaTiles() * Tile.altura - GameView.pantallaAlto * 0.3)
-            if (nave.y + scrollEjeY > GameView.pantallaAlto * 0.7) {
-                scrollEjeY = (int) ((nave.y) - GameView.pantallaAlto * 0.7);
-            }
-
-        if (nave.y > GameView.pantallaAlto * 0.3)
-            if (nave.y + scrollEjeY < GameView.pantallaAlto * 0.3) {
-                scrollEjeY = (int) (nave.y - GameView.pantallaAlto * 0.3);
-            }
+        aplicarScroll();
 
         // el ultimo tile visible
         derecha = Math.min(derecha, anchoMapaTiles() - 1);
@@ -458,16 +547,22 @@ public class Nivel {
                 powerups.add(new CajaInvulnerabilidad(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'X':
-                powerups.add(new CajaBomba(context, xCentroAbajoTile,yCentroAbajoTile));
+                powerups.add(new CajaBomba(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'C':
+                powerups.add(new CajaColor(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'T':
+                powerups.add(new Teletransporte(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'P':
+                powerups.add(new CajaPuntosExtra(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'R':
+                powerups.add(new CajaAleatoria(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'F':
-                powerups.add(new CajaSemiInvulnerabilidad(context, xCentroAbajoTile, yCentroAbajoTile));
-                return new Tile(null, Tile.PASABLE);
-            case 'L':
-                powerups.add(new CajaLentitud(context, xCentroAbajoTile, yCentroAbajoTile));
-                return new Tile(null, Tile.PASABLE);
-            case 'D':
-                powerups.add(new CajaDestruccion(context, xCentroAbajoTile, yCentroAbajoTile));
+                powerups.add(new CajaContraEnemigos(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso
@@ -477,6 +572,27 @@ public class Nivel {
 
     private float tilesEnDistanciaY(double distanciaY) {
         return (float) distanciaY / Tile.altura;
+    }
+
+    public int getTile(int x, int y) {
+        return this.mapaTiles[x][y].tipoDeColision;
+    }
+
+    public void aplicarScroll() {
+        if (nave.y < altoMapaTiles() * Tile.altura - GameView.pantallaAlto * 0.3)
+            if (nave.y + scrollEjeY > GameView.pantallaAlto * 0.7) {
+                scrollEjeY = (int) ((nave.y) - GameView.pantallaAlto * 0.7);
+            }
+
+        if (nave.y > GameView.pantallaAlto * 0.3)
+            if (nave.y + scrollEjeY < GameView.pantallaAlto * 0.3) {
+                scrollEjeY = (int) (nave.y - GameView.pantallaAlto * 0.3);
+            }
+
+        if (nave.y < minPosNaveY) {
+            nave.puntos += (minPosNaveY - nave.y) / 4;
+            minPosNaveY = nave.y;
+        }
     }
 }
 

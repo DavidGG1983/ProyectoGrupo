@@ -7,7 +7,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.graphics.Palette;
-import android.util.Log;
 
 /**
  * Created by Jordan on 14/08/2015.
@@ -83,7 +82,7 @@ public class Sprite {
     }
 
 
-    public void dibujarSprite (Canvas canvas, int x, int y) {
+    public void dibujarSprite(Canvas canvas, int x, int y, boolean b) {
         Rect destRect = new Rect(x - modeloAncho/2, y - modeloAltura/2, x
                 + modeloAncho/2, y + modeloAltura/2);
         canvas.drawBitmap(bitmap, rectanguloDibujo, destRect, null);

@@ -2,7 +2,6 @@ package com.proyectogrupo.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.Log;
 
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
@@ -26,8 +25,11 @@ public class Nave extends Modelo {
     double velocidadNave;
     double velocidadXActual;
     double velocidadYActual;
+    int puntos;
+    public int multiplicadorPuntos = 1;
     public int vida;
-    public boolean invulnerable;
+    boolean invulnerable;
+    boolean contrataque;
 
 
     public Nave(Context context, int x, int y) {
@@ -39,6 +41,7 @@ public class Nave extends Modelo {
         this.shield = 0;
         this.velocidadNave = velocidadInicial;
         this.invulnerable = false;
+        this.contrataque = false;
         Sprite moviendose = new Sprite(CargadorGraficos.cargarDrawable(context,
                 R.drawable.animacion_nave), 50, 63, 4, 4, true);
         sprites = new HashMap<>();
@@ -51,7 +54,7 @@ public class Nave extends Modelo {
     }
 
     public void dibujar(Canvas canvas) {
-        this.sprite.dibujarSprite(canvas, (int) this.x, (int) this.y - Nivel.scrollEjeY);
+        this.sprite.dibujarSprite(canvas, (int) this.x, (int) this.y - Nivel.scrollEjeY, false);
     }
 
     public void procesarOrdenes(float orientacionPadX, float orientacionPadY) {
@@ -74,6 +77,7 @@ public class Nave extends Modelo {
     public void aumentarVelocidad(int multiplicador) {
         velocidadNave *= multiplicador;
     }
+
     public void reducirVelocidad(int divisor) {
         velocidadNave /= divisor;
     }
@@ -98,6 +102,14 @@ public class Nave extends Modelo {
         invulnerable = false;
     }
 
+    public void activarContraataque() {
+        contrataque = true;
+    }
+
+    public void desactivarContraataque() {
+        contrataque = false;
+    }
+    
     public boolean esInvulnerable() {
         return invulnerable;
     }
@@ -120,5 +132,13 @@ public class Nave extends Modelo {
         this.shield += value;
         if (this.shield > 0)
             activarInvunerabilidad();
+    }
+
+    public void sumarPuntos(int puntos) {
+        this.puntos = puntos * multiplicadorPuntos;
+    }
+
+    public int getPuntos() {
+        return puntos;
     }
 }
