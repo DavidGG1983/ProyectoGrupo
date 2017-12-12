@@ -105,6 +105,8 @@ public class Nivel {
     }
 
     private void colisionesDisparos() {
+        if(true) return;
+
         DisparoEnemigo aBorrar = null;
         for (DisparoEnemigo d : disparosEnemigos) {
             if (d.colisiona(nave)) {

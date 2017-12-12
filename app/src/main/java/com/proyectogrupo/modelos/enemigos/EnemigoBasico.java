@@ -6,7 +6,6 @@ import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.graficos.Sprite;
-import com.proyectogrupo.modelos.Nivel;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoBasico;
 
@@ -44,7 +43,7 @@ public class EnemigoBasico extends Enemigo {
     public DisparoEnemigo disparar(long milisegundos) {
         if (milisegundos - tiempoDisparo > 4000 + Math.random() * 4000) {
             tiempoDisparo = System.currentTimeMillis();
-            return new DisparoEnemigoBasico(context, x, y - Nivel.scrollEjeY, sprite.equals(sprites.get(MOVER_DERECHA)), this);
+            return new DisparoEnemigoBasico(context, x, y, sprite.equals(sprites.get(MOVER_DERECHA)), this);
         }
         return null;
     }
