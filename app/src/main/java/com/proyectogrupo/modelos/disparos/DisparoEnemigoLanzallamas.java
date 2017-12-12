@@ -22,6 +22,7 @@ public class DisparoEnemigoLanzallamas extends DisparoEnemigo {
         imagenDerecha = CargadorGraficos.cargarDrawable(context, R.drawable.disparo_flame_derecha);
         imagenIzquierda = CargadorGraficos.cargarDrawable(context, R.drawable.disparo_flame_izquierda);
         imagen = imagenDerecha;
+        this.damage = 2;
     }
 
     public void moverAutomaticamente() {

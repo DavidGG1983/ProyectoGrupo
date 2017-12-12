@@ -2,16 +2,12 @@ package com.proyectogrupo;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.proyectogrupo.GameLoop;
-import com.proyectogrupo.graficos.Sprite;
 import com.proyectogrupo.modelos.IconoVida;
-import com.proyectogrupo.modelos.Nave;
 import com.proyectogrupo.modelos.Nivel;
 import com.proyectogrupo.modelos.controles.Pad;
 
@@ -28,6 +24,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Nivel nivel;
     private IconoVida[] iconosVida;
     private Pad pad;
+
+    public static int VIDAS = 5;
 
     public GameView(Context context) {
         super(context);
@@ -122,14 +120,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     protected void inicializar() throws Exception {
         nivel = new Nivel(context);
         pad = new Pad(context);
-        iconosVida = new IconoVida[3];
+        iconosVida = new IconoVida[VIDAS];
 
-        iconosVida[0] = new IconoVida(context, GameView.pantallaAncho * 0.08,
-                GameView.pantallaAlto * 0.05);
-        iconosVida[1] = new IconoVida(context, GameView.pantallaAncho * 0.18,
-                GameView.pantallaAlto * 0.05);
-        iconosVida[2] = new IconoVida(context, GameView.pantallaAncho * 0.28,
-                GameView.pantallaAlto * 0.05);
+        double ancho = 0.08;
+        for(int i = 0;i<VIDAS;i++){
+            iconosVida[i] = new IconoVida(context, GameView.pantallaAncho * ancho,
+                    GameView.pantallaAlto * 0.05);
+            ancho += 0.10;
+        }
     }
 
     public void actualizar(long tiempo) throws Exception {

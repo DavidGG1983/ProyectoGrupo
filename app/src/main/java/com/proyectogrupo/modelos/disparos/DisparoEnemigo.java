@@ -15,6 +15,7 @@ public abstract class DisparoEnemigo extends Modelo {
     public double aceleracionX;
     public boolean orientacion;
     public Enemigo enemigo;
+    public int damage;
 
     public DisparoEnemigo(Context context, double x, double y,
                           boolean orientacion, double aceleracionX, Enemigo enemigo, int altura, int ancho) {
@@ -22,7 +23,11 @@ public abstract class DisparoEnemigo extends Modelo {
         this.aceleracionX = aceleracionX;
         this.orientacion = orientacion;
         this.enemigo = enemigo;
+        this.damage = 1;
+    }
 
+    public int getDamage() {
+        return damage;
     }
 
     public void dibujar(Canvas canvas){

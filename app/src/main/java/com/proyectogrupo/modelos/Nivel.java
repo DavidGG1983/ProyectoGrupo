@@ -45,7 +45,7 @@ public class Nivel {
     private Context context = null;
     public static int numeroNivel;
     private Fondo fondo;
-    public Nave nave;
+    static public Nave nave;
     public float orientacionPadX = 0;
     public float orientacionPadY = 0;
     public List<Enemigo> enemigos = new ArrayList<>();
@@ -111,9 +111,9 @@ public class Nivel {
 
         DisparoEnemigo aBorrar = null;
         for (DisparoEnemigo d : disparosEnemigos) {
-            if (d.colisiona(nave)) {
+            if (d.colisiona(nave) && !nave.esInvulnerable()) {
                 if (!nave.contrataque) {
-                    nave.setVida(nave.getVida() - 1);
+                    nave.setVida(nave.getVida() - d.getDamage());
                     nave.activarInvunerabilidad();
                     Runnable action = new Runnable() {
                         @Override
