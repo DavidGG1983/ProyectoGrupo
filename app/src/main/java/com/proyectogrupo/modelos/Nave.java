@@ -19,6 +19,7 @@ public class Nave extends Modelo {
 
     double xInicial, yInicial;
     private static final String NAVE_MOVIENDOSE = "nave_moviendose";
+    private static final String NAVE_INVULNERABLE = "nave_invulnerable";
     Map<String, Sprite> sprites;
     Sprite sprite;
     final double velocidadInicial = 5;
@@ -46,8 +47,11 @@ public class Nave extends Modelo {
         this.contrataque = false;
         Sprite moviendose = new Sprite(CargadorGraficos.cargarDrawable(context,
                 R.drawable.animacion_nave), 50, 63, 4, 4, true);
+        Sprite invulnerable = new Sprite(CargadorGraficos.cargarDrawable(context,
+                R.drawable.animacion_nave_invulnerable), 50, 63, 4, 4, true);
         sprites = new HashMap<>();
         sprites.put(NAVE_MOVIENDOSE, moviendose);
+        sprites.put(NAVE_INVULNERABLE, invulnerable);
         this.sprite = moviendose;
     }
 
@@ -106,10 +110,12 @@ public class Nave extends Modelo {
     }
 
     public void activarInvunerabilidad() {
+        sprite = sprites.get(NAVE_INVULNERABLE);
         invulnerable = true;
     }
 
     public void desactivarInvunerabilidad() {
+        sprite = sprites.get(NAVE_MOVIENDOSE);
         invulnerable = false;
     }
 
