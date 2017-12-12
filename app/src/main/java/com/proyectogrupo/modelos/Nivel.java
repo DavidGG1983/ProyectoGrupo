@@ -9,6 +9,10 @@ import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
+import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
+import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
+import com.proyectogrupo.modelos.enemigos.Enemigo;
+import com.proyectogrupo.modelos.enemigos.EnemigoBasico;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
@@ -111,11 +115,21 @@ public class Nivel {
                     };
                     new Hilo(2000, action).start();
                     aBorrar = d;
+                    if (d instanceof DisparoEnemigoRalentizador) {
+                        nave.detenerNave();
+                        Runnable action2 = new Runnable() {
+                            @Override
+                            public void run() {
+                                nave.recuperarVelocidad();
+                            }
+                        };
+                        new Hilo(1000, action2).start();
+                    }
                     break;
-                } else {
-                    //Matar al enemigo que disparo
-                    enemigos.remove(d.enemigo);
                 }
+            } else {
+                //Matar al enemigo que disparo
+                enemigos.remove(d.enemigo);
             }
         }
         disparosEnemigos.remove(aBorrar);

@@ -1,9 +1,10 @@
-package com.proyectogrupo.modelos;
+package com.proyectogrupo.modelos.disparos;
 
 import android.content.Context;
 
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
+import com.proyectogrupo.modelos.enemigos.Enemigo;
 
 /**
  * Created by Daniel on 15/10/2017.

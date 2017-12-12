@@ -1,4 +1,4 @@
-package com.proyectogrupo.modelos;
+package com.proyectogrupo.modelos.enemigos;
 
 import android.content.Context;
 
@@ -6,18 +6,15 @@ import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.graficos.Sprite;
-import com.proyectogrupo.modelos.Enemigo;
+import com.proyectogrupo.modelos.Nivel;
+import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
+import com.proyectogrupo.modelos.disparos.DisparoEnemigoBasico;
 
 /**
  * Created by davidgarcia on 2/12/17.
  */
 
 public class EnemigoBasico extends Enemigo {
-
-    public final static String MOVER_DERECHA = "mover_derecha";
-    public final static String MOVER_IZQUIERDA = "mover_izquierda";
-    long tiempoDisparo;
-
 
     public EnemigoBasico(Context context, double x, double y) {
         super(context, x, y);

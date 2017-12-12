@@ -30,6 +30,7 @@ public class Nave extends Modelo {
     public int vida;
     boolean invulnerable;
     boolean contrataque;
+    boolean detenida;
 
 
     public Nave(Context context, int x, int y) {
@@ -58,8 +59,10 @@ public class Nave extends Modelo {
     }
 
     public void procesarOrdenes(float orientacionPadX, float orientacionPadY) {
-        velocidadXActual = mover(orientacionPadX);
-        velocidadYActual = mover(orientacionPadY);
+        if (!detenida) {
+            velocidadXActual = mover(orientacionPadX);
+            velocidadYActual = mover(orientacionPadY);
+        }
     }
 
     private double mover(float orientacionPad) {
@@ -82,8 +85,15 @@ public class Nave extends Modelo {
         velocidadNave /= divisor;
     }
 
+    public void detenerNave() {
+        this.velocidadXActual = 0;
+        this.velocidadYActual = 0;
+        detenida = true;
+    }
+
     public void recuperarVelocidad() {
         velocidadNave = velocidadInicial;
+        detenida = false;
     }
 
     public int getVida() {
@@ -109,7 +119,7 @@ public class Nave extends Modelo {
     public void desactivarContraataque() {
         contrataque = false;
     }
-    
+
     public boolean esInvulnerable() {
         return invulnerable;
     }

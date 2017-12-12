@@ -1,11 +1,12 @@
-package com.proyectogrupo.modelos;
+package com.proyectogrupo.modelos.enemigos;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.support.v7.graphics.Palette;
 
 import com.proyectogrupo.graficos.Sprite;
+import com.proyectogrupo.modelos.Modelo;
+import com.proyectogrupo.modelos.Nivel;
+import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,9 @@ public abstract class Enemigo extends Modelo {
     public double xAnterior;
     public Sprite sprite;
     public Map<String,Sprite> sprites = new HashMap<>();
+    public final static String MOVER_DERECHA = "mover_derecha";
+    public final static String MOVER_IZQUIERDA = "mover_izquierda";
+    long tiempoDisparo;
 
     public double velocidadX = 4;
     private double velocidadXCopia = velocidadX;
