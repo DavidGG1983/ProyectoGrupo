@@ -15,6 +15,7 @@ import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
 import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
+import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
@@ -123,7 +124,6 @@ public class Nivel {
                     new Hilo(2000, action).start();
 
                     if (d instanceof DisparoEnemigoRalentizador) {
-                        Log.d("DISPARO-RALENTIADOR","HOLA; ESTOY AQUI");
                         nave.detenerNave();
 
                         Runnable action2 = new Runnable() {
@@ -134,7 +134,10 @@ public class Nivel {
                         };
                         new Hilo(1000, action2).start();
                     }
-                    aBorrar = d;
+
+                    // si es lanzallamas no se eliminar el disparo
+                    if(!(d.enemigo instanceof EnemigoLanzallamas))
+                        aBorrar = d;
                     break;
                 } else {
                     //Matar al enemigo que disparo
@@ -201,8 +204,9 @@ public class Nivel {
             if(e instanceof Disparador){
                 Disparador disparador = (Disparador) e;
                 disparo = disparador.disparar(tiempo);
-                if (disparo != null)
+                if (disparo != null){
                     disparosEnemigos.add(disparo);
+                }
             }
         }
     }
@@ -563,8 +567,12 @@ public class Nivel {
                 return new Tile(CargadorGraficos.cargarDrawable(context,
                         R.drawable.blocka2), Tile.SOLIDO);
             case 'B':
-                this.enemigos.add(new EnemigoDisparador
-                        (context, xCentroAbajoTile, yCentroAbajoTile));
+                this.enemigos.add(new EnemigoDisparador(
+                        context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'L':
+                this.enemigos.add(new EnemigoLanzallamas(
+                        context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'Z':
                 this.enemigos.add(new EnemigoRalentizador(
