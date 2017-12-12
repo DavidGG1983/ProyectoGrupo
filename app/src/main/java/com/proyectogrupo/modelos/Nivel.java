@@ -106,7 +106,6 @@ public class Nivel {
     }
 
     private void colisionesDisparos() {
-        if(true) return;
 
         DisparoEnemigo aBorrar = null;
         for (DisparoEnemigo d : disparosEnemigos) {
@@ -121,9 +120,11 @@ public class Nivel {
                         }
                     };
                     new Hilo(2000, action).start();
-                    aBorrar = d;
+
                     if (d instanceof DisparoEnemigoRalentizador) {
+                        Log.d("DISPARO-RALENTIADOR","HOLA; ESTOY AQUI");
                         nave.detenerNave();
+
                         Runnable action2 = new Runnable() {
                             @Override
                             public void run() {
@@ -132,6 +133,7 @@ public class Nivel {
                         };
                         new Hilo(1000, action2).start();
                     }
+                    aBorrar = d;
                     break;
                 } else {
                     //Matar al enemigo que disparo

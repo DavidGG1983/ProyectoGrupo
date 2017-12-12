@@ -30,7 +30,7 @@ public class Nave extends Modelo {
     public int vida;
     boolean invulnerable;
     boolean contrataque;
-    boolean detenida;
+    boolean detenida = false;
 
 
     public Nave(Context context, int x, int y) {

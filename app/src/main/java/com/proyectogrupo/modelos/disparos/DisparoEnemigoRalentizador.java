@@ -13,7 +13,7 @@ import com.proyectogrupo.modelos.enemigos.Enemigo;
 public class DisparoEnemigoRalentizador extends DisparoEnemigo {
     public DisparoEnemigoRalentizador(Context context, double x, double y, boolean orientacion, Enemigo enemigo) {
         super(context, x, y, orientacion, 6, enemigo, 20, 26);
-        imagen = CargadorGraficos.cargarDrawable(context, R.drawable.disparo_enemigo);
+        imagen = CargadorGraficos.cargarDrawable(context, R.mipmap.ic_launcher);
     }
 
     @Override
