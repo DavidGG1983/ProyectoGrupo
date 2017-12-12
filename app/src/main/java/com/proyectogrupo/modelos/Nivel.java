@@ -10,11 +10,13 @@ import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
+import com.proyectogrupo.modelos.disparos.DisparoBomba;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
 import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
+import com.proyectogrupo.modelos.enemigos.EnemigoLanzaBombas;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
@@ -34,6 +36,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.RunnableFuture;
 
 public class Nivel {
     public static Dificultad dificultad;
@@ -110,6 +113,8 @@ public class Nivel {
 
         DisparoEnemigo aBorrar = null;
         for (DisparoEnemigo d : disparosEnemigos) {
+            if ((d instanceof DisparoBomba && !((DisparoBomba) d).explotando))
+                continue;
             if (d.colisiona(nave)) {
                 if (!nave.contrataque) {
                     nave.setVida(nave.getVida() - 1);
@@ -123,7 +128,6 @@ public class Nivel {
                     new Hilo(2000, action).start();
 
                     if (d instanceof DisparoEnemigoRalentizador) {
-                        Log.d("DISPARO-RALENTIADOR","HOLA; ESTOY AQUI");
                         nave.detenerNave();
 
                         Runnable action2 = new Runnable() {
@@ -195,15 +199,37 @@ public class Nivel {
     }
 
     public void comprobarDisparos() {
-        DisparoEnemigo disparo = null;
         long tiempo = System.currentTimeMillis();
         for (Enemigo e : enemigos) {
-            if(e instanceof Disparador){
+            if (e instanceof Disparador) {
                 Disparador disparador = (Disparador) e;
-                disparo = disparador.disparar(tiempo);
+                final DisparoEnemigo disparo = disparador.disparar(tiempo);
+                if (disparo instanceof DisparoBomba) {
+                    Runnable action = new Runnable() {
+                        @Override
+                        public void run() {
+                            ((DisparoBomba) disparo).explotando = true;
+                        }
+                    };
+                    new Hilo(2000, action).start();
+                }
                 if (disparo != null)
                     disparosEnemigos.add(disparo);
             }
+        }
+    }
+
+    private void explotar(DisparoEnemigo disparo) {
+        if (disparo.colisiona(nave)) {
+            nave.setVida(nave.getVida() - 1);
+            nave.activarInvunerabilidad();
+            Runnable action = new Runnable() {
+                @Override
+                public void run() {
+                    nave.desactivarInvunerabilidad();
+                }
+            };
+            new Hilo(2000, action).start();
         }
     }
 
@@ -568,6 +594,10 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'Z':
                 this.enemigos.add(new EnemigoRalentizador(
+                        context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'O':
+                this.enemigos.add(new EnemigoLanzaBombas(
                         context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'H':
