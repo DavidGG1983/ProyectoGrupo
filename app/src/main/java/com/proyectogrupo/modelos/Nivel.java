@@ -12,8 +12,9 @@ import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
+import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
-import com.proyectogrupo.modelos.enemigos.EnemigoBasico;
+import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
@@ -106,6 +107,7 @@ public class Nivel {
     }
 
     private void colisionesDisparos() {
+
         DisparoEnemigo aBorrar = null;
         for (DisparoEnemigo d : disparosEnemigos) {
             if (d.colisiona(nave)) {
@@ -119,9 +121,11 @@ public class Nivel {
                         }
                     };
                     new Hilo(2000, action).start();
-                    aBorrar = d;
+
                     if (d instanceof DisparoEnemigoRalentizador) {
+                        Log.d("DISPARO-RALENTIADOR","HOLA; ESTOY AQUI");
                         nave.detenerNave();
+
                         Runnable action2 = new Runnable() {
                             @Override
                             public void run() {
@@ -130,6 +134,7 @@ public class Nivel {
                         };
                         new Hilo(1000, action2).start();
                     }
+                    aBorrar = d;
                     break;
                 } else {
                     //Matar al enemigo que disparo
@@ -193,9 +198,12 @@ public class Nivel {
         DisparoEnemigo disparo = null;
         long tiempo = System.currentTimeMillis();
         for (Enemigo e : enemigos) {
-            disparo = e.disparar(tiempo);
-            if (disparo != null)
-                disparosEnemigos.add(disparo);
+            if(e instanceof Disparador){
+                Disparador disparador = (Disparador) e;
+                disparo = disparador.disparar(tiempo);
+                if (disparo != null)
+                    disparosEnemigos.add(disparo);
+            }
         }
     }
 
@@ -555,7 +563,7 @@ public class Nivel {
                 return new Tile(CargadorGraficos.cargarDrawable(context,
                         R.drawable.blocka2), Tile.SOLIDO);
             case 'B':
-                this.enemigos.add(new EnemigoBasico
+                this.enemigos.add(new EnemigoDisparador
                         (context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'Z':

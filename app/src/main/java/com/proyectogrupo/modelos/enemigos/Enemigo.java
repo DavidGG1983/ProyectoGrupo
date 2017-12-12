@@ -7,7 +7,6 @@ import com.proyectogrupo.GameView;
 import com.proyectogrupo.graficos.Sprite;
 import com.proyectogrupo.modelos.Modelo;
 import com.proyectogrupo.modelos.Nivel;
-import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +54,6 @@ public abstract class Enemigo extends Modelo {
     }
 
     public abstract void inicializar();
-    public abstract DisparoEnemigo disparar(long milisegundos);
 
     public void dibujar(Canvas canvas){
         this.sprite.dibujarSprite(canvas, (int)x, (int)y - Nivel.scrollEjeY,true);
