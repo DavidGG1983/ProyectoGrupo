@@ -117,36 +117,52 @@ public class Nivel {
                 continue;
             if (d.colisiona(nave)) {
                 if (!nave.contrataque) {
-                    nave.setVida(nave.getVida() - 1);
-                    nave.activarInvunerabilidad();
-                    Runnable action = new Runnable() {
-                        @Override
-                        public void run() {
-                            nave.desactivarInvunerabilidad();
-                        }
-                    };
-                    new Hilo(2000, action).start();
-
-                    if (d instanceof DisparoEnemigoRalentizador) {
-                        nave.detenerNave();
-
-                        Runnable action2 = new Runnable() {
-                            @Override
-                            public void run() {
-                                nave.recuperarVelocidad();
-                            }
-                        };
-                        new Hilo(1000, action2).start();
-                    }
-                    aBorrar = d;
+                    aBorrar = colisionDisparoNave(d);
                     break;
                 } else {
                     //Matar al enemigo que disparo
                     enemigos.remove(d.enemigo);
                 }
+            } else {
+                if (d instanceof DisparoBomba) {
+                    DisparoBomba disparoBomba = (DisparoBomba) d;
+
+                    if (Math.abs(nave.x - disparoBomba.x) <= DisparoBomba.RADIO &&
+                            Math.abs(nave.y - disparoBomba.y) <= DisparoBomba.RADIO) {
+                        aBorrar = colisionDisparoNave(disparoBomba);
+                        break;
+                    }
+                }
             }
         }
         disparosEnemigos.remove(aBorrar);
+    }
+
+    private DisparoEnemigo colisionDisparoNave(DisparoEnemigo d) {
+        DisparoEnemigo aBorrar;
+        nave.setVida(nave.getVida() - 1);
+        nave.activarInvunerabilidad();
+        Runnable action = new Runnable() {
+            @Override
+            public void run() {
+                nave.desactivarInvunerabilidad();
+            }
+        };
+        new Hilo(2000, action).start();
+
+        if (d instanceof DisparoEnemigoRalentizador) {
+            nave.detenerNave();
+
+            Runnable action2 = new Runnable() {
+                @Override
+                public void run() {
+                    nave.recuperarVelocidad();
+                }
+            };
+            new Hilo(1000, action2).start();
+        }
+        aBorrar = d;
+        return aBorrar;
     }
 
     private void colisionaEnemigos() {

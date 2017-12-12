@@ -11,6 +11,7 @@ import com.proyectogrupo.modelos.enemigos.Enemigo;
  */
 
 public class DisparoBomba extends DisparoEnemigo {
+    public static final double RADIO = 20;
     public boolean explotando;
 
     public DisparoBomba(Context context, double x, double y, boolean orientacion, Enemigo enemigo) {
