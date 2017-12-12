@@ -132,10 +132,10 @@ public class Nivel {
                         new Hilo(1000, action2).start();
                     }
                     break;
+                } else {
+                    //Matar al enemigo que disparo
+                    enemigos.remove(d.enemigo);
                 }
-            } else {
-                //Matar al enemigo que disparo
-                enemigos.remove(d.enemigo);
             }
         }
         disparosEnemigos.remove(aBorrar);
@@ -612,7 +612,7 @@ public class Nivel {
             }
 
         if (nave.y < minPosNaveY) {
-            nave.puntos += (minPosNaveY - nave.y) / 4;
+            nave.sumarPuntos((int) ((minPosNaveY - nave.y) / 4));
             minPosNaveY = nave.y;
         }
     }
@@ -637,4 +637,3 @@ public class Nivel {
         }
     }
 }
-

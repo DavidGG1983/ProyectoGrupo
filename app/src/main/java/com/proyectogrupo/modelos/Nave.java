@@ -145,7 +145,7 @@ public class Nave extends Modelo {
     }
 
     public void sumarPuntos(int puntos) {
-        this.puntos = puntos * multiplicadorPuntos;
+        this.puntos += puntos * multiplicadorPuntos;
     }
 
     public int getPuntos() {

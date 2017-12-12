@@ -31,6 +31,6 @@ public class CajaPuntosExtra extends PowerUp {
             }
         };
 
-        new Hilo(10000, action);
+        new Hilo(10000, action).start();
     }
 }
