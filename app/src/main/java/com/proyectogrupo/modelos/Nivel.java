@@ -14,6 +14,7 @@ import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoBasico;
+import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
@@ -558,6 +559,10 @@ public class Nivel {
             case 'B':
                 this.enemigos.add(new EnemigoBasico
                         (context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'Z':
+                this.enemigos.add(new EnemigoRalentizador(
+                        context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'H':
                 powerups.add(new CajaVidaExtra(context, xCentroAbajoTile, yCentroAbajoTile));

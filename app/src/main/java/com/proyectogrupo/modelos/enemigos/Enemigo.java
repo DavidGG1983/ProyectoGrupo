@@ -3,6 +3,7 @@ package com.proyectogrupo.modelos.enemigos;
 import android.content.Context;
 import android.graphics.Canvas;
 
+import com.proyectogrupo.GameView;
 import com.proyectogrupo.graficos.Sprite;
 import com.proyectogrupo.modelos.Modelo;
 import com.proyectogrupo.modelos.Nivel;
@@ -36,11 +37,22 @@ public abstract class Enemigo extends Modelo {
         this.inicializar();
     }
 
-    public void girar(){
-
+    public void girar() {
+        this.velocidadX *= -1;
+        if (sprite == sprites.get(MOVER_DERECHA))
+            sprite = sprites.get(MOVER_IZQUIERDA);
+        else
+            sprite = sprites.get(MOVER_DERECHA);
     }
 
-    public abstract void mover();
+    public void mover() {
+        this.xAnterior = x;
+        this.x += velocidadX;
+        if (x > GameView.pantallaAncho)
+            x = 0;
+        if (x < 0)
+            x = GameView.pantallaAncho;
+    }
 
     public abstract void inicializar();
     public abstract DisparoEnemigo disparar(long milisegundos);
@@ -49,8 +61,9 @@ public abstract class Enemigo extends Modelo {
         this.sprite.dibujarSprite(canvas, (int)x, (int)y - Nivel.scrollEjeY,true);
     }
 
-    public void actualizar (long tiempo){
 
+    public void actualizar(long tiempo) {
+        sprite.actualizar(tiempo);
     }
 
     @Override
@@ -65,4 +78,5 @@ public abstract class Enemigo extends Modelo {
     public void reducirVelocidad(int i) {
         this.velocidadX -= i;
     }
+
 }

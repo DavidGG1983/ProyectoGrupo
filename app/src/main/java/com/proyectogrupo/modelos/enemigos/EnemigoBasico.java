@@ -30,15 +30,6 @@ public class EnemigoBasico extends Enemigo {
         this.sprite = moverDerecha;
     }
 
-    public void mover() {
-        this.xAnterior = x;
-        this.x += velocidadX;
-        if (x > GameView.pantallaAncho)
-            x = 0;
-        if (x < 0)
-            x = GameView.pantallaAncho;
-    }
-
     @Override
     public DisparoEnemigo disparar(long milisegundos) {
         if (milisegundos - tiempoDisparo > 4000 + Math.random() * 4000) {
@@ -46,17 +37,5 @@ public class EnemigoBasico extends Enemigo {
             return new DisparoEnemigoBasico(context, x, y, sprite.equals(sprites.get(MOVER_DERECHA)), this);
         }
         return null;
-    }
-
-    public void actualizar(long tiempo) {
-        sprite.actualizar(tiempo);
-    }
-
-    public void girar() {
-        this.velocidadX *= -1;
-        if (sprite == sprites.get(MOVER_DERECHA))
-            sprite = sprites.get(MOVER_IZQUIERDA);
-        else
-            sprite = sprites.get(MOVER_DERECHA);
     }
 }
