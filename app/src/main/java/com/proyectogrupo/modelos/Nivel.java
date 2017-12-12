@@ -298,7 +298,7 @@ public class Nivel {
 
                 if (disparo != null)
                     disparosEnemigos.add(disparo);
-                }
+
             }
         }
 
