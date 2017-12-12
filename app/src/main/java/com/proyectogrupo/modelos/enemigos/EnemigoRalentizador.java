@@ -5,16 +5,14 @@ import android.content.Context;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.graficos.Sprite;
-import com.proyectogrupo.modelos.Nivel;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
-import com.proyectogrupo.modelos.disparos.DisparoEnemigoBasico;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
 
 /**
  * Created by Daniel on 12/12/2017.
  */
 
-public class EnemigoRalentizador extends Enemigo {
+public class EnemigoRalentizador extends Enemigo implements Disparador{
 
     public EnemigoRalentizador(Context context, double x, double y) {
         super(context, x, y);
