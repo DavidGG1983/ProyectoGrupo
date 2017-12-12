@@ -27,6 +27,12 @@ public abstract class Enemigo extends Modelo {
     public double velocidadX = 4;
     private double velocidadXCopia = velocidadX;
 
+    public Enemigo(Context context, double x, double y, int altura, int ancho) {
+        this(context, x, y);
+        this.altura = altura;
+        this.ancho = ancho;
+    }
+
     public Enemigo(Context context, double x, double y) {
         super(context, 0, 0, 40, 40);
 
