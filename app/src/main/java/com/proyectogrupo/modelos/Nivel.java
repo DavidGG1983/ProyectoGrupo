@@ -36,7 +36,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.RunnableFuture;
 
 public class Nivel {
     public static Dificultad dificultad;
@@ -130,6 +129,7 @@ public class Nivel {
                     if (Math.abs(nave.x - disparoBomba.x) <= DisparoBomba.RADIO &&
                             Math.abs(nave.y - disparoBomba.y) <= DisparoBomba.RADIO) {
                         aBorrar = colisionDisparoNave(disparoBomba);
+                        Log.d("EXPLOTANDO","BOMBA EXPLOTA");
                         break;
                     }
                 }
@@ -220,15 +220,31 @@ public class Nivel {
             if (e instanceof Disparador) {
                 Disparador disparador = (Disparador) e;
                 final DisparoEnemigo disparo = disparador.disparar(tiempo);
+
                 if (disparo instanceof DisparoBomba) {
                     Runnable action = new Runnable() {
                         @Override
                         public void run() {
-                            ((DisparoBomba) disparo).explotando = true;
+                            DisparoBomba disp = ((DisparoBomba) disparo);
+                            disp.explotando = true;
+                            disp.imagen = CargadorGraficos.cargarDrawable(context,R.drawable.explosion_bomba);
+                            disp.altura = disp.altura +5;
+                            disp.ancho =disp.ancho + 10;
                         }
                     };
+
+                    Runnable timerBomba = new Runnable() {
+                        @Override
+                        public void run() {
+                            disparosEnemigos.remove(disparo);
+                        }
+                    };
+
                     new Hilo(2000, action).start();
+
+                    new Hilo(4000, timerBomba).start();
                 }
+
                 if (disparo != null)
                     disparosEnemigos.add(disparo);
             }
