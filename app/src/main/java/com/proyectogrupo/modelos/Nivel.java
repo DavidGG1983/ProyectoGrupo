@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.Log;
 
+import com.proyectogrupo.Dificultad;
 import com.proyectogrupo.GameView;
 import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
@@ -33,12 +34,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Nivel {
+    public static Dificultad dificultad;
     public static int scrollEjeY = 0;
 
     private Tile[][] mapaTiles;
     public List<PowerUp> powerups = new ArrayList<>();
     private Context context = null;
-    private int numeroNivel;
+    public static int numeroNivel;
     private Fondo fondo;
     public Nave nave;
     public float orientacionPadX = 0;
@@ -55,11 +57,13 @@ public class Nivel {
 
     private double minPosNaveY;
 
-    public Nivel(Context context, int numeroNivel) throws Exception {
+    private long tiempoUltimoMovimientoNave = -1;
+    private double ultimaPosYNave = -1;
+
+    public Nivel(Context context) throws Exception {
         inicializado = false;
 
         this.context = context;
-        this.numeroNivel = numeroNivel;
         inicializar();
 
         inicializado = true;
@@ -436,6 +440,8 @@ public class Nivel {
             for (PowerUp p : powerups)
                 if (p instanceof MonedaRecolectable)
                     p.actualizar(tiempo);
+
+            comprobarMaxTiempoQuieta();
         }
     }
 
@@ -606,6 +612,26 @@ public class Nivel {
         if (nave.y < minPosNaveY) {
             nave.puntos += (minPosNaveY - nave.y) / 4;
             minPosNaveY = nave.y;
+        }
+    }
+
+    private void comprobarMaxTiempoQuieta() {
+        if (ultimaPosYNave > -1) {
+            if (nave.y != ultimaPosYNave) {
+                ultimaPosYNave = nave.y;
+                tiempoUltimoMovimientoNave = System.currentTimeMillis();
+            }
+        } else {
+            if (nave.y != nave.yInicial) {
+                ultimaPosYNave = nave.y;
+                tiempoUltimoMovimientoNave = System.currentTimeMillis();
+            }
+        }
+
+        if (tiempoUltimoMovimientoNave > -1) {
+            if (System.currentTimeMillis() - tiempoUltimoMovimientoNave >= (dificultad.getMaxSegundosQuieto() * 1000)) {
+                nave.vida = 0;
+            }
         }
     }
 }
