@@ -12,10 +12,12 @@ import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
+import com.proyectogrupo.modelos.disparos.DisparoHelicoptero;
 import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
+import com.proyectogrupo.modelos.enemigos.Helicoptero;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
@@ -45,13 +47,15 @@ public class Nivel {
     private Context context = null;
     public static int numeroNivel;
     private Fondo fondo;
-    static public Nave nave;
+    public Nave nave;
     public float orientacionPadX = 0;
     public float orientacionPadY = 0;
     public List<Enemigo> enemigos = new ArrayList<>();
+    private List<Helicoptero> helicopteros = new ArrayList<>();
     public List<Integer> coloresCajas = new ArrayList<>();
     private Enemigo enemigoColorCaja;
     private List<DisparoEnemigo> disparosEnemigos = new ArrayList<>();
+    private List<DisparoHelicoptero> disparosHelicopteros = new ArrayList<>();
 
     private MarcadorPuntos marcadorPuntos;
 
@@ -101,10 +105,25 @@ public class Nivel {
         this.moverNaveVertical(tileXnaveIzquierda, tileXnaveDerecha, tileYnaveInferior,
                 tileYnaveCentro, tileYnaveSuperior);
         this.moverEnemigos();
+        this.moverHelicopteros();
         this.moverDisparos();
         this.colisionesPowerUps();
         this.colisionaEnemigos();
         this.colisionesDisparos();
+    }
+
+    private void moverHelicopteros() {
+        Helicoptero helicopteroAEliminar = null;
+        for (Helicoptero helicoptero : helicopteros) {
+            if (helicoptero.x - helicoptero.ancho / 2 <= 0) {
+                helicopteroAEliminar = helicoptero;
+                break;
+            }
+        }
+
+        if (helicopteroAEliminar != null) {
+            helicopteros.remove(helicopteroAEliminar);
+        }
     }
 
     private void colisionesDisparos() {
@@ -208,6 +227,12 @@ public class Nivel {
                     disparosEnemigos.add(disparo);
                 }
             }
+        }
+
+        for (Helicoptero helicoptero : helicopteros) {
+            DisparoHelicoptero disparoHelicoptero = helicoptero.disparar(tiempo);
+            if (disparoHelicoptero != null)
+                disparosHelicopteros.add(disparoHelicoptero);
         }
     }
 
@@ -453,7 +478,10 @@ public class Nivel {
             for (PowerUp p : powerups)
                 if (p instanceof MonedaRecolectable)
                     p.actualizar(tiempo);
-
+            for (Helicoptero helicoptero : helicopteros)
+                helicoptero.actualizar(tiempo);
+            for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
+                disparoHelicoptero.actualizar(tiempo);
             comprobarMaxTiempoQuieta();
         }
     }
@@ -470,6 +498,10 @@ public class Nivel {
                 p.dibujar(canvas);
             for (DisparoEnemigo d : disparosEnemigos)
                 d.dibujar(canvas);
+            for (Helicoptero helicoptero : helicopteros)
+                helicoptero.dibujar(canvas);
+            for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
+                disparoHelicoptero.dibujar(canvas);
             marcadorPuntos.dibujar(canvas);
         }
     }
@@ -577,6 +609,11 @@ public class Nivel {
             case 'Z':
                 this.enemigos.add(new EnemigoRalentizador(
                         context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'K':
+                this.helicopteros.add(new Helicoptero(
+                        context, xCentroAbajoTile, yCentroAbajoTile
+                ));
                 return new Tile(null, Tile.PASABLE);
             case 'H':
                 powerups.add(new CajaVidaExtra(context, xCentroAbajoTile, yCentroAbajoTile));
