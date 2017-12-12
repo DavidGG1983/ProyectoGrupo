@@ -10,6 +10,7 @@ import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
+import com.proyectogrupo.modelos.disparos.DisparoBomba;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
 import com.proyectogrupo.modelos.disparos.DisparoHelicoptero;
@@ -17,6 +18,7 @@ import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
+import com.proyectogrupo.modelos.enemigos.EnemigoLanzaBombas;
 import com.proyectogrupo.modelos.enemigos.Helicoptero;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.powerups.CajaAleatoria;
@@ -124,47 +126,94 @@ public class Nivel {
         if (helicopteroAEliminar != null) {
             helicopteros.remove(helicopteroAEliminar);
         }
+
+        DisparoHelicoptero disparoABorrar = null;
+
+        for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
+            if (disparoHelicoptero.y - Nivel.scrollEjeY >= GameView.pantallaAlto) {
+                disparoABorrar = disparoHelicoptero;
+            }
+        }
+
+        if (disparoABorrar != null) {
+            disparosHelicopteros.remove(disparoABorrar);
+        }
     }
 
     private void colisionesDisparos() {
 
         DisparoEnemigo aBorrar = null;
         for (DisparoEnemigo d : disparosEnemigos) {
-            if (d.colisiona(nave) && !nave.esInvulnerable()) {
+            if ((d instanceof DisparoBomba && !((DisparoBomba) d).explotando))
+                continue;
+            if (d.colisiona(nave)) {
                 if (!nave.contrataque) {
-                    nave.setVida(nave.getVida() - d.getDamage());
-                    nave.activarInvunerabilidad();
-                    Runnable action = new Runnable() {
-                        @Override
-                        public void run() {
-                            nave.desactivarInvunerabilidad();
-                        }
-                    };
-                    new Hilo(2000, action).start();
-
-                    if (d instanceof DisparoEnemigoRalentizador) {
-                        nave.detenerNave();
-
-                        Runnable action2 = new Runnable() {
-                            @Override
-                            public void run() {
-                                nave.recuperarVelocidad();
-                            }
-                        };
-                        new Hilo(1000, action2).start();
-                    }
-
-                    // si es lanzallamas no se eliminar el disparo
-                    if(!(d.enemigo instanceof EnemigoLanzallamas))
-                        aBorrar = d;
+                    aBorrar = colisionDisparoNave(d);
                     break;
                 } else {
                     //Matar al enemigo que disparo
                     enemigos.remove(d.enemigo);
                 }
+            } else {
+                if (d instanceof DisparoBomba) {
+                    DisparoBomba disparoBomba = (DisparoBomba) d;
+
+                    if (Math.abs(nave.x - disparoBomba.x) <= DisparoBomba.RADIO &&
+                            Math.abs(nave.y - disparoBomba.y) <= DisparoBomba.RADIO) {
+                        aBorrar = colisionDisparoNave(disparoBomba);
+                        Log.d("EXPLOTANDO","BOMBA EXPLOTA");
+                        break;
+                    }
+                }
             }
         }
         disparosEnemigos.remove(aBorrar);
+
+        DisparoHelicoptero disparoHelicopteroBorrar = null;
+        for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
+            if (disparoHelicoptero.colisiona(nave)) {
+                nave.setVida(nave.getVida() - 1);
+                nave.activarInvunerabilidad();
+                Runnable action = new Runnable() {
+                    @Override
+                    public void run() {
+                        nave.desactivarInvunerabilidad();
+                    }
+                };
+                new Hilo(2000, action).start();
+                disparoHelicopteroBorrar = disparoHelicoptero;
+            }
+        }
+
+        if (disparoHelicopteroBorrar != null)
+            disparosHelicopteros.remove(disparoHelicopteroBorrar);
+    }
+
+    private DisparoEnemigo colisionDisparoNave(DisparoEnemigo d) {
+        DisparoEnemigo aBorrar;
+        nave.setVida(nave.getVida() - d.getDamage());
+        nave.activarInvunerabilidad();
+        Runnable action = new Runnable() {
+            @Override
+            public void run() {
+                nave.desactivarInvunerabilidad();
+            }
+        };
+        new Hilo(2000, action).start();
+
+        if (d instanceof DisparoEnemigoRalentizador) {
+            nave.detenerNave();
+
+            Runnable action2 = new Runnable() {
+                @Override
+                public void run() {
+                    nave.recuperarVelocidad();
+                }
+            };
+            new Hilo(1000, action2).start();
+        }
+        aBorrar = d;
+        return aBorrar;
     }
 
     private void colisionaEnemigos() {
@@ -217,13 +266,37 @@ public class Nivel {
     }
 
     public void comprobarDisparos() {
-        DisparoEnemigo disparo = null;
         long tiempo = System.currentTimeMillis();
         for (Enemigo e : enemigos) {
-            if(e instanceof Disparador){
+            if (e instanceof Disparador) {
                 Disparador disparador = (Disparador) e;
-                disparo = disparador.disparar(tiempo);
-                if (disparo != null){
+                final DisparoEnemigo disparo = disparador.disparar(tiempo);
+
+                if (disparo instanceof DisparoBomba) {
+                    Runnable action = new Runnable() {
+                        @Override
+                        public void run() {
+                            DisparoBomba disp = ((DisparoBomba) disparo);
+                            disp.explotando = true;
+                            disp.imagen = CargadorGraficos.cargarDrawable(context,R.drawable.explosion_bomba);
+                            disp.altura = disp.altura +5;
+                            disp.ancho =disp.ancho + 10;
+                        }
+                    };
+
+                    Runnable timerBomba = new Runnable() {
+                        @Override
+                        public void run() {
+                            disparosEnemigos.remove(disparo);
+                        }
+                    };
+
+                    new Hilo(2000, action).start();
+
+                    new Hilo(4000, timerBomba).start();
+                }
+
+                if (disparo != null)
                     disparosEnemigos.add(disparo);
                 }
             }
@@ -233,6 +306,20 @@ public class Nivel {
             DisparoHelicoptero disparoHelicoptero = helicoptero.disparar(tiempo);
             if (disparoHelicoptero != null)
                 disparosHelicopteros.add(disparoHelicoptero);
+        }
+    }
+
+    private void explotar(DisparoEnemigo disparo) {
+        if (disparo.colisiona(nave)) {
+            nave.setVida(nave.getVida() - 1);
+            nave.activarInvunerabilidad();
+            Runnable action = new Runnable() {
+                @Override
+                public void run() {
+                    nave.desactivarInvunerabilidad();
+                }
+            };
+            new Hilo(2000, action).start();
         }
     }
 
@@ -610,6 +697,9 @@ public class Nivel {
                 this.enemigos.add(new EnemigoRalentizador(
                         context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
+            case 'O':
+                this.enemigos.add(new EnemigoLanzaBombas(
+                        context, xCentroAbajoTile, yCentroAbajoTile));
             case 'K':
                 this.helicopteros.add(new Helicoptero(
                         context, xCentroAbajoTile, yCentroAbajoTile
