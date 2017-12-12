@@ -3,6 +3,7 @@ package com.proyectogrupo.modelos;
 import android.content.Context;
 import android.graphics.Canvas;
 
+import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.graficos.Sprite;
@@ -38,7 +39,7 @@ public class Nave extends Modelo {
         this.y = y - this.altura / 2;
         this.xInicial = x;
         this.yInicial = this.y;
-        this.vida = 3;
+        this.vida = GameView.VIDAS;
         this.shield = 0;
         this.velocidadNave = velocidadInicial;
         this.invulnerable = false;

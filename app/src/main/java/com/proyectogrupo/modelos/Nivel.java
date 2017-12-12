@@ -10,14 +10,17 @@ import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
+import com.proyectogrupo.modelos.disparos.DisparoBomba;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
 import com.proyectogrupo.modelos.disparos.DisparoHelicoptero;
 import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
-import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
+import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
+import com.proyectogrupo.modelos.enemigos.EnemigoLanzaBombas;
 import com.proyectogrupo.modelos.enemigos.Helicoptero;
+import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
@@ -145,33 +148,22 @@ public class Nivel {
                 continue;
             if (d.colisiona(nave)) {
                 if (!nave.contrataque) {
-                    nave.setVida(nave.getVida() - 1);
-                    nave.activarInvunerabilidad();
-                    Runnable action = new Runnable() {
-                        @Override
-                        public void run() {
-                            nave.desactivarInvunerabilidad();
-                        }
-                    };
-                    new Hilo(2000, action).start();
-
-                    if (d instanceof DisparoEnemigoRalentizador) {
-                        Log.d("DISPARO-RALENTIADOR","HOLA; ESTOY AQUI");
-                        nave.detenerNave();
-
-                        Runnable action2 = new Runnable() {
-                            @Override
-                            public void run() {
-                                nave.recuperarVelocidad();
-                            }
-                        };
-                        new Hilo(1000, action2).start();
-                    }
-                    aBorrar = d;
+                    aBorrar = colisionDisparoNave(d);
                     break;
                 } else {
                     //Matar al enemigo que disparo
                     enemigos.remove(d.enemigo);
+                }
+            } else {
+                if (d instanceof DisparoBomba) {
+                    DisparoBomba disparoBomba = (DisparoBomba) d;
+
+                    if (Math.abs(nave.x - disparoBomba.x) <= DisparoBomba.RADIO &&
+                            Math.abs(nave.y - disparoBomba.y) <= DisparoBomba.RADIO) {
+                        aBorrar = colisionDisparoNave(disparoBomba);
+                        Log.d("EXPLOTANDO","BOMBA EXPLOTA");
+                        break;
+                    }
                 }
             }
         }
@@ -195,6 +187,33 @@ public class Nivel {
 
         if (disparoHelicopteroBorrar != null)
             disparosHelicopteros.remove(disparoHelicopteroBorrar);
+    }
+
+    private DisparoEnemigo colisionDisparoNave(DisparoEnemigo d) {
+        DisparoEnemigo aBorrar;
+        nave.setVida(nave.getVida() - d.getDamage());
+        nave.activarInvunerabilidad();
+        Runnable action = new Runnable() {
+            @Override
+            public void run() {
+                nave.desactivarInvunerabilidad();
+            }
+        };
+        new Hilo(2000, action).start();
+
+        if (d instanceof DisparoEnemigoRalentizador) {
+            nave.detenerNave();
+
+            Runnable action2 = new Runnable() {
+                @Override
+                public void run() {
+                    nave.recuperarVelocidad();
+                }
+            };
+            new Hilo(1000, action2).start();
+        }
+        aBorrar = d;
+        return aBorrar;
     }
 
     private void colisionaEnemigos() {
@@ -279,7 +298,7 @@ public class Nivel {
 
                 if (disparo != null)
                     disparosEnemigos.add(disparo);
-
+                }
             }
         }
 
