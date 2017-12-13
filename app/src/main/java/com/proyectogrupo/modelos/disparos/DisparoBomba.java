@@ -15,11 +15,7 @@ public class DisparoBomba extends DisparoEnemigo {
     public boolean explotando;
 
     public DisparoBomba(Context context, double x, double y, boolean orientacion, Enemigo enemigo) {
-        super(context, x, y, orientacion, 6, enemigo, 20, 26);
-        if (orientacion)
-            x -= 26;
-        else
-            x += 26;
+        super(context, x, y, orientacion, 0, enemigo, 20, 26);
         imagen = CargadorGraficos.cargarDrawable(context, R.drawable.bomba);
         this.explotando = false;
     }

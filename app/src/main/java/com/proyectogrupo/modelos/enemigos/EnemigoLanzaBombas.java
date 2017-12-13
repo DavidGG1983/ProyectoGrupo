@@ -25,17 +25,9 @@ public class EnemigoLanzaBombas extends Enemigo implements Disparador {
 
     @Override
     public DisparoEnemigo disparar(long milisegundos) {
-        if (milisegundos - tiempoDisparo > 4000 + Math.random() * 4000) {
+        if (milisegundos - tiempoDisparo > 2000 + Math.random() * 2000) {
             tiempoDisparo = System.currentTimeMillis();
-            Random rdn = new Random();
-
-            double xActual = 0.0;
-            if (sprite.equals(sprites.get(MOVER_DERECHA))) {
-                xActual = ThreadLocalRandom.current().nextDouble(x, GameView.pantallaAncho);
-            } else {
-                xActual = ThreadLocalRandom.current().nextDouble(0, x);
-            }
-            return new DisparoBomba(context, xActual, y, sprite.equals(sprites.get(MOVER_DERECHA)), this);
+            return new DisparoBomba(context, x, y, sprite.equals(sprites.get(MOVER_DERECHA)), this);
         }
         return null;
     }
