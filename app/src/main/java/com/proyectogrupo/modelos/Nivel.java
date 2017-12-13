@@ -12,6 +12,7 @@ import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.modelos.disparos.DisparoBomba;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
+import com.proyectogrupo.modelos.disparos.DisparoEnemigoLanzallamas;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
 import com.proyectogrupo.modelos.disparos.DisparoHelicoptero;
 import com.proyectogrupo.modelos.enemigos.Disparador;
@@ -377,6 +378,7 @@ public class Nivel {
         }
 
         for (DisparoEnemigo d : aBorrar)
+            if(! (d instanceof DisparoEnemigoLanzallamas))
             disparosEnemigos.remove(d);
     }
 
@@ -569,6 +571,10 @@ public class Nivel {
                 helicoptero.actualizar(tiempo);
             for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
                 disparoHelicoptero.actualizar(tiempo);
+            for(DisparoEnemigo disparoEnemigo : disparosEnemigos) {
+                disparoEnemigo.moverAutomaticamente();
+                disparoEnemigo.actualizar(tiempo);
+            }
             comprobarMaxTiempoQuieta();
         }
     }
