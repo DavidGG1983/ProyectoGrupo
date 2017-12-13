@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.proyectogrupo.modelos.Nivel;
+
 public class MainActivity extends Activity {
     GameView gameView = null;
 
@@ -24,10 +26,16 @@ public class MainActivity extends Activity {
     }
 
     public void infinitoClicked(View view) {
-        // TODO: Añadir modo infinito
+        Nivel.infinito = true;
+        startActivity(new Intent(this, DificultadActivity.class));
     }
 
     public void nivelesClicked(View view) {
+        Nivel.infinito = false;
+        seleccionNivel();
+    }
+
+    private void seleccionNivel() {
         startActivity(new Intent(this, SeleccionNivelActivity.class));
     }
 }
