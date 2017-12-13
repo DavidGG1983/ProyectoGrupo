@@ -26,11 +26,17 @@ public class Teletransporte extends PowerUp {
     public void efecto(Nivel nivel) {
         int avanzar;
         do {
-            avanzar = (int) (Math.random() * 5 + 4);  // genera un avance entre 4 y 9
+            avanzar = (int) (Math.random() * 5 + 4);
         }
-        while(nivel.nave.y - avanzar <= 0  //mientras
+        while(nivel.nave.y - (avanzar * Tile.altura) <= 0
                 || nivel.getTile((int)nivel.nave.x/Tile.ancho,
-                (int)(nivel.nave.y - avanzar)/Tile.altura) != Tile.PASABLE);
-        nivel.nave.y -= avanzar * Tile.ancho;
+                (int)(nivel.nave.y - avanzar * Tile.altura)/Tile.altura) != Tile.PASABLE);
+
+        double yFinal = nivel.nave.y - avanzar * Tile.altura;
+
+        while (nivel.nave.y > yFinal) {
+            nivel.nave.y--;
+            nivel.aplicarScroll();
+        }
     }
 }
