@@ -13,6 +13,7 @@ public class GameLoop extends Thread {
     private GameView gameView;
 
     private boolean corriendo;
+    public boolean finDeJuego = false;
 
     public void setRunning(boolean running) {
         this.corriendo = running;
@@ -36,8 +37,8 @@ public class GameLoop extends Thread {
 
             tiempoEspera = 0;
 
-            while (corriendo) {
-                canvas = null;
+           while (corriendo) {
+            canvas = null;
                 try {
                     canvas = this.gameView.getHolder().lockCanvas();
 

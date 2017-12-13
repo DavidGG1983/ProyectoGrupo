@@ -700,6 +700,7 @@ public class Nivel {
             case 'O':
                 this.enemigos.add(new EnemigoLanzaBombas(
                         context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null,Tile.PASABLE);
             case 'K':
                 this.helicopteros.add(new Helicoptero(
                         context, xCentroAbajoTile, yCentroAbajoTile
