@@ -2,6 +2,8 @@ package com.proyectogrupo.powerups;
 
 import android.content.Context;
 
+import com.proyectogrupo.R;
+import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.Nivel;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoBasico;
@@ -21,7 +23,8 @@ import java.util.Random;
 public class CajaEnemigos extends PowerUp {
 
     public CajaEnemigos(Context context, double x, double y) {
-        super(context, x, y, 0, 0);
+        super(context, x, y, 29, 30);
+        imagen = CargadorGraficos.cargarDrawable(context, R.drawable.caja_enemigos);
     }
 
     @Override
@@ -56,8 +59,8 @@ public class CajaEnemigos extends PowerUp {
 
         enemigo1 = aAñadir.get(0);
         enemigo2 = aAñadir.get(1);
-        enemigo1.y = enemigo1.altura + enemigo1.y + this.altura;
-        enemigo2.y = enemigo1.altura - enemigo1.y - this.altura;
+        enemigo1.y = enemigo1.y + enemigo1.altura + this.altura;
+        enemigo2.y = enemigo2.y - enemigo2.altura - this.altura;
         enemigos.add(enemigo1);
         enemigos.add(enemigo2);
     }

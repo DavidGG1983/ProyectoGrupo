@@ -162,7 +162,7 @@ public class Nivel {
                     if (Math.abs(nave.x - disparoBomba.x) <= DisparoBomba.RADIO &&
                             Math.abs(nave.y - disparoBomba.y) <= DisparoBomba.RADIO) {
                         aBorrar = colisionDisparoNave(disparoBomba);
-                        Log.d("EXPLOTANDO","BOMBA EXPLOTA");
+                        Log.d("EXPLOTANDO", "BOMBA EXPLOTA");
                         break;
                     }
                 }
@@ -279,9 +279,9 @@ public class Nivel {
                         public void run() {
                             DisparoBomba disp = ((DisparoBomba) disparo);
                             disp.explotando = true;
-                            disp.imagen = CargadorGraficos.cargarDrawable(context,R.drawable.explosion_bomba);
-                            disp.altura = disp.altura +5;
-                            disp.ancho =disp.ancho + 10;
+                            disp.imagen = CargadorGraficos.cargarDrawable(context, R.drawable.explosion_bomba);
+                            disp.altura = disp.altura + 5;
+                            disp.ancho = disp.ancho + 10;
                         }
                     };
 
@@ -378,8 +378,8 @@ public class Nivel {
         }
 
         for (DisparoEnemigo d : aBorrar)
-            if(! (d instanceof DisparoEnemigoLanzallamas))
-            disparosEnemigos.remove(d);
+            if (!(d instanceof DisparoEnemigoLanzallamas))
+                disparosEnemigos.remove(d);
     }
 
     private void moverNaveHorizontal(int tileXnaveIzquierda, int tileXnaveDerecha,
@@ -571,8 +571,7 @@ public class Nivel {
                 helicoptero.actualizar(tiempo);
             for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
                 disparoHelicoptero.actualizar(tiempo);
-            for(DisparoEnemigo disparoEnemigo : disparosEnemigos) {
-                disparoEnemigo.moverAutomaticamente();
+            for (DisparoEnemigo disparoEnemigo : disparosEnemigos) {
                 disparoEnemigo.actualizar(tiempo);
             }
             comprobarMaxTiempoQuieta();
@@ -706,7 +705,7 @@ public class Nivel {
             case 'O':
                 this.enemigos.add(new EnemigoLanzaBombas(
                         context, xCentroAbajoTile, yCentroAbajoTile));
-                return new Tile(null,Tile.PASABLE);
+                return new Tile(null, Tile.PASABLE);
             case 'K':
                 this.helicopteros.add(new Helicoptero(
                         context, xCentroAbajoTile, yCentroAbajoTile
