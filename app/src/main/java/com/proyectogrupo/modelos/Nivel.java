@@ -21,12 +21,12 @@ import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzaBombas;
-import com.proyectogrupo.modelos.enemigos.Helicoptero;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
 import com.proyectogrupo.powerups.CajaContraEnemigos;
+import com.proyectogrupo.powerups.CajaEnemigos;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
 import com.proyectogrupo.powerups.CajaPuntosExtra;
 import com.proyectogrupo.powerups.CajaVelocidad;
@@ -41,13 +41,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Nivel {
     public static Dificultad dificultad;
     public static int scrollEjeY = 0;
 
     private Tile[][] mapaTiles;
-    public List<PowerUp> powerups = new ArrayList<>();
+    public List<PowerUp> powerups = new LinkedList<>();
     private Context context = null;
     public static boolean infinito;
     public static int numeroNivel;
@@ -55,12 +56,12 @@ public class Nivel {
     public Nave nave;
     public float orientacionPadX = 0;
     public float orientacionPadY = 0;
-    public List<Enemigo> enemigos = new ArrayList<>();
-    private List<Helicoptero> helicopteros = new ArrayList<>();
-    public List<Integer> coloresCajas = new ArrayList<>();
+    public List<Enemigo> enemigos = new LinkedList<>();
+    private List<Helicoptero> helicopteros = new LinkedList<>();
+    public List<Integer> coloresCajas = new LinkedList<>();
     private Enemigo enemigoColorCaja;
-    private List<DisparoEnemigo> disparosEnemigos = new ArrayList<>();
-    private List<DisparoHelicoptero> disparosHelicopteros = new ArrayList<>();
+    private LinkedBlockingQueue<DisparoEnemigo> disparosEnemigos = new LinkedBlockingQueue<>();
+    private List<DisparoHelicoptero> disparosHelicopteros = new LinkedList<>();
 
     private MarcadorPuntos marcadorPuntos;
 
@@ -188,7 +189,7 @@ public class Nivel {
                     if (Math.abs(nave.x - disparoBomba.x) <= DisparoBomba.RADIO &&
                             Math.abs(nave.y - disparoBomba.y) <= DisparoBomba.RADIO) {
                         aBorrar = colisionDisparoNave(disparoBomba);
-                        Log.d("EXPLOTANDO","BOMBA EXPLOTA");
+                        Log.d("EXPLOTANDO", "BOMBA EXPLOTA");
                         break;
                     }
                 }
@@ -305,9 +306,9 @@ public class Nivel {
                         public void run() {
                             DisparoBomba disp = ((DisparoBomba) disparo);
                             disp.explotando = true;
-                            disp.imagen = CargadorGraficos.cargarDrawable(context,R.drawable.explosion_bomba);
-                            disp.altura = disp.altura +5;
-                            disp.ancho =disp.ancho + 10;
+                            disp.imagen = CargadorGraficos.cargarDrawable(context, R.drawable.explosion_bomba);
+                            disp.altura = disp.altura + 5;
+                            disp.ancho = disp.ancho + 10;
                         }
                     };
 
@@ -404,8 +405,8 @@ public class Nivel {
         }
 
         for (DisparoEnemigo d : aBorrar)
-            if(! (d instanceof DisparoEnemigoLanzallamas))
-            disparosEnemigos.remove(d);
+            if (!(d instanceof DisparoEnemigoLanzallamas))
+                disparosEnemigos.remove(d);
     }
 
     private void moverNaveHorizontal(int tileXnaveIzquierda, int tileXnaveDerecha,
@@ -597,8 +598,7 @@ public class Nivel {
                 helicoptero.actualizar(tiempo);
             for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
                 disparoHelicoptero.actualizar(tiempo);
-            for(DisparoEnemigo disparoEnemigo : disparosEnemigos) {
-                disparoEnemigo.moverAutomaticamente();
+            for (DisparoEnemigo disparoEnemigo : disparosEnemigos) {
                 disparoEnemigo.actualizar(tiempo);
             }
             comprobarMaxTiempoQuieta();
@@ -617,6 +617,7 @@ public class Nivel {
                 p.dibujar(canvas);
             for (DisparoEnemigo d : disparosEnemigos)
                 d.dibujar(canvas);
+
             for (Helicoptero helicoptero : helicopteros)
                 helicoptero.dibujar(canvas);
             for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
@@ -829,7 +830,7 @@ public class Nivel {
             case 'O':
                 this.enemigos.add(new EnemigoLanzaBombas(
                         context, xCentroAbajoTile, yCentroAbajoTile));
-                return new Tile(null,Tile.PASABLE);
+                return new Tile(null, Tile.PASABLE);
             case 'K':
                 this.helicopteros.add(new Helicoptero(
                         context, xCentroAbajoTile, yCentroAbajoTile
@@ -861,6 +862,9 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'F':
                 powerups.add(new CajaContraEnemigos(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'G':
+                powerups.add(new CajaEnemigos(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso

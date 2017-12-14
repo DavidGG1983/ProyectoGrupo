@@ -26,8 +26,8 @@ public class CajaAleatoria extends PowerUp {
 
     private void selectPowerUp() {
         Random rdn = new Random();
-        int value = rdn.nextInt(11); //Sumar 1 al bound al añadir powerUp
-        switch (value) { // Añadir un case con el nuevo PowerUp
+        int value = rdn.nextInt(11);
+        switch (value) {
             case 0:
                 powerup = new CajaBomba(context, x, y);
                 return;
@@ -60,6 +60,12 @@ public class CajaAleatoria extends PowerUp {
                 return;
             case 10:
                 powerup = new CajaLentitud(context, x, y);
+                return;
+            case 11:
+                powerup = new CajaEnemigos(context, x, y);
+                return;
+            case 12:
+                powerup = new CajaContraEnemigos(context, x, y);
                 return;
             default:
                 powerup = null;
