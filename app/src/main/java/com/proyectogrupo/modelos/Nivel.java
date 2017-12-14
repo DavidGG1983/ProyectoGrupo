@@ -750,8 +750,8 @@ public class Nivel {
     }
 
     private void inicializarMapaTilesAleatorioArriba() {
-        int numeroFilasTile = Utils.randBetween(3, 6);
-        int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile);
+        int numeroFilasTile = Utils.randBetween(5, 6);
+        int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile,true);
 
         for (int y = 0; y < altoMapaTiles() / 2; ++y) {
             if(yaExisteFila(posicionesFilaConTile,y))
@@ -763,8 +763,8 @@ public class Nivel {
     }
 
     private void generarTilesEnEjeX(int y){
-        int posicionInicio = Utils.randBetween(0,anchoMapaTiles()-1);
-        int numTiles = Utils.randBetween(2,anchoMapaTiles()-4);
+        int posicionInicio = Utils.randBetween(3,anchoMapaTiles()-3);
+        int numTiles = Utils.randBetween(2,anchoMapaTiles()-6);
         int orientacion = Utils.randBetween(0,1);
         int limite;
         if(orientacion == 0){
@@ -785,9 +785,9 @@ public class Nivel {
         }
         else{
             if(posicionInicio - numTiles < 0){
-                for(int x = posicionInicio; x >= 0;x--)
+                for(int x = posicionInicio-1; x >= 0;x--)
                     mapaTiles[x][y] = inicializarTile('#',x,y);
-                for(int x=posicionInicio+1;x < anchoMapaTiles();x++ )
+                for(int x=posicionInicio;x < anchoMapaTiles();x++ )
                     mapaTiles[x][y] = inicializarTile('.',x,y);
             }
             else{
@@ -801,8 +801,8 @@ public class Nivel {
     }
 
     private void inicializarMapaTilesAleatorioAbajo() {
-        int numeroFilasTile = Utils.randBetween(3, 6);
-        int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile);
+        int numeroFilasTile = Utils.randBetween(5, 8);
+        int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile,false);
         for (int y = altoMapaTiles() / 2; y < altoMapaTiles(); ++y) {
             if(yaExisteFila(posicionesFilaConTile,y)) {
                 this.generarTilesEnEjeX(y);
@@ -817,13 +817,25 @@ public class Nivel {
 
     }
 
-    private int[] getFilasConTile(int numFilas){
+    private int[] getFilasConTile(int numFilas,boolean arriba){
+        int min,max;
+        if(arriba){
+            min = 10;
+            max = 19;
+        }
+        else{
+            min = 0;
+            max = 9;
+        }
         int[] posicionFilas = new int[numFilas];
         inicializarPosiciones(posicionFilas);
         for(int i=0;i < numFilas;i++) {
-            int pos = Utils.randBetween(0, 19);
-            if(!yaExisteFila(posicionFilas,pos))
-                posicionFilas[i] = Utils.randBetween(0, 19);
+            int pos = Utils.randBetween(min, max);
+            if(!yaExisteFila(posicionFilas,pos)) {
+                if(i + 2 < numFilas) {
+                      posicionFilas[i] = Utils.randBetween(min, max);
+                }
+            }
         }
         return posicionFilas;
     }
