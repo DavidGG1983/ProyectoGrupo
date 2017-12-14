@@ -40,25 +40,27 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Nivel {
     public static Dificultad dificultad;
     public static int scrollEjeY = 0;
 
     private Tile[][] mapaTiles;
-    public List<PowerUp> powerups = new ArrayList<>();
+    public List<PowerUp> powerups = new LinkedList<>();
     private Context context = null;
     public static int numeroNivel;
     private Fondo fondo;
     public Nave nave;
     public float orientacionPadX = 0;
     public float orientacionPadY = 0;
-    public List<Enemigo> enemigos = new ArrayList<>();
-    private List<Helicoptero> helicopteros = new ArrayList<>();
-    public List<Integer> coloresCajas = new ArrayList<>();
+    public List<Enemigo> enemigos = new LinkedList<>();
+    private List<Helicoptero> helicopteros = new LinkedList<>();
+    public List<Integer> coloresCajas = new LinkedList<>();
     private Enemigo enemigoColorCaja;
-    private List<DisparoEnemigo> disparosEnemigos = new ArrayList<>();
-    private List<DisparoHelicoptero> disparosHelicopteros = new ArrayList<>();
+    private LinkedBlockingQueue<DisparoEnemigo> disparosEnemigos = new LinkedBlockingQueue<>();
+    private List<DisparoHelicoptero> disparosHelicopteros = new LinkedList<>();
 
     private MarcadorPuntos marcadorPuntos;
 
@@ -590,6 +592,7 @@ public class Nivel {
                 p.dibujar(canvas);
             for (DisparoEnemigo d : disparosEnemigos)
                 d.dibujar(canvas);
+
             for (Helicoptero helicoptero : helicopteros)
                 helicoptero.dibujar(canvas);
             for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
