@@ -697,6 +697,42 @@ public class Nivel {
         }
     }
 
+    private void generarEnemigosAleatorios(){
+        int conta = 0;
+        for(int y=0;y < altoMapaTiles();++y) {
+            if (comprobarFilaSinTiles(y) && conta < 5){
+                int x = Utils.randBetween(0,anchoMapaTiles()-1);
+                generarEnemigo(Utils.randBetween(0,5),x,y);
+                conta++;
+            }
+        }
+    }
+
+    private Tile generarEnemigo(int i,int x,int y) {
+        switch (i){
+            case 0:
+                return this.inicializarTile('B',x,y);
+            case 1:
+                return this.inicializarTile('L',x,y);
+            case 2:
+                return this.inicializarTile('Z',x,y);
+            case 3:
+                return this.inicializarTile('O',x,y);
+            case 4:
+                return this.inicializarTile('K',x,y);
+             default:
+                 return this.inicializarTile('.',x,y);
+
+        }
+    }
+
+    private boolean comprobarFilaSinTiles(int y){
+        for(int x=0; x < anchoMapaTiles();++x)
+            if(mapaTiles[x][y].tipoDeColision == Tile.SOLIDO)
+                return false;
+        return true;
+    }
+
     public int anchoMapaTiles() {
         return mapaTiles.length;
     }
@@ -747,10 +783,11 @@ public class Nivel {
         mapaTiles = new Tile[anchoNivel * 2][altoNivel * 2];
         this.inicializarMapaTilesAleatorioArriba();
         this.inicializarMapaTilesAleatorioAbajo();
+        this.generarEnemigosAleatorios();
     }
 
     private void inicializarMapaTilesAleatorioArriba() {
-        int numeroFilasTile = Utils.randBetween(5, 6);
+        int numeroFilasTile = Utils.randBetween(4, 6);
         int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile,true);
 
         for (int y = 0; y < altoMapaTiles() / 2; ++y) {
@@ -832,9 +869,7 @@ public class Nivel {
         for(int i=0;i < numFilas;i++) {
             int pos = Utils.randBetween(min, max);
             if(!yaExisteFila(posicionFilas,pos)) {
-                if(i + 2 < numFilas) {
-                      posicionFilas[i] = Utils.randBetween(min, max);
-                }
+                posicionFilas[i] = Utils.randBetween(min, max);
             }
         }
         return posicionFilas;
