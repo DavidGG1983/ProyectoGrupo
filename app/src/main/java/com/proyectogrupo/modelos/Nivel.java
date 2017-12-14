@@ -703,6 +703,42 @@ public class Nivel {
         }
     }
 
+    private void generarEnemigosAleatorios(){
+        int conta = 0;
+        for(int y=0;y < altoMapaTiles();++y) {
+            if (comprobarFilaSinTiles(y) && conta < 5){
+                int x = Utils.randBetween(0,anchoMapaTiles()-1);
+                generarEnemigo(Utils.randBetween(0,5),x,y);
+                conta++;
+            }
+        }
+    }
+
+    private Tile generarEnemigo(int i,int x,int y) {
+        switch (i){
+            case 0:
+                return this.inicializarTile('B',x,y);
+            case 1:
+                return this.inicializarTile('L',x,y);
+            case 2:
+                return this.inicializarTile('Z',x,y);
+            case 3:
+                return this.inicializarTile('O',x,y);
+            case 4:
+                return this.inicializarTile('K',x,y);
+             default:
+                 return this.inicializarTile('.',x,y);
+
+        }
+    }
+
+    private boolean comprobarFilaSinTiles(int y){
+        for(int x=0; x < anchoMapaTiles();++x)
+            if(mapaTiles[x][y].tipoDeColision == Tile.SOLIDO)
+                return false;
+        return true;
+    }
+
     public int anchoMapaTiles() {
         return mapaTiles.length;
     }
@@ -748,78 +784,99 @@ public class Nivel {
     }
 
     private void inicializarMapaTilesInfinito() {
-        // Inicializar la matriz
-        /*int anchoNivel = 8;
-        int altoNivel = 20;
-        int numeroFilasTile = Utils.randBetween(4, 7);
-        int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile);
-        mapaTiles = new Tile[anchoNivel * 2][altoNivel * 2];
-        // Iterar y completar todas las posiciones
-        for (int y = 0; y < altoMapaTiles(); ++y) {
-            if(yaExisteFila(posicionesFilaConTile,y)){
-
-            }
-            int numeroTilesFila = Utils.randBetween(2, 5);
-            for (int x = 0; x < anchoMapaTiles(); ++x) {
-                char tipoDeTile;
-                if (y < numeroFilasTile) {
-                    tipoDeTile = '#';
-                } else {
-                    tipoDeTile = generarTileAleatoriamente();
-                }
-                mapaTiles[x][y] = inicializarTile(tipoDeTile, x, y);
-            }
-        }*/
-
         int anchoNivel = 8;
         int altoNivel = 20;
-        mapaTiles = new Tile[anchoNivel][altoNivel * 2];
-
-        inicializarMapaTilesAleatorioArriba();
-        inicializarMapaTilesAleatorioAbajo();
+        mapaTiles = new Tile[anchoNivel * 2][altoNivel * 2];
+        this.inicializarMapaTilesAleatorioArriba();
+        this.inicializarMapaTilesAleatorioAbajo();
+        this.generarEnemigosAleatorios();
     }
 
     private void inicializarMapaTilesAleatorioArriba() {
+        int numeroFilasTile = Utils.randBetween(4, 6);
+        int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile,true);
+
         for (int y = 0; y < altoMapaTiles() / 2; ++y) {
-            for (int x = 0; x < anchoMapaTiles(); ++x) {
-                char tipoDeTile;
-                if (x == 0) {
-                    tipoDeTile = '#';
-                } else {
-                    tipoDeTile = '.';
-                }
-                mapaTiles[x][y] = inicializarTile(tipoDeTile, x, y);
+            if(yaExisteFila(posicionesFilaConTile,y))
+                this.generarTilesEnEjeX(y);
+            else
+                for(int x=0; x < anchoMapaTiles();++x)
+                    mapaTiles[x][y] = inicializarTile('.',x,y);
+        }
+    }
+
+    private void generarTilesEnEjeX(int y){
+        int posicionInicio = Utils.randBetween(3,anchoMapaTiles()-3);
+        int numTiles = Utils.randBetween(2,anchoMapaTiles()-6);
+        int orientacion = Utils.randBetween(0,1);
+        int limite;
+        if(orientacion == 0){
+            if(posicionInicio + numTiles >= anchoMapaTiles()){
+                for(int x = 0; x < anchoMapaTiles();x++)
+                    if(x >= posicionInicio)
+                        mapaTiles[x][y] = inicializarTile('#',x,y);
+                    else
+                        mapaTiles[x][y] = inicializarTile('.',x,y);
+            }
+            else{
+                for(int x=posicionInicio; x < posicionInicio +numTiles;x++)
+                    mapaTiles[x][y] = inicializarTile('#',x,y);
+                for(int x=0;x < anchoMapaTiles();x++)
+                    if( x < posicionInicio || x >= posicionInicio+numTiles)
+                        mapaTiles[x][y] = inicializarTile('.',x,y);
+            }
+        }
+        else{
+            if(posicionInicio - numTiles < 0){
+                for(int x = posicionInicio-1; x >= 0;x--)
+                    mapaTiles[x][y] = inicializarTile('#',x,y);
+                for(int x=posicionInicio;x < anchoMapaTiles();x++ )
+                    mapaTiles[x][y] = inicializarTile('.',x,y);
+            }
+            else{
+                for(int x=posicionInicio; x > posicionInicio - numTiles;x--)
+                    mapaTiles[x][y] = inicializarTile('#',x,y);
+                for(int x=0;x < anchoMapaTiles();x++)
+                    if( x <= posicionInicio-numTiles || x > posicionInicio)
+                        mapaTiles[x][y] = inicializarTile('.',x,y);
             }
         }
     }
 
     private void inicializarMapaTilesAleatorioAbajo() {
+        int numeroFilasTile = Utils.randBetween(5, 8);
+        int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile,false);
         for (int y = altoMapaTiles() / 2; y < altoMapaTiles(); ++y) {
-            for (int x = 0; x < anchoMapaTiles(); ++x) {
-                char tipoDeTile;
-                if (x == anchoMapaTiles() - 1) {
-                    tipoDeTile = '#';
-                } else if (y == altoMapaTiles() - 1 && x == 3) {
-                    tipoDeTile = '1';
-                } else {
-                    tipoDeTile = generarTileAleatoriamente();
-                }
-                mapaTiles[x][y] = inicializarTile(tipoDeTile, x, y);
-            }
+            if(yaExisteFila(posicionesFilaConTile,y)) {
+                this.generarTilesEnEjeX(y);
+            }else
+                for(int x=0; x < anchoMapaTiles();++x)
+                    mapaTiles[x][y] = inicializarTile('.',x,y);
         }
+        mapaTiles[3][altoMapaTiles()-1] = inicializarTile('1',3,altoMapaTiles()-1);
     }
 
     private void inicializarMapaTilesAleatorio(int xInicial, int xFinal, int yInicial, int yFinal) {
 
     }
 
-    private int[] getFilasConTile(int numFilas){
+    private int[] getFilasConTile(int numFilas,boolean arriba){
+        int min,max;
+        if(arriba){
+            min = 10;
+            max = 19;
+        }
+        else{
+            min = 0;
+            max = 9;
+        }
         int[] posicionFilas = new int[numFilas];
         inicializarPosiciones(posicionFilas);
         for(int i=0;i < numFilas;i++) {
-            int pos = Utils.randBetween(0, 19);
-            if(!yaExisteFila(posicionFilas,pos))
-                posicionFilas[i] = Utils.randBetween(0, 19);
+            int pos = Utils.randBetween(min, max);
+            if(!yaExisteFila(posicionFilas,pos)) {
+                posicionFilas[i] = Utils.randBetween(min, max);
+            }
         }
         return posicionFilas;
     }
