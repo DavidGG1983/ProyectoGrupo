@@ -2,6 +2,7 @@ package com.proyectogrupo.modelos.enemigos;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 
 import com.proyectogrupo.GameView;
 import com.proyectogrupo.graficos.Sprite;
@@ -10,6 +11,7 @@ import com.proyectogrupo.modelos.Nivel;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by davidgarcia on 2/12/17.
@@ -83,4 +85,9 @@ public abstract class Enemigo extends Modelo {
         this.velocidadX -= i;
     }
 
+    public void randomVelocidad(){
+        Random r = new Random();
+        this.velocidadX = (r.nextDouble()*r.nextInt(4))+2.5;
+        Log.d("velocidad",""+this.velocidadX);
+    }
 }

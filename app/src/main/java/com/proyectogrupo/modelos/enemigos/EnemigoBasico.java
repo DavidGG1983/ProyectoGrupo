@@ -25,6 +25,8 @@ public class EnemigoBasico extends Enemigo{
         sprites.put(MOVER_DERECHA, moverDerecha);
         sprites.put(MOVER_IZQUIERDA, moverIzquierda);
         this.sprite = moverDerecha;
+
+        randomVelocidad();
     }
 
 }

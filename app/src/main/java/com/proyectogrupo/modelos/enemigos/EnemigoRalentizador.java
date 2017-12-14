@@ -27,6 +27,8 @@ public class EnemigoRalentizador extends Enemigo implements Disparador{
         sprites.put(MOVER_DERECHA, moverDerecha);
         sprites.put(MOVER_IZQUIERDA, moverIzquierda);
         this.sprite = moverDerecha;
+
+        randomVelocidad();
     }
 
     @Override
