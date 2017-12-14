@@ -39,6 +39,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -125,20 +126,56 @@ public class Nivel {
         int tileYNave = (int) (nave.y / Tile.altura);
         Log.d("movnave", "" + tileYNave);
         if (tileYNave <= 14) {
-            copiarMapaArribaAbajo();
             scrollEjeY = (int) altoMapaTiles() * Tile.altura - GameView.pantallaAlto;
-            int tileYDestino = 39 - (19 - tileYNave);
+            int tileYDestino = altoMapaTiles() - 1 - (altoMapaTiles() / 2 - tileYNave);
             nave.y = tileYDestino * Tile.altura;
+            copiarMapaArribaAbajo();
             inicializarMapaTilesAleatorioArriba();
         }
     }
 
     private void copiarMapaArribaAbajo() {
+        limpiarMapaAbajo();
         for (int y = altoMapaTiles() / 2; y < altoMapaTiles(); ++y) {
             for (int x = 0; x < anchoMapaTiles(); ++x) {
-                mapaTiles[x][y - (altoMapaTiles() / 2)] = mapaTiles[x][y];
+                mapaTiles[x][y] = mapaTiles[x][y - altoMapaTiles() / 2];
             }
         }
+
+        moverModelosAbajo(powerups);
+        moverModelosAbajo(enemigos);
+        moverModelosAbajo(helicopteros);
+    }
+
+    private <T extends Modelo> void moverModelosAbajo(List<T> modelos) {
+        for (T modelo : modelos) {
+            if (!estaEnMapaDeAbajo(modelo)) {
+                int tileYModelo = (int) (modelo.y / Tile.altura);
+                int tileYFinalModelo = altoMapaTiles() - 1 - (altoMapaTiles() / 2 - 1 - tileYModelo);
+                modelo.y = tileYFinalModelo * Tile.altura;
+            }
+        }
+    }
+
+    private void limpiarMapaAbajo() {
+        limpiarModelosMapaAbajo(powerups);
+        limpiarModelosMapaAbajo(enemigos);
+        limpiarModelosMapaAbajo(helicopteros);
+    }
+
+    private <T extends Modelo> void limpiarModelosMapaAbajo(List<T> modelos) {
+        Iterator<T> iterador = modelos.iterator();
+        while (iterador.hasNext()) {
+            Modelo modelo = iterador.next();
+            if (estaEnMapaDeAbajo(modelo)) {
+                iterador.remove();
+            }
+        }
+    }
+
+    private boolean estaEnMapaDeAbajo(Modelo modelo) {
+        int tileYModelo = (int) (modelo.y / Tile.altura);
+        return tileYModelo < altoMapaTiles() && tileYModelo > altoMapaTiles() / 2;
     }
 
     private void moverHelicopteros() {
@@ -877,7 +914,7 @@ public class Nivel {
     }
 
     public void aplicarScroll() {
-        if (nave.y < altoMapaTiles() * Tile.altura - GameView.pantallaAlto * 0.3)
+        if (nave.y < altoMapaTiles()  * Tile.altura - GameView.pantallaAlto * 0.3)
             if (nave.y + scrollEjeY > GameView.pantallaAlto * 0.7) {
                 scrollEjeY = (int) ((nave.y) - GameView.pantallaAlto * 0.7);
             }
