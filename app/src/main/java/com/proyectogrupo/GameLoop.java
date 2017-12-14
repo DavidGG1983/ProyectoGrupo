@@ -13,6 +13,7 @@ public class GameLoop extends Thread {
     private GameView gameView;
 
     private boolean corriendo;
+    public boolean finDeJuego = false;
 
     public void setRunning(boolean running) {
         this.corriendo = running;
@@ -56,7 +57,7 @@ public class GameLoop extends Thread {
                         if (tiempoEspera > 0) {
                             try {
                                 // Util para ahorrar bateria
-                                Log.v("GameLoop","GameLoop - Tiempo de espera "+tiempoEspera);
+                                Log.v("GameLoop", "GameLoop - Tiempo de espera " + tiempoEspera);
                                 Thread.sleep(tiempoEspera);
                             } catch (InterruptedException e) {
                             }
@@ -68,7 +69,7 @@ public class GameLoop extends Thread {
                             this.gameView.actualizar(FRAME_TIEMPO);
                             tiempoEspera += FRAME_TIEMPO;
                             framesSaltados++;
-                            Log.v("GameLoop","GameLoop - Frames saltados "+framesSaltados);
+                            Log.v("GameLoop", "GameLoop - Frames saltados " + framesSaltados);
                         }
                     }
                 } finally {
@@ -80,7 +81,7 @@ public class GameLoop extends Thread {
         }// try
         catch (Exception ex) {
             ex.printStackTrace();
-            Log.v("ERROR: ", ex.getMessage());
+            Log.v("ERROR: ", "" + ex.getMessage());
         }
     }
 }

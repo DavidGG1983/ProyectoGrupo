@@ -1,4 +1,4 @@
-package com.proyectogrupo.modelos.enemigos;
+package com.proyectogrupo.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;

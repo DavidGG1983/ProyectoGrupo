@@ -2,7 +2,6 @@ package com.proyectogrupo.powerups;
 
 import android.content.Context;
 
-import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.Nivel;
@@ -19,7 +18,6 @@ public class Teletransporte extends PowerUp {
 
     public Teletransporte(Context context, double x, double y) {
         super(context, x, y, 30, 30);
-        this.y = y - altura / 2;
         this.imagen = CargadorGraficos.cargarDrawable(context,
                 R.drawable.go);
     }

@@ -8,10 +8,12 @@ import com.proyectogrupo.Dificultad;
 import com.proyectogrupo.GameView;
 import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
+import com.proyectogrupo.Utils;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.modelos.disparos.DisparoBomba;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
+import com.proyectogrupo.modelos.disparos.DisparoEnemigoLanzallamas;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
 import com.proyectogrupo.modelos.disparos.DisparoHelicoptero;
 import com.proyectogrupo.modelos.enemigos.Disparador;
@@ -19,12 +21,12 @@ import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzaBombas;
-import com.proyectogrupo.modelos.enemigos.Helicoptero;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
 import com.proyectogrupo.powerups.CajaContraEnemigos;
+import com.proyectogrupo.powerups.CajaEnemigos;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
 import com.proyectogrupo.powerups.CajaPuntosExtra;
 import com.proyectogrupo.powerups.CajaVelocidad;
@@ -37,27 +39,30 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Nivel {
     public static Dificultad dificultad;
     public static int scrollEjeY = 0;
 
     private Tile[][] mapaTiles;
-    public List<PowerUp> powerups = new ArrayList<>();
+    public List<PowerUp> powerups = new LinkedList<>();
     private Context context = null;
+    public static boolean infinito;
     public static int numeroNivel;
     private Fondo fondo;
     public Nave nave;
     public float orientacionPadX = 0;
     public float orientacionPadY = 0;
-    public List<Enemigo> enemigos = new ArrayList<>();
-    private List<Helicoptero> helicopteros = new ArrayList<>();
-    public List<Integer> coloresCajas = new ArrayList<>();
+    public List<Enemigo> enemigos = new LinkedList<>();
+    private List<Helicoptero> helicopteros = new LinkedList<>();
+    public List<Integer> coloresCajas = new LinkedList<>();
     private Enemigo enemigoColorCaja;
-    private List<DisparoEnemigo> disparosEnemigos = new ArrayList<>();
-    private List<DisparoHelicoptero> disparosHelicopteros = new ArrayList<>();
+    private LinkedBlockingQueue<DisparoEnemigo> disparosEnemigos = new LinkedBlockingQueue<>();
+    private List<DisparoHelicoptero> disparosHelicopteros = new LinkedList<>();
 
     private MarcadorPuntos marcadorPuntos;
 
@@ -112,6 +117,66 @@ public class Nivel {
         this.colisionesPowerUps();
         this.colisionaEnemigos();
         this.colisionesDisparos();
+
+        if (infinito) {
+            realizarCambioMapaSiNecesario();
+        }
+    }
+
+    private void realizarCambioMapaSiNecesario() {
+        int tileYNave = (int) (nave.y / Tile.altura);
+        Log.d("movnave", "" + tileYNave);
+        if (tileYNave <= 14) {
+            scrollEjeY = (int) altoMapaTiles() * Tile.altura - GameView.pantallaAlto;
+            int tileYDestino = altoMapaTiles() - 1 - (altoMapaTiles() / 2 - tileYNave);
+            nave.y = tileYDestino * Tile.altura;
+            copiarMapaArribaAbajo();
+            inicializarMapaTilesAleatorioArriba();
+        }
+    }
+
+    private void copiarMapaArribaAbajo() {
+        limpiarMapaAbajo();
+        for (int y = altoMapaTiles() / 2; y < altoMapaTiles(); ++y) {
+            for (int x = 0; x < anchoMapaTiles(); ++x) {
+                mapaTiles[x][y] = mapaTiles[x][y - altoMapaTiles() / 2];
+            }
+        }
+
+        moverModelosAbajo(powerups);
+        moverModelosAbajo(enemigos);
+        moverModelosAbajo(helicopteros);
+    }
+
+    private <T extends Modelo> void moverModelosAbajo(List<T> modelos) {
+        for (T modelo : modelos) {
+            if (!estaEnMapaDeAbajo(modelo)) {
+                int tileYModelo = (int) (modelo.y / Tile.altura);
+                int tileYFinalModelo = altoMapaTiles() - 1 - (altoMapaTiles() / 2 - 1 - tileYModelo);
+                modelo.y = tileYFinalModelo * Tile.altura;
+            }
+        }
+    }
+
+    private void limpiarMapaAbajo() {
+        limpiarModelosMapaAbajo(powerups);
+        limpiarModelosMapaAbajo(enemigos);
+        limpiarModelosMapaAbajo(helicopteros);
+    }
+
+    private <T extends Modelo> void limpiarModelosMapaAbajo(List<T> modelos) {
+        Iterator<T> iterador = modelos.iterator();
+        while (iterador.hasNext()) {
+            Modelo modelo = iterador.next();
+            if (estaEnMapaDeAbajo(modelo)) {
+                iterador.remove();
+            }
+        }
+    }
+
+    private boolean estaEnMapaDeAbajo(Modelo modelo) {
+        int tileYModelo = (int) (modelo.y / Tile.altura);
+        return tileYModelo < altoMapaTiles() && tileYModelo > altoMapaTiles() / 2;
     }
 
     private void moverHelicopteros() {
@@ -161,7 +226,7 @@ public class Nivel {
                     if (Math.abs(nave.x - disparoBomba.x) <= DisparoBomba.RADIO &&
                             Math.abs(nave.y - disparoBomba.y) <= DisparoBomba.RADIO) {
                         aBorrar = colisionDisparoNave(disparoBomba);
-                        Log.d("EXPLOTANDO","BOMBA EXPLOTA");
+                        Log.d("EXPLOTANDO", "BOMBA EXPLOTA");
                         break;
                     }
                 }
@@ -278,9 +343,9 @@ public class Nivel {
                         public void run() {
                             DisparoBomba disp = ((DisparoBomba) disparo);
                             disp.explotando = true;
-                            disp.imagen = CargadorGraficos.cargarDrawable(context,R.drawable.explosion_bomba);
-                            disp.altura = disp.altura +5;
-                            disp.ancho =disp.ancho + 10;
+                            disp.imagen = CargadorGraficos.cargarDrawable(context, R.drawable.explosion_bomba);
+                            disp.altura = disp.altura + 5;
+                            disp.ancho = disp.ancho + 10;
                         }
                     };
 
@@ -377,7 +442,8 @@ public class Nivel {
         }
 
         for (DisparoEnemigo d : aBorrar)
-            disparosEnemigos.remove(d);
+            if (!(d instanceof DisparoEnemigoLanzallamas))
+                disparosEnemigos.remove(d);
     }
 
     private void moverNaveHorizontal(int tileXnaveIzquierda, int tileXnaveDerecha,
@@ -569,6 +635,9 @@ public class Nivel {
                 helicoptero.actualizar(tiempo);
             for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
                 disparoHelicoptero.actualizar(tiempo);
+            for (DisparoEnemigo disparoEnemigo : disparosEnemigos) {
+                disparoEnemigo.actualizar(tiempo);
+            }
             comprobarMaxTiempoQuieta();
         }
     }
@@ -585,6 +654,7 @@ public class Nivel {
                 p.dibujar(canvas);
             for (DisparoEnemigo d : disparosEnemigos)
                 d.dibujar(canvas);
+
             for (Helicoptero helicoptero : helicopteros)
                 helicoptero.dibujar(canvas);
             for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
@@ -636,6 +706,10 @@ public class Nivel {
     }
 
     private void inicializarMapaTiles() throws Exception {
+        if (infinito) {
+            inicializarMapaTilesInfinito();
+            return;
+        }
         InputStream is;
         is = context.getAssets().open(numeroNivel + ".txt");
         int anchoLinea;
@@ -664,6 +738,99 @@ public class Nivel {
                 mapaTiles[x][y] = inicializarTile(tipoDeTile, x, y);
             }
         }
+    }
+
+    private void inicializarMapaTilesInfinito() {
+        // Inicializar la matriz
+        /*int anchoNivel = 8;
+        int altoNivel = 20;
+        int numeroFilasTile = Utils.randBetween(4, 7);
+        int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile);
+        mapaTiles = new Tile[anchoNivel * 2][altoNivel * 2];
+        // Iterar y completar todas las posiciones
+        for (int y = 0; y < altoMapaTiles(); ++y) {
+            if(yaExisteFila(posicionesFilaConTile,y)){
+
+            }
+            int numeroTilesFila = Utils.randBetween(2, 5);
+            for (int x = 0; x < anchoMapaTiles(); ++x) {
+                char tipoDeTile;
+                if (y < numeroFilasTile) {
+                    tipoDeTile = '#';
+                } else {
+                    tipoDeTile = generarTileAleatoriamente();
+                }
+                mapaTiles[x][y] = inicializarTile(tipoDeTile, x, y);
+            }
+        }*/
+
+        int anchoNivel = 8;
+        int altoNivel = 20;
+        mapaTiles = new Tile[anchoNivel][altoNivel * 2];
+
+        inicializarMapaTilesAleatorioArriba();
+        inicializarMapaTilesAleatorioAbajo();
+    }
+
+    private void inicializarMapaTilesAleatorioArriba() {
+        for (int y = 0; y < altoMapaTiles() / 2; ++y) {
+            for (int x = 0; x < anchoMapaTiles(); ++x) {
+                char tipoDeTile;
+                if (x == 0) {
+                    tipoDeTile = '#';
+                } else {
+                    tipoDeTile = '.';
+                }
+                mapaTiles[x][y] = inicializarTile(tipoDeTile, x, y);
+            }
+        }
+    }
+
+    private void inicializarMapaTilesAleatorioAbajo() {
+        for (int y = altoMapaTiles() / 2; y < altoMapaTiles(); ++y) {
+            for (int x = 0; x < anchoMapaTiles(); ++x) {
+                char tipoDeTile;
+                if (x == anchoMapaTiles() - 1) {
+                    tipoDeTile = '#';
+                } else if (y == altoMapaTiles() - 1 && x == 3) {
+                    tipoDeTile = '1';
+                } else {
+                    tipoDeTile = generarTileAleatoriamente();
+                }
+                mapaTiles[x][y] = inicializarTile(tipoDeTile, x, y);
+            }
+        }
+    }
+
+    private void inicializarMapaTilesAleatorio(int xInicial, int xFinal, int yInicial, int yFinal) {
+
+    }
+
+    private int[] getFilasConTile(int numFilas){
+        int[] posicionFilas = new int[numFilas];
+        inicializarPosiciones(posicionFilas);
+        for(int i=0;i < numFilas;i++) {
+            int pos = Utils.randBetween(0, 19);
+            if(!yaExisteFila(posicionFilas,pos))
+                posicionFilas[i] = Utils.randBetween(0, 19);
+        }
+        return posicionFilas;
+    }
+
+    private void inicializarPosiciones(int[] posiciones){
+        for(int i=0;i < posiciones.length;i++)
+            posiciones[i] = -1;
+    }
+
+    private boolean yaExisteFila(int[]posiciones,int pos){
+        for(int i=0;i < posiciones.length;i++)
+            if(posiciones[i] == pos)
+                return true;
+        return false;
+    }
+
+    private char generarTileAleatoriamente() {
+        return '.';
     }
 
     private Tile inicializarTile(char codigoTile, int x, int y) {
@@ -700,6 +867,7 @@ public class Nivel {
             case 'O':
                 this.enemigos.add(new EnemigoLanzaBombas(
                         context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
             case 'K':
                 this.helicopteros.add(new Helicoptero(
                         context, xCentroAbajoTile, yCentroAbajoTile
@@ -732,6 +900,9 @@ public class Nivel {
             case 'F':
                 powerups.add(new CajaContraEnemigos(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
+            case 'G':
+                powerups.add(new CajaEnemigos(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso
                 return new Tile(null, Tile.PASABLE);
@@ -747,7 +918,7 @@ public class Nivel {
     }
 
     public void aplicarScroll() {
-        if (nave.y < altoMapaTiles() * Tile.altura - GameView.pantallaAlto * 0.3)
+        if (nave.y < altoMapaTiles()  * Tile.altura - GameView.pantallaAlto * 0.3)
             if (nave.y + scrollEjeY > GameView.pantallaAlto * 0.7) {
                 scrollEjeY = (int) ((nave.y) - GameView.pantallaAlto * 0.7);
             }
