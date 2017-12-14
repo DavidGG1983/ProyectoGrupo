@@ -33,11 +33,11 @@ public class EnemigoVista extends Enemigo implements Disparador {
 
     public void cambiarLadoDisparo() {
         if (sprite.equals(sprites.get(MOVER_DERECHA))) {
-            actual.x = x + (GameView.pantallaAncho - x) / 2;
-            actual.ancho = (int) ((actual.x - x) * 2);
+            actual.x = GameView.pantallaAncho;
+            actual.ancho = (int) ((actual.x - x) * 2) - ancho;
         } else {
-            actual.x = x / 2;
-            actual.ancho = (int) actual.x * 2;
+            actual.x = 0;
+            actual.ancho = (int) (x * 2) - ancho;
         }
     }
 

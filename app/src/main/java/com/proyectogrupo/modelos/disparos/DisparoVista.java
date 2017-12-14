@@ -14,7 +14,7 @@ import com.proyectogrupo.modelos.enemigos.Enemigo;
 public class DisparoVista extends DisparoEnemigo {
     public DisparoVista(Context context, double x, double y, boolean orientacion, Enemigo enemigo) {
         super(context, x, y, orientacion, 6, enemigo, 20, 10);
-        imagen = CargadorGraficos.cargarDrawable(context, R.mipmap.ic_launcher);
+        imagen = CargadorGraficos.cargarDrawable(context, R.drawable.disparohelicoptero);
     }
 
     @Override
