@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 public class PuntosActivity extends Activity {
 
@@ -15,6 +16,9 @@ public class PuntosActivity extends Activity {
         setContentView(R.layout.activity_puntos);
 
         int puntos = getIntent().getIntExtra(EXTRA_PUNTOS, -1);
+
+        TextView tvPuntos = findViewById(R.id.tvPuntos);
+        tvPuntos.setText(String.valueOf(puntos));
 
         if (Utils.record(this, puntos)) {
             findViewById(R.id.tvRecord).setVisibility(View.VISIBLE);

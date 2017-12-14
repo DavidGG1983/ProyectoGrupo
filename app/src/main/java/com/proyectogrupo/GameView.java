@@ -14,9 +14,9 @@ import com.proyectogrupo.modelos.controles.Pad;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    boolean iniciado = false;
+    private boolean iniciado = false;
     Context context;
-    GameLoop gameloop;
+    public static GameLoop gameloop;
 
     public static int pantallaAncho;
     public static int pantallaAlto;

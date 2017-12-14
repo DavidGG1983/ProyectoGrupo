@@ -1,5 +1,6 @@
 package com.proyectogrupo.modelos;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -1020,16 +1021,20 @@ public class Nivel {
 
     private void comprobarVictoriaDerrota() {
         if (nave.vida <= 0) {
-            if (!infinito)
+            if (!infinito) {
+                GameView.gameloop.setRunning(false);
                 context.startActivity(new Intent(context, DerrotaActivity.class));
-            else
+            } else {
+                GameView.gameloop.setRunning(false);
                 Utils.mostrarPuntos(context, marcadorPuntos.puntos);
+            }
         }
 
         if (!infinito) {
             int tileYNave = (int) (nave.y / Tile.altura);
 
             if (tileYNave <= 0) {
+                GameView.gameloop.setRunning(false);
                 context.startActivity(new Intent(context, VictoriaActivity.class));
             }
         }
