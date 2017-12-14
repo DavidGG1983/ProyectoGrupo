@@ -5,6 +5,7 @@ import android.content.Context;
 import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
+import com.proyectogrupo.modelos.Modelo;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 
 /**
@@ -15,6 +16,15 @@ public class DisparoVista extends DisparoEnemigo {
     public DisparoVista(Context context, double x, double y, boolean orientacion, Enemigo enemigo) {
         super(context, x, y, orientacion, 6, enemigo, 20, 10);
         imagen = CargadorGraficos.cargarDrawable(context, R.drawable.disparohelicoptero);
+    }
+
+    @Override
+    public boolean colisiona(Modelo modelo) {
+        if (modelo.x < x + ancho && modelo.x > x - ancho && modelo.y > y - altura
+                && modelo.y < y + altura)
+            return true;
+        else
+            return false;
     }
 
     @Override

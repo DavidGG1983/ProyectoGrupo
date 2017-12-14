@@ -15,6 +15,7 @@ import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoLanzallamas;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
 import com.proyectogrupo.modelos.disparos.DisparoHelicoptero;
+import com.proyectogrupo.modelos.disparos.DisparoVista;
 import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
@@ -171,7 +172,8 @@ public class Nivel {
                 }
             }
         }
-        disparosEnemigos.remove(aBorrar);
+        if (!(aBorrar instanceof DisparoVista))
+            disparosEnemigos.remove(aBorrar);
 
         DisparoHelicoptero disparoHelicopteroBorrar = null;
         for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
