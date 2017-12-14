@@ -52,11 +52,11 @@ public class DisparoEnemigoLanzallamas extends DisparoEnemigo {
     public void moverAutomaticamente() {
         Log.println(Log.DEBUG,"VELOCIDAD",""+enemigo.velocidadX);
         if (enemigo.velocidadX > 0) {
-            x = enemigo.x + 50;
+            x = enemigo.x + 47;
             this.sprite = sprites.get(llamaDerecha);
         }else{
             this.sprite = sprites.get(llamaIzquieda);
-            x = enemigo.x-50;
+            x = enemigo.x-47;
         }
     }
 
