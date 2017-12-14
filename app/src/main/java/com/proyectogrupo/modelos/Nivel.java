@@ -279,7 +279,7 @@ public class Nivel {
                     disparosEnemigos.add(disparo);
                 if (e instanceof EnemigoVista) {
                     EnemigoVista vista = (EnemigoVista) e;
-                    DisparoEnemigo actual = disparosEnemigos.get(disparosEnemigos.indexOf(vista.actual));
+                    int actual = disparosEnemigos.indexOf(vista.actual);
                     vista.cambiarLadoDisparo();
                     disparosEnemigos.remove(actual);
                     disparosEnemigos.add(vista.actual);

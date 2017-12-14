@@ -25,10 +25,11 @@ public class EnemigoVista extends Enemigo implements Disparador {
 
     @Override
     public DisparoEnemigo disparar(long milisegundos) {
-        if (actual == null)
+        if (actual == null) {
             actual = new DisparoVista(context, x, y, sprite.equals(sprites.get(MOVER_DERECHA)), this);
-        return actual;
-
+            return actual;
+        }
+        return null;
     }
 
     public void cambiarLadoDisparo() {
