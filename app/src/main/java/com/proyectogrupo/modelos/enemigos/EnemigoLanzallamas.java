@@ -23,9 +23,9 @@ public class EnemigoLanzallamas extends Enemigo implements Disparador{
     @Override
     public void inicializar() {
         Sprite moverDerecha = new Sprite(CargadorGraficos.cargarDrawable
-                (this.context, R.drawable.enemigo_basico_derecha), ancho, altura, 4, 4, true);
+                (this.context, R.drawable.enemigo_basico_derecha_verde), ancho, altura, 4, 4, true);
         Sprite moverIzquierda = new Sprite(CargadorGraficos.cargarDrawable
-                (this.context, R.drawable.enemigo_basico_izquierda), ancho, altura, 4, 4, true);
+                (this.context, R.drawable.enemigo_basico_izquierda_verde), ancho, altura, 4, 4, true);
         sprites.put(MOVER_DERECHA, moverDerecha);
         sprites.put(MOVER_IZQUIERDA, moverIzquierda);
         this.sprite = moverDerecha;
