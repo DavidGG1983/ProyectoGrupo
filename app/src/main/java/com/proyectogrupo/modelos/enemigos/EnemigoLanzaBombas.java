@@ -17,6 +17,7 @@ public class EnemigoLanzaBombas extends Enemigo implements Disparador {
 
     public EnemigoLanzaBombas(Context context, double x, double y) {
         super(context, x, y);
+        randomVelocidad();
     }
 
     @Override
