@@ -1029,7 +1029,7 @@ public class Nivel {
         if (!infinito) {
             int tileYNave = (int) (nave.y / Tile.altura);
 
-            if (tileYNave + 1 >= altoMapaTiles()) {
+            if (tileYNave <= 0) {
                 context.startActivity(new Intent(context, VictoriaActivity.class));
             }
         }
