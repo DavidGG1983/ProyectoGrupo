@@ -29,28 +29,10 @@ public class SeleccionNivelActivity extends Activity implements NivelesAdapter.N
 
         setContentView(R.layout.activity_seleccion_nivel);
 
-        int numNiveles = getNumNiveles();
+        int numNiveles = Utils.getNumNiveles(this);
         RecyclerView rvNiveles = findViewById(R.id.rvNiveles);
         rvNiveles.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         rvNiveles.setAdapter(new NivelesAdapter(numNiveles, this));
-    }
-
-    private int getNumNiveles() {
-        int numNiveles = 0;
-        String[] files = new String[0];
-        try {
-            files = getAssets().list("");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        for (String file : files) {
-            if (file.endsWith(".txt")) {
-                numNiveles++;
-            }
-        }
-
-        return numNiveles;
     }
 
     @Override

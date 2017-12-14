@@ -1,14 +1,17 @@
 package com.proyectogrupo.modelos;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.util.Log;
 
+import com.proyectogrupo.DerrotaActivity;
 import com.proyectogrupo.Dificultad;
 import com.proyectogrupo.GameView;
 import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
 import com.proyectogrupo.Utils;
+import com.proyectogrupo.VictoriaActivity;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
 import com.proyectogrupo.modelos.disparos.DisparoBomba;
@@ -639,6 +642,9 @@ public class Nivel {
             for (DisparoEnemigo disparoEnemigo : disparosEnemigos) {
                 disparoEnemigo.actualizar(tiempo);
             }
+
+            comprobarVictoriaDerrota();
+
             comprobarMaxTiempoQuieta();
         }
     }
@@ -951,6 +957,23 @@ public class Nivel {
         if (tiempoUltimoMovimientoNave > -1) {
             if (System.currentTimeMillis() - tiempoUltimoMovimientoNave >= (dificultad.getMaxSegundosQuieto() * 1000)) {
                 nave.vida = 0;
+            }
+        }
+    }
+
+    private void comprobarVictoriaDerrota() {
+        if (nave.vida <= 0) {
+            if (!infinito)
+                context.startActivity(new Intent(context, DerrotaActivity.class));
+            else
+                Utils.mostrarPuntos(context, marcadorPuntos.puntos);
+        }
+
+        if (!infinito) {
+            int tileYNave = (int) (nave.y / Tile.altura);
+
+            if (tileYNave + 1 >= altoMapaTiles()) {
+                context.startActivity(new Intent(context, VictoriaActivity.class));
             }
         }
     }
