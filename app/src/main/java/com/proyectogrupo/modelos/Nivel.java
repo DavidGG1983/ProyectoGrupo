@@ -385,6 +385,9 @@ public class Nivel {
                     }
                 }
             }
+
+            if (d.x > GameView.pantallaAncho || d.x < 0)
+                aBorrar.add(d);
         }
 
         for (DisparoEnemigo d : aBorrar)
