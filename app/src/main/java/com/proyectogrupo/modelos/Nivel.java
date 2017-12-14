@@ -232,7 +232,8 @@ public class Nivel {
                 }
             }
         }
-        disparosEnemigos.remove(aBorrar);
+        if(!(aBorrar instanceof DisparoEnemigoLanzallamas))
+            disparosEnemigos.remove(aBorrar);
 
         DisparoHelicoptero disparoHelicopteroBorrar = null;
         for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
