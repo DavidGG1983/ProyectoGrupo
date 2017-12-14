@@ -60,7 +60,7 @@ public class CajaEnemigos extends PowerUp {
         enemigo1 = aAñadir.get(0);
         enemigo2 = aAñadir.get(1);
         enemigo1.y = enemigo1.y + enemigo1.altura + this.altura;
-        enemigo2.y = enemigo2.y - enemigo2.altura - this.altura;
+        enemigo2.y = enemigo2.y - this.altura;
         enemigos.add(enemigo1);
         enemigos.add(enemigo2);
     }
