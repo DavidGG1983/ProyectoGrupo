@@ -32,7 +32,7 @@ public class Nave extends Modelo {
 
 
     public Nave(Context context, int x, int y) {
-        super(context, x, y, 36, 42);
+        super(context, x, y, 30, 30);
         this.y = y - this.altura / 2;
         this.xInicial = x;
         this.yInicial = this.y;
