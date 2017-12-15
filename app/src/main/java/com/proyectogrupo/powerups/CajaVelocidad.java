@@ -18,13 +18,15 @@ public class CajaVelocidad extends PowerUp {
     @Override
     public void efecto(Nivel nivel) {
         final Nave nave = nivel.nave;
-        nave.aumentarVelocidad(2);
-        Runnable action = new Runnable() {
-            @Override
-            public void run() {
-                nave.recuperarVelocidad();
-            }
-        };
-        new Hilo(5000, action).start();
+        if (nave.velocidadNave <= nave.velocidadInicial) {
+            nave.aumentarVelocidad(2);
+            Runnable action = new Runnable() {
+                @Override
+                public void run() {
+                    nave.recuperarVelocidad();
+                }
+            };
+            new Hilo(5000, action).start();
+        }
     }
 }

@@ -18,9 +18,9 @@ public class Nave extends Modelo {
     private static final String NAVE_INVULNERABLE = "nave_invulnerable";
     Map<String, Sprite> sprites;
     Sprite sprite;
-    final double velocidadInicial = 5;
+    public final double velocidadInicial = 5;
     int shield;
-    double velocidadNave;
+    public  double velocidadNave;
     double velocidadXActual;
     double velocidadYActual;
     int puntos;
