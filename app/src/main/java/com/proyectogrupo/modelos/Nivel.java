@@ -442,6 +442,7 @@ public class Nivel {
 
     private void moverDisparos() {
         List<DisparoEnemigo> aBorrar = new ArrayList<>();
+
         for (DisparoEnemigo d : disparosEnemigos) {
             d.moverAutomaticamente();
             int tileXDerecha = (int) ((d.x + d.ancho / 2) / Tile.ancho);
@@ -470,9 +471,12 @@ public class Nivel {
                 aBorrar.add(d);
         }
 
-        for (DisparoEnemigo d : aBorrar)
+        Iterator<DisparoEnemigo> disparoEnemigoIterator = disparosEnemigos.iterator();
+        while (disparoEnemigoIterator.hasNext()) {
+            DisparoEnemigo d = disparoEnemigoIterator.next();
             if (!(d instanceof DisparoEnemigoLanzallamas) && !(d instanceof DisparoVista))
-                disparosEnemigos.remove(d);
+                disparoEnemigoIterator.remove();
+        }
     }
 
     private void moverNaveHorizontal(int tileXnaveIzquierda, int tileXnaveDerecha,
@@ -1049,11 +1053,12 @@ public class Nivel {
 
         double naveY;
         if (infinito) {
-            naveY = nave.y - (altoMapaTiles() / 2 * numMapa);
+            naveY = nave.y - (18 * Tile.altura * (numMapa - 1));
+            Log.println(Log.DEBUG,"NAVEY:",""+naveY);
         } else {
             naveY = nave.y;
         }
-        Log.println(Log.DEBUG,"NAVEY:",""+naveY);
+
         if (naveY < minPosNaveY) {
             nave.sumarPuntos((int) ((minPosNaveY - naveY) / 4));
             minPosNaveY = naveY;
