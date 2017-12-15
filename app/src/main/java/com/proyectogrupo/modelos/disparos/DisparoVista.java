@@ -20,7 +20,7 @@ public class DisparoVista extends DisparoEnemigo {
 
     @Override
     public boolean colisiona(Modelo modelo) {
-        if (modelo.x < x + ancho && modelo.x > x - ancho && modelo.y > y - altura
+        if (modelo.x + modelo.ancho / 2 > x - ancho / 2 && modelo.x - ancho / 2 < x + ancho / 2 && modelo.y > y - altura
                 && modelo.y < y + altura)
             return true;
         else
