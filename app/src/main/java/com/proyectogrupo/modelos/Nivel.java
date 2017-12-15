@@ -702,12 +702,13 @@ public class Nivel {
             fondo.dibujar(canvas);
             dibujarTiles(canvas);
             nave.dibujar(canvas);
+            for (DisparoEnemigo d : disparosEnemigos)
+                d.dibujar(canvas);
+
             for (Enemigo e : enemigos)
                 e.dibujar(canvas);
             for (PowerUp p : powerups)
                 p.dibujar(canvas);
-            for (DisparoEnemigo d : disparosEnemigos)
-                d.dibujar(canvas);
 
             for (Helicoptero helicoptero : helicopteros)
                 helicoptero.dibujar(canvas);
@@ -747,6 +748,64 @@ public class Nivel {
                     mapaTiles[x][y].imagen.draw(canvas);
                 }
             }
+        }
+    }
+
+    private void generarPowerUpsAleatorioArriba(){
+        int conta = 0;
+        for (int y = 0; y < altoMapaTiles()/2; y++) {
+            if(conta < 5) {
+                int x;
+                do {
+                    x = Utils.randBetween(0, anchoMapaTiles() - 2);
+                }
+                while (mapaTiles[x][y].tipoDeColision == Tile.SOLIDO);
+                generarPowerUp(Utils.randBetween(0, 9), x, y);
+                conta++;
+            }
+        }
+    }
+
+    private void generarPowerUpsAleatorioAbajo(){
+        int conta = 0;
+        for (int y = altoMapaTiles()/2; y < altoMapaTiles(); y++) {
+            if(conta < 5) {
+                int x;
+                do {
+                    x = Utils.randBetween(0, anchoMapaTiles() - 2);
+                }
+                while (mapaTiles[x][y].tipoDeColision == Tile.SOLIDO);
+                generarPowerUp(Utils.randBetween(0, 9), x, y);
+                conta++;
+            }
+        }
+    }
+
+    private Tile generarPowerUp(int tipo,int x,int y){
+        //M,H,S,I,X,C,T,P,R,F,G
+        switch (tipo){
+            case 0:
+                return this.inicializarTile('M', x, y);
+            case 1:
+                return this.inicializarTile('H', x, y);
+            case 2:
+                return this.inicializarTile('S', x, y);
+            case 3:
+                return this.inicializarTile('I', x, y);
+            case 4:
+                return this.inicializarTile('X', x, y);
+            case 5:
+                return this.inicializarTile('C', x, y);
+            case 6:
+                return this.inicializarTile('T', x, y);
+            case 7:
+                return this.inicializarTile('P', x, y);
+            case 8:
+                return this.inicializarTile('R', x, y);
+            case 9:
+                return this.inicializarTile('F', x, y);
+            default:
+                return this.inicializarTile('.', x, y);
         }
     }
 
@@ -861,6 +920,7 @@ public class Nivel {
                     mapaTiles[x][y] = inicializarTile('.', x, y);
         }
         this.generarEnemigosAleatoriosArriba();
+        this.generarPowerUpsAleatorioArriba();
     }
 
     private void generarTilesEnEjeX(int y) {
@@ -911,6 +971,7 @@ public class Nivel {
         mapaTiles[3][altoMapaTiles() - 1] =
                 inicializarTile('1', 3, altoMapaTiles() - 1);
         this.generarEnemigosAleatoriosAbajo();
+        this.generarPowerUpsAleatorioAbajo();
     }
 
 
