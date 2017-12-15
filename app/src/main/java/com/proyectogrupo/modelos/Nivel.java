@@ -19,12 +19,14 @@ import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoLanzallamas;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
 import com.proyectogrupo.modelos.disparos.DisparoHelicoptero;
+import com.proyectogrupo.modelos.disparos.DisparoVista;
 import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
-import com.proyectogrupo.modelos.enemigos.EnemigoLanzaBombas;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
+import com.proyectogrupo.modelos.enemigos.EnemigoLanzaBombas;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
+import com.proyectogrupo.modelos.enemigos.EnemigoVista;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
@@ -45,14 +47,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Nivel {
     public static Dificultad dificultad;
     public static int scrollEjeY = 0;
 
     private Tile[][] mapaTiles;
-    public List<PowerUp> powerups = new LinkedList<>();
+    public List<PowerUp> powerups = new ArrayList<>();
     private Context context = null;
     public static boolean infinito;
     public static int numeroNivel;
@@ -60,12 +62,12 @@ public class Nivel {
     public Nave nave;
     public float orientacionPadX = 0;
     public float orientacionPadY = 0;
-    public List<Enemigo> enemigos = new LinkedList<>();
-    private List<Helicoptero> helicopteros = new LinkedList<>();
-    public List<Integer> coloresCajas = new LinkedList<>();
+    public List<Enemigo> enemigos = new ArrayList<>();
+    private List<Helicoptero> helicopteros = new ArrayList<>();
+    public List<Integer> coloresCajas = new ArrayList<>();
     private Enemigo enemigoColorCaja;
-    private LinkedBlockingQueue<DisparoEnemigo> disparosEnemigos = new LinkedBlockingQueue<>();
-    private List<DisparoHelicoptero> disparosHelicopteros = new LinkedList<>();
+    private CopyOnWriteArrayList<DisparoEnemigo> disparosEnemigos = new CopyOnWriteArrayList<>();
+    private List<DisparoHelicoptero> disparosHelicopteros = new ArrayList<>();
 
     private MarcadorPuntos marcadorPuntos;
 
@@ -237,6 +239,8 @@ public class Nivel {
         }
         if(!(aBorrar instanceof DisparoEnemigoLanzallamas))
             disparosEnemigos.remove(aBorrar);
+        if (!(aBorrar instanceof DisparoVista))
+            disparosEnemigos.remove(aBorrar);
 
         DisparoHelicoptero disparoHelicopteroBorrar = null;
         for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
@@ -262,7 +266,6 @@ public class Nivel {
         DisparoEnemigo aBorrar;
         nave.setVida(nave.getVida() - d.getDamage());
         nave.activarInvunerabilidad();
-        Log.d("Estado NAVE:","Vida:"+nave.getVida()+"invulnerable? "+nave.invulnerable);
         Runnable action = new Runnable() {
             @Override
             public void run() {
@@ -341,7 +344,15 @@ public class Nivel {
             if (e instanceof Disparador) {
                 Disparador disparador = (Disparador) e;
                 final DisparoEnemigo disparo = disparador.disparar(tiempo);
-
+                if (disparo != null)
+                    disparosEnemigos.add(disparo);
+                if (e instanceof EnemigoVista) {
+                    EnemigoVista vista = (EnemigoVista) e;
+                    int actual = disparosEnemigos.indexOf(vista.actual);
+                    vista.cambiarLadoDisparo();
+                    disparosEnemigos.remove(actual);
+                    disparosEnemigos.add(vista.actual);
+                }
                 if (disparo instanceof DisparoBomba) {
                     Runnable action = new Runnable() {
                         @Override
@@ -365,18 +376,17 @@ public class Nivel {
 
                     new Hilo(4000, timerBomba).start();
                 }
+            }
+            if (disparo != null)
+                disparosEnemigos.add(disparo);
 
-                if (disparo != null)
-                    disparosEnemigos.add(disparo);
-
+            for (Helicoptero helicoptero : helicopteros) {
+                DisparoHelicoptero disparoHelicoptero = helicoptero.disparar(tiempo);
+                if (disparoHelicoptero != null)
+                    disparosHelicopteros.add(disparoHelicoptero);
             }
         }
 
-        for (Helicoptero helicoptero : helicopteros) {
-            DisparoHelicoptero disparoHelicoptero = helicoptero.disparar(tiempo);
-            if (disparoHelicoptero != null)
-                disparosHelicopteros.add(disparoHelicoptero);
-        }
     }
 
     private void explotar(DisparoEnemigo disparo) {
@@ -397,6 +407,9 @@ public class Nivel {
     private void moverEnemigos() {
         for (Enemigo enemigo : enemigos) {
             enemigo.mover();
+            if (enemigo instanceof EnemigoVista) {
+                return;
+            }
             int tileXDerecha = (int) ((enemigo.x + enemigo.ancho / 2) / Tile.ancho);
             int tileXIzquierda = (int) ((enemigo.x - enemigo.ancho / 2) / Tile.ancho);
 
@@ -444,6 +457,9 @@ public class Nivel {
                     }
                 }
             }
+
+            if (d.x > GameView.pantallaAncho || d.x < 0)
+                aBorrar.add(d);
         }
 
         for (DisparoEnemigo d : aBorrar)
@@ -931,6 +947,10 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'O':
                 this.enemigos.add(new EnemigoLanzaBombas(
+                        context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'V':
+                this.enemigos.add(new EnemigoVista(
                         context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'K':
