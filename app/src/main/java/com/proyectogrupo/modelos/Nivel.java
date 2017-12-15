@@ -217,12 +217,15 @@ public class Nivel {
             if ((d instanceof DisparoBomba && !((DisparoBomba) d).explotando))
                 continue;
             if (d.colisiona(nave)) {
-                if (!nave.contrataque) {
-                    aBorrar = colisionDisparoNave(d);
-                    break;
-                } else {
-                    //Matar al enemigo que disparo
-                    enemigos.remove(d.enemigo);
+                if (!nave.invulnerable) {
+                    if (!nave.contrataque) {
+                        aBorrar = colisionDisparoNave(d);
+                        break;
+                    } else {
+                        //Matar al enemigo que disparo
+                        enemigos.remove(d.enemigo);
+                        aBorrar = d;
+                    }
                 }
             } else {
                 if (d instanceof DisparoBomba) {
