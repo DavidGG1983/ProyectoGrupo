@@ -286,7 +286,7 @@ public class Nivel {
                         nave.desactivarInvunerabilidad();
                     }
                 };
-                new Hilo(2000, action).start();
+                new Hilo(context, 2000, action).start();
                 disparoHelicopteroBorrar = disparoHelicoptero;
             }
         }
@@ -305,7 +305,7 @@ public class Nivel {
                 nave.desactivarInvunerabilidad();
             }
         };
-        new Hilo(2000, action).start();
+        new Hilo(context, 2000, action).start();
 
         if (d instanceof DisparoEnemigoRalentizador) {
             nave.detenerNave();
@@ -316,7 +316,7 @@ public class Nivel {
                     nave.recuperarVelocidad();
                 }
             };
-            new Hilo(1000, action2).start();
+            new Hilo(context, 1000, action2).start();
         }
         aBorrar = d;
         return aBorrar;
@@ -345,7 +345,7 @@ public class Nivel {
                                     nave.desactivarInvunerabilidad();
                                 }
                             };
-                            new Hilo(5000, action).start();
+                            new Hilo(context, 5000, action).start();
                         }
                     } else {
                         eliminar = e;
@@ -414,9 +414,9 @@ public class Nivel {
                         }
                     };
 
-                    new Hilo(2000, action).start();
+                    new Hilo(context, 2000, action).start();
 
-                    new Hilo(4000, timerBomba).start();
+                    new Hilo(context, 4000, timerBomba).start();
                 }
             }
 
@@ -439,7 +439,7 @@ public class Nivel {
                     nave.desactivarInvunerabilidad();
                 }
             };
-            new Hilo(2000, action).start();
+            new Hilo(context, 2000, action).start();
         }
     }
 

@@ -32,7 +32,7 @@ public class CajaColor extends PowerUp {
                 nivel.coloresCajas.remove(Integer.valueOf(colorActual));
             }
         };
-        new Hilo(10000, action).start();
+        new Hilo(context, 10000, action).start();
     }
 
     @Override

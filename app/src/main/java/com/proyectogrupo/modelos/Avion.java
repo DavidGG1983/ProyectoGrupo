@@ -16,6 +16,7 @@ public class Avion extends Modelo {
 
     public Avion(Context context, double x, double y) {
         super(context, x, y, 30, 48);
+        this.y = y - altura / 2;
         inicializar();
     }
 

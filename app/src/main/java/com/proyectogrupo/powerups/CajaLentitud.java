@@ -32,6 +32,6 @@ public class CajaLentitud extends PowerUp {
                 nave.recuperarVelocidad();
             }
         };
-        new Hilo(10000, action).start();
+        new Hilo(context, 10000, action).start();
     }
 }

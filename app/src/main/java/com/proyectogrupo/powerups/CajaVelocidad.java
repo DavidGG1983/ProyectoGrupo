@@ -26,7 +26,7 @@ public class CajaVelocidad extends PowerUp {
                     nave.recuperarVelocidad();
                 }
             };
-            new Hilo(5000, action).start();
+            new Hilo(context, 5000, action).start();
         }
     }
 }

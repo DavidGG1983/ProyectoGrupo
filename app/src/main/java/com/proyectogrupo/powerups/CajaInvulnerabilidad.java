@@ -25,6 +25,6 @@ public class CajaInvulnerabilidad extends PowerUp {
                 nave.desactivarInvunerabilidad();
             }
         };
-        new Hilo(5000, action).start();
+        new Hilo(context, 5000, action).start();
     }
 }
