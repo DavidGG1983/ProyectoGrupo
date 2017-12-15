@@ -768,6 +768,23 @@ public class Nivel {
         }
     }
 
+    private int numTilesLibresFila(int y){
+        int num = 0;
+        for(int x = 0;x < anchoMapaTiles();x++)
+            if(mapaTiles[x][y].tipoDeColision == Tile.SOLIDO)
+                num++;
+        return num;
+    }
+
+    private int numFilasConTile(){
+        int num = 0;
+        for(int y=0;y < altoMapaTiles()/2;y++)
+            for(int x=0;x < anchoMapaTiles();x++)
+                if(mapaTiles[x][y].tipoDeColision == Tile.SOLIDO)
+                    num++;
+        return num;
+    }
+
     private void generarPowerUpsAleatorioAbajo(){
         int conta = 0;
         for (int y = altoMapaTiles()/2; y < altoMapaTiles(); y++) {
@@ -813,9 +830,21 @@ public class Nivel {
 
     private void generarEnemigosAleatoriosArriba() {
         int conta = 0;
-        for (int y = 0; y < altoMapaTiles()/2; y++) {
-            if (comprobarFilaSinTiles(y) && conta < 7) {
-                int x = Utils.randBetween(0, anchoMapaTiles() - 2);
+        for (int y = 0; y < altoMapaTiles()/2 && conta < 6; y++) {
+            int x = -1;
+            if(!this.comprobarFilaSinTiles(y) && this.numTilesLibresFila(y) >= 4 ) {
+                do {
+                    x = Utils.randBetween(0, anchoMapaTiles() - 1);
+                }
+                while(mapaTiles[x][y].tipoDeColision == Tile.SOLIDO);
+            }
+            else
+                if(this.comprobarFilaSinTiles(y)){
+                    x = Utils.randBetween(0, anchoMapaTiles() - 2);
+                    generarEnemigo(Utils.randBetween(0, 7), x, y);
+                }
+
+            if(x != -1 && conta < 3){
                 generarEnemigo(Utils.randBetween(0, 7), x, y);
                 conta++;
             }
@@ -825,8 +854,20 @@ public class Nivel {
     private void generarEnemigosAleatoriosAbajo(){
         int conta = 0;
         for (int y = altoMapaTiles()/2; y < altoMapaTiles(); y++) {
-            if (comprobarFilaSinTiles(y) && conta < 7) {
-                int x = Utils.randBetween(0, anchoMapaTiles() - 2);
+            int x = -1;
+            if(!this.comprobarFilaSinTiles(y) && this.numTilesLibresFila(y) >= 4 ) {
+                do {
+                    x = Utils.randBetween(0, anchoMapaTiles() - 1);
+                }
+                while(mapaTiles[x][y].tipoDeColision == Tile.SOLIDO);
+            }
+            else
+            if(this.comprobarFilaSinTiles(y)){
+                x = Utils.randBetween(0, anchoMapaTiles() - 2);
+                generarEnemigo(Utils.randBetween(0, 7), x, y);
+            }
+
+            if(x != -1 && conta < 3){
                 generarEnemigo(Utils.randBetween(0, 7), x, y);
                 conta++;
             }
