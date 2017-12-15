@@ -23,16 +23,18 @@ import com.proyectogrupo.modelos.disparos.DisparoVista;
 import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
-import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzaBombas;
+import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.modelos.enemigos.EnemigoVista;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
 import com.proyectogrupo.powerups.CajaContraEnemigos;
+import com.proyectogrupo.powerups.CajaDestruccion;
 import com.proyectogrupo.powerups.CajaEnemigos;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
+import com.proyectogrupo.powerups.CajaLentitud;
 import com.proyectogrupo.powerups.CajaPuntosExtra;
 import com.proyectogrupo.powerups.CajaVelocidad;
 import com.proyectogrupo.powerups.CajaVidaExtra;
@@ -47,7 +49,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Nivel {
     public static Dificultad dificultad;
@@ -1131,6 +1132,12 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'G':
                 powerups.add(new CajaEnemigos(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'N':
+                powerups.add(new CajaLentitud(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'D':
+                powerups.add(new CajaDestruccion(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso
