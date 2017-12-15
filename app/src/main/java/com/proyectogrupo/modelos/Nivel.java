@@ -163,11 +163,9 @@ public class Nivel {
         moverModelosAbajo(helicopteros);
         this.numMapa++;
 
-        if (this.numMapa % 2 == 0) {
-            if (numEnemigosActual < 10) {
+            if (numEnemigosActual < 20) {
                 numEnemigosActual++;
             }
-        }
     }
 
     private <T extends Modelo> void moverModelosAbajo(List<T> modelos) {
@@ -888,6 +886,8 @@ public class Nivel {
     }
 
     private Tile generarEnemigo(int i, int x, int y) {
+        i = 3;
+
         switch (i) {
             case 0:
                 return this.inicializarTile('B', x, y);
