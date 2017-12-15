@@ -84,7 +84,7 @@ public class Nivel {
 
     private long tiempoUltimoMovimientoNave = -1;
     private double ultimaPosYNave = -1;
-    private int numEnemigosActual = 1;
+    private int numEnemigosActual;
 
     public Nivel(Context context) throws Exception {
         inicializado = false;
@@ -97,7 +97,7 @@ public class Nivel {
     }
 
     public void inicializar() throws Exception {
-        numEnemigosActual = 1;
+        numEnemigosActual = 8;
         scrollEjeY = 0;
         minPosNaveY = 0;
         monedasRecogidas = 0;
@@ -224,7 +224,7 @@ public class Nivel {
                     disparoABorrar = disparoHelicoptero;
                 }
             } else {
-                if (disparoHelicoptero.y - Nivel.scrollEjeY >= altoMapaTiles()) {
+                if (disparoHelicoptero.y - Nivel.scrollEjeY >= altoMapaTiles() * Tile.altura) {
                     disparoABorrar = disparoHelicoptero;
                 }
             }
@@ -867,24 +867,25 @@ public class Nivel {
         int conta = 0;
         for (int y = fromY; y < toY; y++) {
             int x = -1;
-            if(!this.comprobarFilaSinTiles(y) && this.numTilesLibresFila(y) >= 2 ) {
-                do {
-                    x = Utils.randBetween(0, anchoMapaTiles() - 1);
-                }
-                while(mapaTiles[x][y].tipoDeColision == Tile.SOLIDO);
+            //if (!this.comprobarFilaSinTiles(y) && this.numTilesLibresFila(y) >= 2) {
+            do {
+                x = Utils.randBetween(0, anchoMapaTiles() - 1);
             }
-            else
-            if(this.comprobarFilaSinTiles(y)){
-                x = Utils.randBetween(0, anchoMapaTiles() - 2);
-                // generarEnemigo(Utils.randBetween(0, 7), x, y);
-            }
+            while (mapaTiles[x][y].tipoDeColision == Tile.SOLIDO);
 
-            if (x != -1 && conta < numEnemigosActual){
+            //}else
+            //    if (this.comprobarFilaSinTiles(y)) {
+            //    x = Utils.randBetween(0, anchoMapaTiles() - 2);
+            // generarEnemigo(Utils.randBetween(0, 7), x, y);
+            // }
+
+            if (x != -1 && conta < numEnemigosActual) {
                 generarEnemigo(Utils.randBetween(0, 7), x, y);
                 conta++;
             }
         }
     }
+
     private void generarEnemigosAleatoriosArriba() {
        generarEnemigosAleatorios(0, altoMapaTiles() / 2);
     }
@@ -971,7 +972,7 @@ public class Nivel {
     }
 
     private void inicializarMapaTilesAleatorioArriba() {
-        int numeroFilasTile = Utils.randBetween(4, 8);
+        int numeroFilasTile = Utils.randBetween(3, 5);
         int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile, true);
 
         for (int y = 0; y < altoMapaTiles() / 2; ++y) {
@@ -1022,7 +1023,7 @@ public class Nivel {
     }
 
     private void inicializarMapaTilesAleatorioAbajo() {
-        int numeroFilasTile = Utils.randBetween(4, 7);
+        int numeroFilasTile = Utils.randBetween(3, 6);
         int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile, false);
         for (int y = altoMapaTiles() / 2; y < altoMapaTiles(); ++y) {
             if (yaExisteFila(posicionesFilaConTile, y)) {
@@ -1059,7 +1060,13 @@ public class Nivel {
         }
         Arrays.sort(posicionFilas);
         for(int i=0;i < posicionFilas.length-1;i++){
-            if(posicionFilas[i+1] == posicionFilas[i]+1){
+            if(posicionFilas[i+1] == posicionFilas[i]+1 || posicionFilas[i+1] == posicionFilas[i]+2){
+                posicionFilas[i+1] += 2;
+            }
+        }
+        Arrays.sort(posicionFilas);
+        for(int i=0;i < posicionFilas.length-1;i++){
+            if(posicionFilas[i+1] == posicionFilas[i]+1 || posicionFilas[i+1] == posicionFilas[i]+2){
                 posicionFilas[i+1] += 2;
             }
         }
