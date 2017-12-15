@@ -1060,7 +1060,7 @@ public class Nivel {
         Arrays.sort(posicionFilas);
         for(int i=0;i < posicionFilas.length-1;i++){
             if(posicionFilas[i+1] == posicionFilas[i]+1){
-                posicionFilas[i+1] += 1;
+                posicionFilas[i+1] += 2;
             }
         }
         return posicionFilas;
