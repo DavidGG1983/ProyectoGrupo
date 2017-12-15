@@ -84,6 +84,7 @@ public class Nivel {
 
     private long tiempoUltimoMovimientoNave = -1;
     private double ultimaPosYNave = -1;
+    private int numEnemigosActual = 1;
 
     public Nivel(Context context) throws Exception {
         inicializado = false;
@@ -96,6 +97,7 @@ public class Nivel {
     }
 
     public void inicializar() throws Exception {
+        numEnemigosActual = 1;
         scrollEjeY = 0;
         minPosNaveY = 0;
         monedasRecogidas = 0;
@@ -160,6 +162,12 @@ public class Nivel {
         moverModelosAbajo(enemigos);
         moverModelosAbajo(helicopteros);
         this.numMapa++;
+
+        if (this.numMapa % 2 == 0) {
+            if (numEnemigosActual < 10) {
+                numEnemigosActual++;
+            }
+        }
     }
 
     private <T extends Modelo> void moverModelosAbajo(List<T> modelos) {
@@ -865,7 +873,7 @@ public class Nivel {
                 // generarEnemigo(Utils.randBetween(0, 7), x, y);
             }
 
-            if(x != -1 && conta < 10){
+            if(x != -1 && conta < numEnemigosActual){
                 generarEnemigo(Utils.randBetween(0, 7), x, y);
                 conta++;
             }
@@ -880,8 +888,6 @@ public class Nivel {
     }
 
     private Tile generarEnemigo(int i, int x, int y) {
-        i = 1;
-
         switch (i) {
             case 0:
                 return this.inicializarTile('B', x, y);
@@ -969,6 +975,7 @@ public class Nivel {
                 for (int x = 0; x < anchoMapaTiles(); ++x)
                     mapaTiles[x][y] = inicializarTile('.', x, y);
         }
+
         this.generarEnemigosAleatoriosArriba();
         this.generarPowerUpsAleatorioArriba();
     }
