@@ -46,7 +46,9 @@ import com.proyectogrupo.powerups.Teletransporte;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -834,7 +836,7 @@ public class Nivel {
 
     private void generarEnemigosAleatoriosArriba() {
         int conta = 0;
-        for (int y = 0; y < altoMapaTiles()/2 && conta < 6; y++) {
+        for (int y = 0; y < altoMapaTiles()/2 && conta < 1; y++) {
             int x = -1;
             if(!this.comprobarFilaSinTiles(y) && this.numTilesLibresFila(y) >= 4 ) {
                 do {
@@ -845,10 +847,10 @@ public class Nivel {
             else
                 if(this.comprobarFilaSinTiles(y)){
                     x = Utils.randBetween(0, anchoMapaTiles() - 2);
-                    //generarEnemigo(Utils.randBetween(0, 7), x, y);
+                    generarEnemigo(Utils.randBetween(0, 7), x, y);
                 }
 
-            if(x != -1 && conta < 10){
+            if(x != -1 && conta < 1){
                 generarEnemigo(Utils.randBetween(0, 7), x, y);
                 conta++;
             }
@@ -868,10 +870,10 @@ public class Nivel {
             else
             if(this.comprobarFilaSinTiles(y)){
                 x = Utils.randBetween(0, anchoMapaTiles() - 2);
-                //generarEnemigo(Utils.randBetween(0, 7), x, y);
+                generarEnemigo(Utils.randBetween(0, 7), x, y);
             }
 
-            if(x != -1 && conta < 10){
+            if(x != -1 && conta < 1){
                 generarEnemigo(Utils.randBetween(0, 7), x, y);
                 conta++;
             }
@@ -972,7 +974,7 @@ public class Nivel {
 
     private void generarTilesEnEjeX(int y) {
         int posicionInicio = Utils.randBetween(3, anchoMapaTiles() - 3);
-        int numTiles = Utils.randBetween(2, anchoMapaTiles() - 2);
+        int numTiles = Utils.randBetween(2, anchoMapaTiles() - 4);
         int orientacion = Utils.randBetween(0, 1);
         int limite;
         if (orientacion == 0) {
@@ -1040,6 +1042,12 @@ public class Nivel {
             }
             while(yaExisteFila(posicionFilas,pos));
             posicionFilas[i] = pos;
+        }
+        Arrays.sort(posicionFilas);
+        for(int i=0;i < posicionFilas.length-1;i++){
+            if(posicionFilas[i+1] == posicionFilas[i]+1){
+                posicionFilas[i+1] += 1;
+            }
         }
         return posicionFilas;
     }
