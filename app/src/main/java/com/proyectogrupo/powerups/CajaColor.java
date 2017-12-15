@@ -7,11 +7,14 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.proyectogrupo.Hilo;
+import com.proyectogrupo.Utils;
 import com.proyectogrupo.modelos.Nivel;
 
 public class CajaColor extends PowerUp {
     private static final int[] colores = {
-            Color.parseColor("#C8D0D0")
+            Color.parseColor("#C8D0D0"),
+            Color.parseColor("#1818C0"),
+            Color.parseColor("#C080B0")
     };
 
     private int color;
@@ -37,7 +40,7 @@ public class CajaColor extends PowerUp {
 
     @Override
     public void dibujar(Canvas canvas) {
-        if (System.currentTimeMillis() - tiempoColorGenerado > 5000) {
+        if (System.currentTimeMillis() - tiempoColorGenerado > 3000) {
             generarColor();
             tiempoColorGenerado = System.currentTimeMillis();
         }
@@ -48,6 +51,6 @@ public class CajaColor extends PowerUp {
     }
 
     private void generarColor() {
-        color = colores[(int) (Math.random() * colores.length)];
+        color = colores[Utils.randBetween(0, colores.length - 1)];
     }
 }

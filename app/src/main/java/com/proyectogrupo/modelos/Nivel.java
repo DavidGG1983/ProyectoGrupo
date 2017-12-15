@@ -23,6 +23,7 @@ import com.proyectogrupo.modelos.disparos.DisparoHelicoptero;
 import com.proyectogrupo.modelos.disparos.DisparoVista;
 import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
+import com.proyectogrupo.modelos.enemigos.EnemigoBasico;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzaBombas;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
@@ -345,7 +346,7 @@ public class Nivel {
                                 int colorEnemigo = e.getColor();
 
                                 if (colorEnemigo == colorCaja && enemigoColorCaja == null) {
-                                    nave.sumarPuntos(1);
+                                    nave.sumarPuntos(300);
                                     enemigoColorCaja = e;
                                 }
                             } else {
