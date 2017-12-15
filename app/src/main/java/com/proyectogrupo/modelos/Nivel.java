@@ -187,10 +187,8 @@ public class Nivel {
         limpiarModelosMapaAbajo(powerups);
         limpiarModelosMapaAbajo(enemigos);
         limpiarModelosMapaAbajo(disparosHelicopteros);
-        limpiarModelosMapaAbajo(disparosEnemigos);
+       // limpiarModelosMapaAbajo(disparosEnemigos);
         limpiarModelosMapaAbajo(helicopteros);
-        limpiarModelosMapaAbajo(disparosEnemigos);
-        limpiarModelosMapaAbajo(disparosHelicopteros);
     }
 
     private <T extends Modelo> void limpiarModelosMapaAbajo(List<T> modelos) {
@@ -271,7 +269,7 @@ public class Nivel {
             }
         }
         if (!nave.contrataque) {
-            if (!(aBorrar instanceof DisparoEnemigoLanzallamas) && !(aBorrar instanceof DisparoVista))
+            if (!(aBorrar instanceof DisparoEnemigoLanzallamas) && !(aBorrar instanceof DisparoVista) && !(aBorrar instanceof DisparoBomba))
                 disparosEnemigos.remove(aBorrar);
         } else {
             disparosEnemigos.remove(aBorrar);
@@ -511,11 +509,12 @@ public class Nivel {
                 aBorrar.add(d);
         }
 
-        Iterator<DisparoEnemigo> disparoEnemigoIterator = disparosEnemigos.iterator();
+        Iterator<DisparoEnemigo> disparoEnemigoIterator = aBorrar.iterator();
         while (disparoEnemigoIterator.hasNext()) {
             DisparoEnemigo d = disparoEnemigoIterator.next();
-            if (!(d instanceof DisparoEnemigoLanzallamas) && !(d instanceof DisparoVista))
+            if (!(d instanceof DisparoEnemigoLanzallamas) && !(d instanceof DisparoVista) && !(d instanceof DisparoBomba)) {
                 disparoEnemigoIterator.remove();
+            }
         }
     }
 
