@@ -413,8 +413,10 @@ public class Nivel {
             int tileXIzquierda = (int) ((enemigo.x - enemigo.ancho / 2) / Tile.ancho);
 
             if (tileXDerecha < anchoMapaTiles()) {
+                int aux = (int) (enemigo.y / Tile.altura);
+
                 if (mapaTiles[tileXDerecha]
-                        [(int) (enemigo.y / Tile.altura)].tipoDeColision
+                        [aux].tipoDeColision
                         != Tile.PASABLE) {
                     enemigo.x = enemigo.xAnterior;
                     enemigo.girar();
@@ -721,7 +723,7 @@ public class Nivel {
 
     private void generarEnemigosAleatorios() {
         int conta = 0;
-        for (int y = 0; y < altoMapaTiles(); ++y) {
+        for (int y = 0; y < altoMapaTiles(); y++) {
             if (comprobarFilaSinTiles(y) && conta < 5) {
                 int x = Utils.randBetween(0, anchoMapaTiles() - 1);
                 generarEnemigo(Utils.randBetween(0, 5), x, y);
@@ -869,9 +871,6 @@ public class Nivel {
         mapaTiles[3][altoMapaTiles() - 1] = inicializarTile('1', 3, altoMapaTiles() - 1);
     }
 
-    private void inicializarMapaTilesAleatorio(int xInicial, int xFinal, int yInicial, int yFinal) {
-
-    }
 
     private int[] getFilasConTile(int numFilas, boolean arriba) {
         int min, max;
