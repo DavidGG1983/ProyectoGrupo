@@ -102,10 +102,7 @@ public class Nave extends Modelo {
     }
 
     public void setVida(int vida) {
-        if (vida > this.getVida())   // si es una caja de vida o algo por el estilo se suma
-            this.vida = vida;
-        else if (!esInvulnerable())   // si es invulnerable a disparos no recibe daño
-            this.vida = vida;
+        this.vida = vida;
     }
 
     public void activarInvunerabilidad() {
