@@ -698,12 +698,13 @@ public class Nivel {
             fondo.dibujar(canvas);
             dibujarTiles(canvas);
             nave.dibujar(canvas);
+            for (DisparoEnemigo d : disparosEnemigos)
+                d.dibujar(canvas);
+
             for (Enemigo e : enemigos)
                 e.dibujar(canvas);
             for (PowerUp p : powerups)
                 p.dibujar(canvas);
-            for (DisparoEnemigo d : disparosEnemigos)
-                d.dibujar(canvas);
 
             for (Helicoptero helicoptero : helicopteros)
                 helicoptero.dibujar(canvas);
