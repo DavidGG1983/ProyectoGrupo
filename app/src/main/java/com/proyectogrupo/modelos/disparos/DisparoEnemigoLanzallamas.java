@@ -43,16 +43,18 @@ public class DisparoEnemigoLanzallamas extends DisparoEnemigo {
 
     public void actualizar(long tiempo) {
         this.sprite.actualizar(tiempo);
+        moverAutomaticamente();
     }
 
     public void moverAutomaticamente() {
-        Log.println(Log.DEBUG, "VELOCIDAD", "" + enemigo.velocidadX);
         if (enemigo.velocidadX > 0) {
             x = enemigo.x + 47;
+            y = enemigo.y;
             this.sprite = sprites.get(llamaDerecha);
         } else {
             this.sprite = sprites.get(llamaIzquieda);
             x = enemigo.x - 47;
+            y = enemigo.y;
         }
     }
 
