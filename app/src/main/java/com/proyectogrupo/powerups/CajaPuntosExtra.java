@@ -8,10 +8,6 @@ import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.Nave;
 import com.proyectogrupo.modelos.Nivel;
 
-/**
- * Created by Daniel on 10/12/2017.
- */
-
 public class CajaPuntosExtra extends PowerUp {
 
     public CajaPuntosExtra(Context context, double x, double y) {

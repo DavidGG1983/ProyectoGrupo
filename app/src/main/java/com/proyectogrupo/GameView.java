@@ -11,7 +11,6 @@ import com.proyectogrupo.modelos.IconoVida;
 import com.proyectogrupo.modelos.Nivel;
 import com.proyectogrupo.modelos.controles.Pad;
 
-
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private boolean iniciado = false;

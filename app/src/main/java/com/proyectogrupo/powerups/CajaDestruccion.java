@@ -4,15 +4,12 @@ import android.content.Context;
 
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
-import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.Nivel;
+import com.proyectogrupo.modelos.enemigos.Enemigo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Daniel on 06/12/2017.
- */
 
 public class CajaDestruccion extends PowerUp {
     public CajaDestruccion(Context context, double x, double y) {

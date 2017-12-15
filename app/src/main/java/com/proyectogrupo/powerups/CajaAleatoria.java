@@ -10,8 +10,7 @@ import com.proyectogrupo.modelos.Nivel;
 import java.util.Random;
 
 /**
- * Created by Daniel on 10/12/2017.
- * Usa el patron State
+ * Patron State.
  */
 
 public class CajaAleatoria extends PowerUp {

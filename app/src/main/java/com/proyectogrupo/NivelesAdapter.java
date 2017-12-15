@@ -6,10 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-/**
- * Created by Fer on 12/12/2017.
- */
-
 public class NivelesAdapter extends RecyclerView.Adapter<NivelesAdapter.NivelViewHolder> {
 
     interface NivelClickListener {

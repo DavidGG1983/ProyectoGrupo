@@ -16,10 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Created by Daniel on 13/12/2017.
- */
-
 public class CajaEnemigos extends PowerUp {
 
     public CajaEnemigos(Context context, double x, double y) {

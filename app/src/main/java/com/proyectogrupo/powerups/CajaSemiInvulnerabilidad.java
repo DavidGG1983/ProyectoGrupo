@@ -8,10 +8,6 @@ import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.Nave;
 import com.proyectogrupo.modelos.Nivel;
 
-/**
- * Created by Daniel on 05/12/2017.
- */
-
 public class CajaSemiInvulnerabilidad extends PowerUp {
     public CajaSemiInvulnerabilidad(Context context, double x, double y) {
         super(context, x, y, 32, 32);
