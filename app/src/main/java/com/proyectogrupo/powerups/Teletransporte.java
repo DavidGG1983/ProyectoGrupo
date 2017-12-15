@@ -24,7 +24,9 @@ public class Teletransporte extends PowerUp {
         }
         while (nivel.nave.y - (avanzar * Tile.altura) <= 0
                 || nivel.getTile((int) nivel.nave.x / Tile.ancho,
-                (int) (nivel.nave.y - avanzar * Tile.altura) / Tile.altura) != Tile.PASABLE);
+                (int) (nivel.nave.y - avanzar * Tile.altura) / Tile.altura) != Tile.PASABLE
+                || nivel.getTile((int) nivel.nave.x / Tile.ancho,
+                (int) (nivel.nave.y - avanzar * Tile.altura) / Tile.altura + 1) != Tile.PASABLE);
 
         double yFinal = nivel.nave.y - avanzar * Tile.altura;
 
