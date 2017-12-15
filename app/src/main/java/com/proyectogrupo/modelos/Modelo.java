@@ -23,7 +23,7 @@ public class Modelo {
 
     private int dominantColor = -1;
 
-    public Modelo(Context context, double x, double y, int altura, int ancho){;
+    public Modelo(Context context, double x, double y, int altura, int ancho){
         this.context = context;
         this.x = x;
         this.y = y;

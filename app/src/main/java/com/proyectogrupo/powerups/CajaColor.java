@@ -7,12 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.proyectogrupo.Hilo;
-import com.proyectogrupo.modelos.Nave;
 import com.proyectogrupo.modelos.Nivel;
-
-/**
- * Created by Fer on 08/12/2017.
- */
 
 public class CajaColor extends PowerUp {
     private static final int[] colores = {

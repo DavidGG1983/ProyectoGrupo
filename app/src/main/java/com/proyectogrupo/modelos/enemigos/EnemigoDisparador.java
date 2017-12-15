@@ -8,11 +8,8 @@ import com.proyectogrupo.graficos.Sprite;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoBasico;
 
-/**
- * Created by davidgarcia on 2/12/17.
- */
 
-public class EnemigoDisparador extends Enemigo implements Disparador{
+public class EnemigoDisparador extends Enemigo implements Disparador {
 
     public EnemigoDisparador(Context context, double x, double y) {
         super(context, x, y);

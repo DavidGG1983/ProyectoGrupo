@@ -11,10 +11,6 @@ import com.proyectogrupo.graficos.Sprite;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by davidgarcia on 8/11/17.
- */
-
 public class Nave extends Modelo {
 
     double xInicial, yInicial;
@@ -106,7 +102,10 @@ public class Nave extends Modelo {
     }
 
     public void setVida(int vida) {
-        this.vida = vida;
+        if (vida > this.getVida())   // si es una caja de vida o algo por el estilo se suma
+            this.vida = vida;
+        else if (!esInvulnerable())   // si es invulnerable a disparos no recibe daño
+            this.vida = vida;
     }
 
     public void activarInvunerabilidad() {

@@ -6,10 +6,6 @@ import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 
-/**
- * Created by Alumno on 12/12/2017.
- */
-
 public class DisparoBomba extends DisparoEnemigo {
     public static final double RADIO = 20;
     public boolean explotando;

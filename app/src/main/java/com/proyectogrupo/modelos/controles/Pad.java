@@ -7,11 +7,6 @@ import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.Modelo;
 
-
-/**
- * Created by UO246008 on 09/10/2017.
- */
-
 public class Pad extends Modelo {
 
     public static final int EJE_X = 1;
@@ -31,7 +26,7 @@ public class Pad extends Modelo {
                 clickX >= (x - ancho / 2) &&
                 clickY <= (y + altura / 2) &&
                 clickY >= (y - altura / 2)) {
-            if(Math.abs(x - clickX) > Math.abs(y - clickY))
+            if (Math.abs(x - clickX) > Math.abs(y - clickY))
                 return EJE_X;
             else
                 return EJE_Y;
@@ -44,7 +39,7 @@ public class Pad extends Modelo {
         return (int) (x - cliclX);
     }
 
-    public int getOrientacionY(float clickY){
-        return (int)(y - clickY);
+    public int getOrientacionY(float clickY) {
+        return (int) (y - clickY);
     }
 }

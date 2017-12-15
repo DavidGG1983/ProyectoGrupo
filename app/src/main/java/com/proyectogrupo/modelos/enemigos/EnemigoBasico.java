@@ -6,11 +6,7 @@ import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.graficos.Sprite;
 
-/**
- * Created by davidgarcia on 2/12/17.
- */
-
-public class EnemigoBasico extends Enemigo{
+public class EnemigoBasico extends Enemigo {
 
     public EnemigoBasico(Context context, double x, double y) {
         super(context, x, y);

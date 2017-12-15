@@ -13,10 +13,6 @@ import com.proyectogrupo.modelos.enemigos.Enemigo;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by miguel on 12/12/2017.
- */
-
 public class DisparoEnemigoLanzallamas extends DisparoEnemigo {
 
 
@@ -26,37 +22,37 @@ public class DisparoEnemigoLanzallamas extends DisparoEnemigo {
     //private final Drawable imagenDerecha;
     //private final Drawable imagenIzquierda;
     private Sprite sprite;
-    private Map<String,Sprite> sprites =
-            new HashMap<String,Sprite>();
+    private Map<String, Sprite> sprites =
+            new HashMap<String, Sprite>();
 
     public DisparoEnemigoLanzallamas(Context context, double x,
                                      double y, boolean orientacion, Enemigo enemigo) {
         super(context, x, y, orientacion, 6, enemigo, 20, 50);
-        sprites.put(llamaDerecha,new Sprite(CargadorGraficos.cargarDrawable
-                (context,R.drawable.llama_derecha),ancho,altura,2,6,true));
-        sprites.put(llamaIzquieda,new Sprite(CargadorGraficos.cargarDrawable
-                (context,R.drawable.llama_izquierda),ancho,altura,2,6,true));
+        sprites.put(llamaDerecha, new Sprite(CargadorGraficos.cargarDrawable
+                (context, R.drawable.llama_derecha), ancho, altura, 2, 6, true));
+        sprites.put(llamaIzquieda, new Sprite(CargadorGraficos.cargarDrawable
+                (context, R.drawable.llama_izquierda), ancho, altura, 2, 6, true));
         this.damage = 2;
         this.moverAutomaticamente();
     }
 
-    public void dibujar(Canvas canvas){
-        this.sprite.dibujarSprite(canvas,(int)x,
-                (int)y- Nivel.scrollEjeY,true);
+    public void dibujar(Canvas canvas) {
+        this.sprite.dibujarSprite(canvas, (int) x,
+                (int) y - Nivel.scrollEjeY, true);
     }
 
-    public void actualizar(long tiempo){
+    public void actualizar(long tiempo) {
         this.sprite.actualizar(tiempo);
     }
 
     public void moverAutomaticamente() {
-        Log.println(Log.DEBUG,"VELOCIDAD",""+enemigo.velocidadX);
+        Log.println(Log.DEBUG, "VELOCIDAD", "" + enemigo.velocidadX);
         if (enemigo.velocidadX > 0) {
             x = enemigo.x + 47;
             this.sprite = sprites.get(llamaDerecha);
-        }else{
+        } else {
             this.sprite = sprites.get(llamaIzquieda);
-            x = enemigo.x-47;
+            x = enemigo.x - 47;
         }
     }
 
