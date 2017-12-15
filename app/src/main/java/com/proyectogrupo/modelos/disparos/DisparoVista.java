@@ -1,6 +1,7 @@
 package com.proyectogrupo.modelos.disparos;
 
 import android.content.Context;
+import android.graphics.Canvas;
 
 import com.proyectogrupo.GameView;
 import com.proyectogrupo.R;
@@ -30,6 +31,10 @@ public class DisparoVista extends DisparoEnemigo {
     @Override
     public void moverAutomaticamente() {
 
+    }
+
+    @Override
+    public void dibujar(Canvas canvas) {
     }
 }
 

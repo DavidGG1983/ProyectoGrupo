@@ -845,10 +845,10 @@ public class Nivel {
             else
                 if(this.comprobarFilaSinTiles(y)){
                     x = Utils.randBetween(0, anchoMapaTiles() - 2);
-                    generarEnemigo(Utils.randBetween(0, 7), x, y);
+                    //generarEnemigo(Utils.randBetween(0, 7), x, y);
                 }
 
-            if(x != -1 && conta < 3){
+            if(x != -1 && conta < 10){
                 generarEnemigo(Utils.randBetween(0, 7), x, y);
                 conta++;
             }
@@ -868,10 +868,10 @@ public class Nivel {
             else
             if(this.comprobarFilaSinTiles(y)){
                 x = Utils.randBetween(0, anchoMapaTiles() - 2);
-                generarEnemigo(Utils.randBetween(0, 7), x, y);
+                //generarEnemigo(Utils.randBetween(0, 7), x, y);
             }
 
-            if(x != -1 && conta < 3){
+            if(x != -1 && conta < 10){
                 generarEnemigo(Utils.randBetween(0, 7), x, y);
                 conta++;
             }
