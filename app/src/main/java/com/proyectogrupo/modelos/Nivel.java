@@ -14,6 +14,7 @@ import com.proyectogrupo.Utils;
 import com.proyectogrupo.VictoriaActivity;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
+import com.proyectogrupo.modelos.disparos.DisparoAvion;
 import com.proyectogrupo.modelos.disparos.DisparoBomba;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoLanzallamas;
@@ -28,6 +29,7 @@ import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.modelos.enemigos.EnemigoVista;
 import com.proyectogrupo.powerups.CajaAleatoria;
+import com.proyectogrupo.powerups.CajaAvion;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
 import com.proyectogrupo.powerups.CajaContraEnemigos;
@@ -68,10 +70,12 @@ public class Nivel {
     public float orientacionPadY = 0;
     public List<Enemigo> enemigos = new ArrayList<>();
     private List<Helicoptero> helicopteros = new ArrayList<>();
+    public List<Avion> aviones = new ArrayList<>();
     public List<Integer> coloresCajas = new ArrayList<>();
     private Enemigo enemigoColorCaja;
     private List<DisparoEnemigo> disparosEnemigos = new ArrayList<>();
     private List<DisparoHelicoptero> disparosHelicopteros = new ArrayList<>();
+    private List<DisparoAvion> disparosAviones;
 
     private MarcadorPuntos marcadorPuntos;
 
@@ -126,6 +130,7 @@ public class Nivel {
                 tileYnaveCentro, tileYnaveSuperior);
         this.moverEnemigos();
         this.moverHelicopteros();
+        this.moverAviones();
         this.moverDisparos();
         this.colisionesPowerUps();
         this.colisionaEnemigos();
@@ -163,9 +168,9 @@ public class Nivel {
         moverModelosAbajo(helicopteros);
         this.numMapa++;
 
-            if (numEnemigosActual < 20) {
-                numEnemigosActual++;
-            }
+        if (numEnemigosActual < 20) {
+            numEnemigosActual++;
+        }
     }
 
     private <T extends Modelo> void moverModelosAbajo(List<T> modelos) {
@@ -452,8 +457,8 @@ public class Nivel {
 
             if (tileXDerecha < anchoMapaTiles()) {
                 int aux = (int) (enemigo.y / Tile.altura);
-                if(aux >= altoMapaTiles())
-                    aux = altoMapaTiles()-1;
+                if (aux >= altoMapaTiles())
+                    aux = altoMapaTiles() - 1;
                 if (mapaTiles[tileXDerecha]
                         [aux].tipoDeColision
                         != Tile.PASABLE) {
@@ -464,7 +469,7 @@ public class Nivel {
 
             if (tileXIzquierda >= 0) {
                 int auxY = (enemigo.y / Tile.altura >=
-                        altoMapaTiles()) ? altoMapaTiles()-1 : (int)enemigo.y / Tile.altura;
+                        altoMapaTiles()) ? altoMapaTiles() - 1 : (int) enemigo.y / Tile.altura;
                 if (mapaTiles[tileXIzquierda]
                         [auxY].tipoDeColision
                         != Tile.PASABLE) {
@@ -511,6 +516,16 @@ public class Nivel {
             DisparoEnemigo d = disparoEnemigoIterator.next();
             if (!(d instanceof DisparoEnemigoLanzallamas) && !(d instanceof DisparoVista))
                 disparoEnemigoIterator.remove();
+        }
+    }
+
+    private void moverAviones() {
+        Avion aEliminar = null;
+        for (Avion avion : aviones) {
+            if (avion.x - avion.ancho / 2 <= 0) {
+                aEliminar = avion;
+                break;
+            }
         }
     }
 
@@ -701,6 +716,8 @@ public class Nivel {
                     p.actualizar(tiempo);
             for (Helicoptero helicoptero : helicopteros)
                 helicoptero.actualizar(tiempo);
+            for(Avion avion :aviones)
+                avion.actualizar(tiempo);
             for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
                 disparoHelicoptero.actualizar(tiempo);
             for (DisparoEnemigo disparoEnemigo : disparosEnemigos) {
@@ -716,7 +733,7 @@ public class Nivel {
         }
     }
 
-    private void eliminarModelosEnemigos(){
+    private void eliminarModelosEnemigos() {
         this.eliminarModelosFueraMapa(enemigos);
         this.eliminarModelosFueraMapa(helicopteros);
         this.eliminarModelosFueraMapa(disparosEnemigos);
@@ -724,10 +741,10 @@ public class Nivel {
         this.eliminarModelosFueraMapa(powerups);
     }
 
-    private <T extends Modelo> void eliminarModelosFueraMapa(List<T> modelos){
+    private <T extends Modelo> void eliminarModelosFueraMapa(List<T> modelos) {
         Iterator<T> iterator = modelos.iterator();
-        while(iterator.hasNext()){
-            if(iterator.next().y >= altoMapaTiles() * Tile.altura)
+        while (iterator.hasNext()) {
+            if (iterator.next().y >= altoMapaTiles() * Tile.altura)
                 iterator.remove();
         }
     }
@@ -749,6 +766,8 @@ public class Nivel {
 
             for (Helicoptero helicoptero : helicopteros)
                 helicoptero.dibujar(canvas);
+            for (Avion avion : aviones)
+                avion.dibujar(canvas);
             for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
                 disparoHelicoptero.dibujar(canvas);
             marcadorPuntos.dibujar(canvas);
@@ -788,10 +807,10 @@ public class Nivel {
         }
     }
 
-    private void generarPowerUpsAleatorioArriba(){
+    private void generarPowerUpsAleatorioArriba() {
         int conta = 0;
-        for (int y = 0; y < altoMapaTiles()/2; y++) {
-            if(conta < 5) {
+        for (int y = 0; y < altoMapaTiles() / 2; y++) {
+            if (conta < 5) {
                 int x;
                 do {
                     x = Utils.randBetween(0, anchoMapaTiles() - 2);
@@ -803,27 +822,27 @@ public class Nivel {
         }
     }
 
-    private int numTilesLibresFila(int y){
+    private int numTilesLibresFila(int y) {
         int num = 0;
-        for(int x = 0;x < anchoMapaTiles();x++)
-            if(mapaTiles[x][y].tipoDeColision == Tile.PASABLE)
+        for (int x = 0; x < anchoMapaTiles(); x++)
+            if (mapaTiles[x][y].tipoDeColision == Tile.PASABLE)
                 num++;
         return num;
     }
 
-    private int numFilasConTile(){
+    private int numFilasConTile() {
         int num = 0;
-        for(int y=0;y < altoMapaTiles()/2;y++)
-            for(int x=0;x < anchoMapaTiles();x++)
-                if(mapaTiles[x][y].tipoDeColision == Tile.SOLIDO)
+        for (int y = 0; y < altoMapaTiles() / 2; y++)
+            for (int x = 0; x < anchoMapaTiles(); x++)
+                if (mapaTiles[x][y].tipoDeColision == Tile.SOLIDO)
                     num++;
         return num;
     }
 
-    private void generarPowerUpsAleatorioAbajo(){
+    private void generarPowerUpsAleatorioAbajo() {
         int conta = 0;
-        for (int y = altoMapaTiles()/2; y < altoMapaTiles(); y++) {
-            if(conta < 5) {
+        for (int y = altoMapaTiles() / 2; y < altoMapaTiles(); y++) {
+            if (conta < 5) {
                 int x;
                 do {
                     x = Utils.randBetween(0, anchoMapaTiles() - 2);
@@ -835,9 +854,9 @@ public class Nivel {
         }
     }
 
-    private Tile generarPowerUp(int tipo,int x,int y){
+    private Tile generarPowerUp(int tipo, int x, int y) {
         //M,H,S,I,X,C,T,P,R,F,G
-        switch (tipo){
+        switch (tipo) {
             case 0:
                 return this.inicializarTile('M', x, y);
             case 1:
@@ -867,29 +886,28 @@ public class Nivel {
         int conta = 0;
         for (int y = fromY; y < toY; y++) {
             int x = -1;
-            if(!this.comprobarFilaSinTiles(y) && this.numTilesLibresFila(y) >= 2 ) {
+            if (!this.comprobarFilaSinTiles(y) && this.numTilesLibresFila(y) >= 2) {
                 do {
                     x = Utils.randBetween(0, anchoMapaTiles() - 1);
                 }
-                while(mapaTiles[x][y].tipoDeColision == Tile.SOLIDO);
-            }
-            else
-            if(this.comprobarFilaSinTiles(y)){
+                while (mapaTiles[x][y].tipoDeColision == Tile.SOLIDO);
+            } else if (this.comprobarFilaSinTiles(y)) {
                 x = Utils.randBetween(0, anchoMapaTiles() - 2);
                 // generarEnemigo(Utils.randBetween(0, 7), x, y);
             }
 
-            if (x != -1 && conta < numEnemigosActual){
+            if (x != -1 && conta < numEnemigosActual) {
                 generarEnemigo(Utils.randBetween(0, 7), x, y);
                 conta++;
             }
         }
     }
+
     private void generarEnemigosAleatoriosArriba() {
-       generarEnemigosAleatorios(0, altoMapaTiles() / 2);
+        generarEnemigosAleatorios(0, altoMapaTiles() / 2);
     }
 
-    private void generarEnemigosAleatoriosAbajo(){
+    private void generarEnemigosAleatoriosAbajo() {
         generarEnemigosAleatorios(altoMapaTiles() / 2, altoMapaTiles());
     }
 
@@ -1051,16 +1069,16 @@ public class Nivel {
         inicializarPosiciones(posicionFilas);
         for (int i = 0; i < numFilas; i++) {
             int pos = -1;
-            do{
-                 pos = Utils.randBetween(min, max);
+            do {
+                pos = Utils.randBetween(min, max);
             }
-            while(yaExisteFila(posicionFilas,pos));
+            while (yaExisteFila(posicionFilas, pos));
             posicionFilas[i] = pos;
         }
         Arrays.sort(posicionFilas);
-        for(int i=0;i < posicionFilas.length-1;i++){
-            if(posicionFilas[i+1] == posicionFilas[i]+1){
-                posicionFilas[i+1] += 2;
+        for (int i = 0; i < posicionFilas.length - 1; i++) {
+            if (posicionFilas[i + 1] == posicionFilas[i] + 1) {
+                posicionFilas[i + 1] += 2;
             }
         }
         return posicionFilas;
@@ -1124,6 +1142,9 @@ public class Nivel {
                 this.helicopteros.add(new Helicoptero(
                         context, xCentroAbajoTile, yCentroAbajoTile
                 ));
+                return new Tile(null, Tile.PASABLE);
+            case 'A':
+                powerups.add(new CajaAvion(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'H':
                 powerups.add(new CajaVidaExtra(context, xCentroAbajoTile, yCentroAbajoTile));
@@ -1192,7 +1213,7 @@ public class Nivel {
         double naveY;
         if (infinito) {
             naveY = nave.y - (18 * Tile.altura * (numMapa - 1));
-            Log.println(Log.DEBUG,"NAVEY:",""+naveY);
+            Log.println(Log.DEBUG, "NAVEY:", "" + naveY);
         } else {
             naveY = nave.y;
         }
