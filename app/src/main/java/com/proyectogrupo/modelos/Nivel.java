@@ -31,6 +31,7 @@ import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
 import com.proyectogrupo.powerups.CajaContraEnemigos;
+import com.proyectogrupo.powerups.CajaDestruccion;
 import com.proyectogrupo.powerups.CajaEnemigos;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
 import com.proyectogrupo.powerups.CajaLentitud;
@@ -1132,6 +1133,9 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'N':
                 powerups.add(new CajaLentitud(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'D':
+                powerups.add(new CajaDestruccion(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso
