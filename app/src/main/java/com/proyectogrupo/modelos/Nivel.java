@@ -134,9 +134,11 @@ public class Nivel {
         int tileYNave = (int) (nave.y / Tile.altura);
         Log.d("movnave", "" + tileYNave);
         if (tileYNave <= 14) {
-            scrollEjeY = (int) altoMapaTiles() * Tile.altura - GameView.pantallaAlto;
+            scrollEjeY = ((int) altoMapaTiles() * Tile.altura - GameView.pantallaAlto);
             int tileYDestino = altoMapaTiles() - 1 - (altoMapaTiles() / 2 - tileYNave);
-            nave.y = tileYDestino * Tile.altura;
+            nave.y += (tileYDestino * Tile.altura - tileYNave * Tile.altura);
+            nave.y += 1 * Tile.altura;
+            //scrollEjeY += (tileYDestino * Tile.altura - tileYNave * Tile.altura);
             copiarMapaArribaAbajo();
             inicializarMapaTilesAleatorioArriba();
         }
