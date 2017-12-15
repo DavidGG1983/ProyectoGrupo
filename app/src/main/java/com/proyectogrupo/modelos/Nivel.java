@@ -217,8 +217,14 @@ public class Nivel {
         DisparoHelicoptero disparoABorrar = null;
 
         for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
-            if (disparoHelicoptero.y - Nivel.scrollEjeY >= GameView.pantallaAlto) {
-                disparoABorrar = disparoHelicoptero;
+            if (!infinito) {
+                if (disparoHelicoptero.y - Nivel.scrollEjeY >= GameView.pantallaAlto) {
+                    disparoABorrar = disparoHelicoptero;
+                }
+            } else {
+                if (disparoHelicoptero.y - Nivel.scrollEjeY >= altoMapaTiles()) {
+                    disparoABorrar = disparoHelicoptero;
+                }
             }
         }
 
@@ -871,7 +877,7 @@ public class Nivel {
                 // generarEnemigo(Utils.randBetween(0, 7), x, y);
             }
 
-            if(x != -1 && conta < numEnemigosActual){
+            if (x != -1 && conta < numEnemigosActual){
                 generarEnemigo(Utils.randBetween(0, 7), x, y);
                 conta++;
             }
