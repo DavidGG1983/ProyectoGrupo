@@ -23,7 +23,6 @@ public class CajaAvion extends PowerUp {
 
     @Override
     public void efecto(Nivel nivel) {
-        List<Avion> aviones = nivel.aviones;
-        aviones.add(new Avion(context, x, y));
+        nivel.aviones.add(new Avion(context, x, y));
     }
 }
