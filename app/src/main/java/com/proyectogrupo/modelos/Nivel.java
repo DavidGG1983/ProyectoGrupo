@@ -181,6 +181,8 @@ public class Nivel {
     private void limpiarMapaAbajo() {
         limpiarModelosMapaAbajo(powerups);
         limpiarModelosMapaAbajo(enemigos);
+        limpiarModelosMapaAbajo(disparosHelicopteros);
+        limpiarModelosMapaAbajo(disparosEnemigos);
         limpiarModelosMapaAbajo(helicopteros);
         limpiarModelosMapaAbajo(disparosEnemigos);
         limpiarModelosMapaAbajo(disparosHelicopteros);
@@ -804,7 +806,7 @@ public class Nivel {
     private int numTilesLibresFila(int y){
         int num = 0;
         for(int x = 0;x < anchoMapaTiles();x++)
-            if(mapaTiles[x][y].tipoDeColision == Tile.SOLIDO)
+            if(mapaTiles[x][y].tipoDeColision == Tile.PASABLE)
                 num++;
         return num;
     }
@@ -865,7 +867,7 @@ public class Nivel {
         int conta = 0;
         for (int y = fromY; y < toY; y++) {
             int x = -1;
-            if(!this.comprobarFilaSinTiles(y) && this.numTilesLibresFila(y) >= 4 ) {
+            if(!this.comprobarFilaSinTiles(y) && this.numTilesLibresFila(y) >= 2 ) {
                 do {
                     x = Utils.randBetween(0, anchoMapaTiles() - 1);
                 }
@@ -892,8 +894,6 @@ public class Nivel {
     }
 
     private Tile generarEnemigo(int i, int x, int y) {
-        i = 3;
-
         switch (i) {
             case 0:
                 return this.inicializarTile('B', x, y);
@@ -971,7 +971,7 @@ public class Nivel {
     }
 
     private void inicializarMapaTilesAleatorioArriba() {
-        int numeroFilasTile = Utils.randBetween(4, 6);
+        int numeroFilasTile = Utils.randBetween(4, 8);
         int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile, true);
 
         for (int y = 0; y < altoMapaTiles() / 2; ++y) {
@@ -987,8 +987,8 @@ public class Nivel {
     }
 
     private void generarTilesEnEjeX(int y) {
-        int posicionInicio = Utils.randBetween(3, anchoMapaTiles() - 3);
-        int numTiles = Utils.randBetween(2, anchoMapaTiles() - 4);
+        int posicionInicio = Utils.randBetween(2, anchoMapaTiles() - 1);
+        int numTiles = Utils.randBetween(4, anchoMapaTiles() - 2);
         int orientacion = Utils.randBetween(0, 1);
         int limite;
         if (orientacion == 0) {
@@ -1022,7 +1022,7 @@ public class Nivel {
     }
 
     private void inicializarMapaTilesAleatorioAbajo() {
-        int numeroFilasTile = Utils.randBetween(5, 8);
+        int numeroFilasTile = Utils.randBetween(4, 7);
         int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile, false);
         for (int y = altoMapaTiles() / 2; y < altoMapaTiles(); ++y) {
             if (yaExisteFila(posicionesFilaConTile, y)) {
