@@ -17,7 +17,7 @@ public class CajaVidaExtra extends PowerUp {
 
     public void efecto(Nivel nivel) {
         Nave nave = nivel.nave;
-        if (nave.getVida() < 3)
+        if (nave.getVida() < 5)
             nave.setVida(nave.getVida() + 1);
     }
 }
