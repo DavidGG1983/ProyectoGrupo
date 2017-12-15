@@ -7,11 +7,6 @@ import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.Modelo;
 import com.proyectogrupo.modelos.Nivel;
-import com.proyectogrupo.modelos.enemigos.Enemigo;
-
-/**
- * Created by Daniel on 15/10/2017.
- */
 
 public class DisparoHelicoptero extends Modelo {
 
@@ -33,7 +28,7 @@ public class DisparoHelicoptero extends Modelo {
 
     @Override
     public void dibujar(Canvas canvas) {
-        int yArriba = (int)  y - altura / 2;
+        int yArriba = (int) y - altura / 2;
         int xIzquierda = (int) x - ancho / 2;
 
         imagen.setBounds(xIzquierda, yArriba - Nivel.scrollEjeY, xIzquierda

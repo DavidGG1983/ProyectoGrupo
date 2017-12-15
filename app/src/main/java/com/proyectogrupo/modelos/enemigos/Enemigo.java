@@ -13,15 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-/**
- * Created by davidgarcia on 2/12/17.
- */
-
 public abstract class Enemigo extends Modelo {
 
     public double xAnterior;
     public Sprite sprite;
-    public Map<String,Sprite> sprites = new HashMap<>();
+    public Map<String, Sprite> sprites = new HashMap<>();
     public final static String MOVER_DERECHA = "mover_derecha";
     public final static String MOVER_IZQUIERDA = "mover_izquierda";
     long tiempoDisparo;
@@ -39,7 +35,7 @@ public abstract class Enemigo extends Modelo {
         super(context, 0, 0, 40, 40);
 
         this.x = x;
-        this.y = y - altura/2;
+        this.y = y - altura / 2;
 
         this.inicializar();
     }
@@ -63,8 +59,8 @@ public abstract class Enemigo extends Modelo {
 
     public abstract void inicializar();
 
-    public void dibujar(Canvas canvas){
-        this.sprite.dibujarSprite(canvas, (int)x, (int)y - Nivel.scrollEjeY,true);
+    public void dibujar(Canvas canvas) {
+        this.sprite.dibujarSprite(canvas, (int) x, (int) y - Nivel.scrollEjeY, true);
     }
 
 
@@ -85,9 +81,9 @@ public abstract class Enemigo extends Modelo {
         this.velocidadX -= i;
     }
 
-    public void randomVelocidad(){
+    public void randomVelocidad() {
         Random r = new Random();
-        this.velocidadX = (r.nextDouble()*r.nextInt(4))+2.5;
-        Log.d("velocidad",""+this.velocidadX);
+        this.velocidadX = (r.nextDouble() * r.nextInt(4)) + 2.5;
+        Log.d("velocidad", "" + this.velocidadX);
     }
 }

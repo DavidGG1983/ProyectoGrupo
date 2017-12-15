@@ -2,21 +2,12 @@ package com.proyectogrupo.modelos;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.Log;
 
 import com.proyectogrupo.R;
 import com.proyectogrupo.Utils;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.graficos.Sprite;
-import com.proyectogrupo.modelos.Modelo;
-import com.proyectogrupo.modelos.Nivel;
-import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
-import com.proyectogrupo.modelos.disparos.DisparoEnemigoBasico;
 import com.proyectogrupo.modelos.disparos.DisparoHelicoptero;
-
-/**
- * Created by davidgarcia on 2/12/17.
- */
 
 public class Helicoptero extends Modelo {
 
@@ -42,7 +33,7 @@ public class Helicoptero extends Modelo {
 
     @Override
     public void dibujar(Canvas canvas) {
-        sprite.dibujarSprite(canvas, (int)x, (int)y - Nivel.scrollEjeY, true);
+        sprite.dibujarSprite(canvas, (int) x, (int) y - Nivel.scrollEjeY, true);
     }
 
     public DisparoHelicoptero disparar(long milisegundos) {

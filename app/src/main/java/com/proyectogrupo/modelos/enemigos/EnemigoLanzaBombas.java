@@ -8,11 +8,6 @@ import com.proyectogrupo.graficos.Sprite;
 import com.proyectogrupo.modelos.disparos.DisparoBomba;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 
-
-/**
- * Created by Alumno on 12/12/2017.
- */
-
 public class EnemigoLanzaBombas extends Enemigo implements Disparador {
 
     public EnemigoLanzaBombas(Context context, double x, double y) {

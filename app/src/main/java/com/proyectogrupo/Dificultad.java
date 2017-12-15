@@ -1,9 +1,5 @@
 package com.proyectogrupo;
 
-/**
- * Created by Fer on 10/12/2017.
- */
-
 public enum Dificultad {
     FACIL {
         @Override

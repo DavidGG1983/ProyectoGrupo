@@ -6,10 +6,6 @@ import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 
-/**
- * Created by Daniel on 15/10/2017.
- */
-
 public class DisparoEnemigoBasico extends DisparoEnemigo {
 
     public DisparoEnemigoBasico(Context context, double x, double y, boolean orientacion, Enemigo enemigo) {

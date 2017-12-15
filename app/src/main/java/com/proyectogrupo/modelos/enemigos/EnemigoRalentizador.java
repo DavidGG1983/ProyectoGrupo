@@ -8,11 +8,7 @@ import com.proyectogrupo.graficos.Sprite;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoRalentizador;
 
-/**
- * Created by Daniel on 12/12/2017.
- */
-
-public class EnemigoRalentizador extends Enemigo implements Disparador{
+public class EnemigoRalentizador extends Enemigo implements Disparador {
 
     public EnemigoRalentizador(Context context, double x, double y) {
         super(context, x, y);

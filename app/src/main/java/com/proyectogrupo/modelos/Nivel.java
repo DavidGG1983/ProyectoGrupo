@@ -1,6 +1,5 @@
 package com.proyectogrupo.modelos;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -23,8 +22,8 @@ import com.proyectogrupo.modelos.disparos.DisparoHelicoptero;
 import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
-import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzaBombas;
+import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.powerups.CajaAleatoria;
 import com.proyectogrupo.powerups.CajaBomba;
@@ -263,6 +262,7 @@ public class Nivel {
         DisparoEnemigo aBorrar;
         nave.setVida(nave.getVida() - d.getDamage());
         nave.activarInvunerabilidad();
+        Log.d("Estado NAVE:","Vida:"+nave.getVida()+"invulnerable? "+nave.invulnerable);
         Runnable action = new Runnable() {
             @Override
             public void run() {

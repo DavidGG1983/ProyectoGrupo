@@ -7,12 +7,6 @@ import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.modelos.Nivel;
 import com.proyectogrupo.modelos.Tile;
 
-import java.util.Random;
-
-/**
- * Created by davidgarcia on 9/12/17.
- */
-
 public class Teletransporte extends PowerUp {
 
 
@@ -28,9 +22,9 @@ public class Teletransporte extends PowerUp {
         do {
             avanzar = (int) (Math.random() * 5 + 4);
         }
-        while(nivel.nave.y - (avanzar * Tile.altura) <= 0
-                || nivel.getTile((int)nivel.nave.x/Tile.ancho,
-                (int)(nivel.nave.y - avanzar * Tile.altura)/Tile.altura) != Tile.PASABLE);
+        while (nivel.nave.y - (avanzar * Tile.altura) <= 0
+                || nivel.getTile((int) nivel.nave.x / Tile.ancho,
+                (int) (nivel.nave.y - avanzar * Tile.altura) / Tile.altura) != Tile.PASABLE);
 
         double yFinal = nivel.nave.y - avanzar * Tile.altura;
 

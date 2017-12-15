@@ -7,16 +7,11 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.proyectogrupo.Hilo;
-import com.proyectogrupo.modelos.Nave;
 import com.proyectogrupo.modelos.Nivel;
-
-/**
- * Created by Fer on 08/12/2017.
- */
 
 public class CajaColor extends PowerUp {
     private static final int[] colores = {
-        Color.parseColor("#C8D0D0")
+            Color.parseColor("#C8D0D0")
     };
 
     private int color;
@@ -49,7 +44,7 @@ public class CajaColor extends PowerUp {
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(color);
-        canvas.drawRect(new Rect((int)x, (int)y - Nivel.scrollEjeY, (int)(x + ancho), (int)(y - Nivel.scrollEjeY + altura)), paint);
+        canvas.drawRect(new Rect((int) x, (int) y - Nivel.scrollEjeY, (int) (x + ancho), (int) (y - Nivel.scrollEjeY + altura)), paint);
     }
 
     private void generarColor() {

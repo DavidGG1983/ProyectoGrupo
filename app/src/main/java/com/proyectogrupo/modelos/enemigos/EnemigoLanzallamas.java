@@ -8,11 +8,7 @@ import com.proyectogrupo.graficos.Sprite;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoLanzallamas;
 
-/**
- * Created by davidgarcia on 2/12/17.
- */
-
-public class EnemigoLanzallamas extends Enemigo implements Disparador{
+public class EnemigoLanzallamas extends Enemigo implements Disparador {
 
     boolean estaDisparado;
 

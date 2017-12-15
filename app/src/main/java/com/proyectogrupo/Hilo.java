@@ -1,9 +1,5 @@
 package com.proyectogrupo;
 
-/**
- * Created by Daniel on 02/12/2017.
- */
-
 public class Hilo extends Thread {
     private long time;
 

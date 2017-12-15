@@ -5,15 +5,11 @@ import android.content.Context;
 import com.proyectogrupo.Hilo;
 import com.proyectogrupo.R;
 import com.proyectogrupo.gestores.CargadorGraficos;
-import com.proyectogrupo.modelos.enemigos.Enemigo;
 import com.proyectogrupo.modelos.Nave;
 import com.proyectogrupo.modelos.Nivel;
+import com.proyectogrupo.modelos.enemigos.Enemigo;
 
 import java.util.List;
-
-/**
- * Created by Daniel on 05/12/2017.
- */
 
 public class CajaLentitud extends PowerUp {
     public CajaLentitud(Context context, double x, double y) {
