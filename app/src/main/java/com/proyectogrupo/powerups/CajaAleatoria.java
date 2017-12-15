@@ -26,7 +26,7 @@ public class CajaAleatoria extends PowerUp {
     private void selectPowerUp() {
         Random rdn = new Random();
         int value = rdn.nextInt(11);
-        switch (11) {
+        switch (value) {
             case 0:
                 powerup = new CajaBomba(context, x, y);
                 return;
