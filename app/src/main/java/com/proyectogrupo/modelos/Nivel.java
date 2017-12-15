@@ -414,7 +414,8 @@ public class Nivel {
 
             if (tileXDerecha < anchoMapaTiles()) {
                 int aux = (int) (enemigo.y / Tile.altura);
-
+                if(aux >= altoMapaTiles())
+                    aux = altoMapaTiles()-1;
                 if (mapaTiles[tileXDerecha]
                         [aux].tipoDeColision
                         != Tile.PASABLE) {
@@ -424,8 +425,10 @@ public class Nivel {
             }
 
             if (tileXIzquierda >= 0) {
+                int auxY = (enemigo.y / Tile.altura >=
+                        altoMapaTiles()) ? altoMapaTiles()-1 : (int)enemigo.y / Tile.altura;
                 if (mapaTiles[tileXIzquierda]
-                        [(int) (enemigo.y / Tile.altura)].tipoDeColision
+                        [auxY].tipoDeColision
                         != Tile.PASABLE) {
                     enemigo.x = enemigo.xAnterior;
                     enemigo.girar();
@@ -442,6 +445,7 @@ public class Nivel {
             int tileXIzquierda = (int) ((d.x - d.ancho / 2) / Tile.ancho);
 
             if (d.orientacion) {
+
                 if (tileXDerecha < anchoMapaTiles()) {
                     if (mapaTiles[tileXDerecha]
                             [(int) (d.y / Tile.altura)].tipoDeColision
@@ -721,12 +725,23 @@ public class Nivel {
         }
     }
 
-    private void generarEnemigosAleatorios() {
+    private void generarEnemigosAleatoriosArriba() {
         int conta = 0;
-        for (int y = 0; y < altoMapaTiles(); y++) {
-            if (comprobarFilaSinTiles(y) && conta < 5) {
-                int x = Utils.randBetween(0, anchoMapaTiles() - 1);
-                generarEnemigo(Utils.randBetween(0, 5), x, y);
+        for (int y = 0; y < altoMapaTiles()/2; y++) {
+            if (comprobarFilaSinTiles(y) && conta < 7) {
+                int x = Utils.randBetween(0, anchoMapaTiles() - 2);
+                generarEnemigo(Utils.randBetween(0, 7), x, y);
+                conta++;
+            }
+        }
+    }
+
+    private void generarEnemigosAleatoriosAbajo(){
+        int conta = 0;
+        for (int y = altoMapaTiles()/2; y < altoMapaTiles(); y++) {
+            if (comprobarFilaSinTiles(y) && conta < 7) {
+                int x = Utils.randBetween(0, anchoMapaTiles() - 2);
+                generarEnemigo(Utils.randBetween(0, 7), x, y);
                 conta++;
             }
         }
@@ -804,10 +819,9 @@ public class Nivel {
     private void inicializarMapaTilesInfinito() {
         int anchoNivel = 8;
         int altoNivel = 20;
-        mapaTiles = new Tile[anchoNivel * 2][altoNivel * 2];
+        mapaTiles = new Tile[anchoNivel][altoNivel * 2];
         this.inicializarMapaTilesAleatorioArriba();
         this.inicializarMapaTilesAleatorioAbajo();
-        this.generarEnemigosAleatorios();
     }
 
     private void inicializarMapaTilesAleatorioArriba() {
@@ -821,11 +835,12 @@ public class Nivel {
                 for (int x = 0; x < anchoMapaTiles(); ++x)
                     mapaTiles[x][y] = inicializarTile('.', x, y);
         }
+        this.generarEnemigosAleatoriosArriba();
     }
 
     private void generarTilesEnEjeX(int y) {
         int posicionInicio = Utils.randBetween(3, anchoMapaTiles() - 3);
-        int numTiles = Utils.randBetween(2, anchoMapaTiles() - 6);
+        int numTiles = Utils.randBetween(2, anchoMapaTiles() - 2);
         int orientacion = Utils.randBetween(0, 1);
         int limite;
         if (orientacion == 0) {
@@ -868,7 +883,9 @@ public class Nivel {
                 for (int x = 0; x < anchoMapaTiles(); ++x)
                     mapaTiles[x][y] = inicializarTile('.', x, y);
         }
-        mapaTiles[3][altoMapaTiles() - 1] = inicializarTile('1', 3, altoMapaTiles() - 1);
+        mapaTiles[3][altoMapaTiles() - 1] =
+                inicializarTile('1', 3, altoMapaTiles() - 1);
+        this.generarEnemigosAleatoriosAbajo();
     }
 
 
@@ -884,10 +901,12 @@ public class Nivel {
         int[] posicionFilas = new int[numFilas];
         inicializarPosiciones(posicionFilas);
         for (int i = 0; i < numFilas; i++) {
-            int pos = Utils.randBetween(min, max);
-            if (!yaExisteFila(posicionFilas, pos)) {
-                posicionFilas[i] = Utils.randBetween(min, max);
+            int pos = -1;
+            do{
+                 pos = Utils.randBetween(min, max);
             }
+            while(yaExisteFila(posicionFilas,pos));
+            posicionFilas[i] = pos;
         }
         return posicionFilas;
     }
