@@ -66,13 +66,15 @@ public class Nivel {
     private List<Helicoptero> helicopteros = new ArrayList<>();
     public List<Integer> coloresCajas = new ArrayList<>();
     private Enemigo enemigoColorCaja;
-    private CopyOnWriteArrayList<DisparoEnemigo> disparosEnemigos = new CopyOnWriteArrayList<>();
+    private List<DisparoEnemigo> disparosEnemigos = new ArrayList<>();
     private List<DisparoHelicoptero> disparosHelicopteros = new ArrayList<>();
 
     private MarcadorPuntos marcadorPuntos;
 
     public boolean inicializado;
     public int monedasRecogidas;
+
+    private int numMapa = 1;
 
     private double minPosNaveY;
 
@@ -151,6 +153,7 @@ public class Nivel {
         moverModelosAbajo(powerups);
         moverModelosAbajo(enemigos);
         moverModelosAbajo(helicopteros);
+        this.numMapa++;
     }
 
     private <T extends Modelo> void moverModelosAbajo(List<T> modelos) {
@@ -665,12 +668,30 @@ public class Nivel {
                 disparoEnemigo.actualizar(tiempo);
             }
 
+
             comprobarVictoriaDerrota();
 
             comprobarMaxTiempoQuieta();
+
+            this.eliminarModelosEnemigos();
         }
     }
 
+    private void eliminarModelosEnemigos(){
+        this.eliminarModelosFueraMapa(enemigos);
+        this.eliminarModelosFueraMapa(helicopteros);
+        this.eliminarModelosFueraMapa(disparosEnemigos);
+        this.eliminarModelosFueraMapa(disparosHelicopteros);
+        this.eliminarModelosFueraMapa(powerups);
+    }
+
+    private <T extends Modelo> void eliminarModelosFueraMapa(List<T> modelos){
+        Iterator<T> iterator = modelos.iterator();
+        while(iterator.hasNext()){
+            if(iterator.next().y >= altoMapaTiles() * Tile.altura)
+                iterator.remove();
+        }
+    }
 
     public void dibujar(Canvas canvas) {
         if (inicializado) {
@@ -1026,9 +1047,16 @@ public class Nivel {
                 scrollEjeY = (int) (nave.y - GameView.pantallaAlto * 0.3);
             }
 
-        if (nave.y < minPosNaveY) {
-            nave.sumarPuntos((int) ((minPosNaveY - nave.y) / 4));
-            minPosNaveY = nave.y;
+        double naveY;
+        if (infinito) {
+            naveY = nave.y - (altoMapaTiles() / 2 * numMapa);
+        } else {
+            naveY = nave.y;
+        }
+        Log.println(Log.DEBUG,"NAVEY:",""+naveY);
+        if (naveY < minPosNaveY) {
+            nave.sumarPuntos((int) ((minPosNaveY - naveY) / 4));
+            minPosNaveY = naveY;
         }
     }
 
