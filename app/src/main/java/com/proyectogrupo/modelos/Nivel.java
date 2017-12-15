@@ -36,6 +36,7 @@ import com.proyectogrupo.powerups.CajaEnemigos;
 import com.proyectogrupo.powerups.CajaInvulnerabilidad;
 import com.proyectogrupo.powerups.CajaLentitud;
 import com.proyectogrupo.powerups.CajaPuntosExtra;
+import com.proyectogrupo.powerups.CajaSemiInvulnerabilidad;
 import com.proyectogrupo.powerups.CajaVelocidad;
 import com.proyectogrupo.powerups.CajaVidaExtra;
 import com.proyectogrupo.powerups.MonedaRecolectable;
@@ -1066,7 +1067,6 @@ public class Nivel {
                 scrollEjeY = (int) altoMapaTiles() * Tile.altura - GameView.pantallaAlto;
                 return new Tile(null, Tile.PASABLE);
             case 'M':
-                Log.d("MONEDA POSICION", "x: " + xCentroAbajoTile + ", y: " + yCentroAbajoTile);
                 powerups.add(new MonedaRecolectable(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case '.':
@@ -1136,6 +1136,9 @@ public class Nivel {
                 return new Tile(null, Tile.PASABLE);
             case 'D':
                 powerups.add(new CajaDestruccion(context, xCentroAbajoTile, yCentroAbajoTile));
+                return new Tile(null, Tile.PASABLE);
+            case 'E':
+                powerups.add(new CajaSemiInvulnerabilidad(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             default:
                 //cualquier otro caso
