@@ -51,6 +51,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,7 +61,7 @@ public class Nivel {
     public static int scrollEjeY = 0;
 
     private Tile[][] mapaTiles;
-    public List<PowerUp> powerups = new ArrayList<>();
+    public List<PowerUp> powerups = Collections.synchronizedList(new ArrayList<PowerUp>());
     private Context context = null;
     public static boolean infinito;
     public static int numeroNivel;
@@ -68,13 +69,13 @@ public class Nivel {
     public Nave nave;
     public float orientacionPadX = 0;
     public float orientacionPadY = 0;
-    public List<Enemigo> enemigos = new ArrayList<>();
-    private List<Helicoptero> helicopteros = new ArrayList<>();
-    public List<Avion> aviones = new ArrayList<>();
-    public List<Integer> coloresCajas = new ArrayList<>();
+    public final List<Enemigo> enemigos = Collections.synchronizedList(new ArrayList<Enemigo>());
+    private final List<Helicoptero> helicopteros = Collections.synchronizedList(new ArrayList<Helicoptero>());
+    public final List<Avion> aviones =  Collections.synchronizedList(new ArrayList<Avion>());
+    public final List<Integer> coloresCajas =  Collections.synchronizedList(new ArrayList<Integer>());
     private Enemigo enemigoColorCaja;
-    private List<DisparoEnemigo> disparosEnemigos = new ArrayList<>();
-    private List<DisparoHelicoptero> disparosHelicopteros = new ArrayList<>();
+    private final List<DisparoEnemigo> disparosEnemigos = Collections.synchronizedList(new ArrayList<DisparoEnemigo>());
+    private final List<DisparoHelicoptero> disparosHelicopteros = Collections.synchronizedList(new ArrayList<DisparoHelicoptero>());
     private List<DisparoAvion> disparosAviones;
 
     private MarcadorPuntos marcadorPuntos;
@@ -101,7 +102,7 @@ public class Nivel {
     }
 
     public void inicializar() throws Exception {
-        numEnemigosActual = 1;
+        numEnemigosActual = 8;
         scrollEjeY = 0;
         minPosNaveY = 0;
         monedasRecogidas = 0;
@@ -143,7 +144,6 @@ public class Nivel {
 
     private void realizarCambioMapaSiNecesario() {
         int tileYNave = (int) (nave.y / Tile.altura);
-        Log.d("movnave", "" + tileYNave);
         if (tileYNave <= 14) {
             scrollEjeY = ((int) altoMapaTiles() * Tile.altura - GameView.pantallaAlto);
             int tileYDestino = altoMapaTiles() - 1 - (altoMapaTiles() / 2 - tileYNave);
@@ -174,11 +174,13 @@ public class Nivel {
     }
 
     private <T extends Modelo> void moverModelosAbajo(List<T> modelos) {
-        for (T modelo : modelos) {
-            if (!estaEnMapaDeAbajo(modelo)) {
-                int tileYModelo = (int) (modelo.y / Tile.altura);
-                int tileYFinalModelo = altoMapaTiles() - 1 - (altoMapaTiles() / 2 - 1 - tileYModelo);
-                modelo.y = tileYFinalModelo * Tile.altura;
+        synchronized (modelos) {
+            for (T modelo : modelos) {
+                if (!estaEnMapaDeAbajo(modelo)) {
+                    int tileYModelo = (int) (modelo.y / Tile.altura);
+                    int tileYFinalModelo = altoMapaTiles() - 1 - (altoMapaTiles() / 2 - 1 - tileYModelo);
+                    modelo.y = tileYFinalModelo * Tile.altura;
+                }
             }
         }
     }
@@ -187,7 +189,7 @@ public class Nivel {
         limpiarModelosMapaAbajo(powerups);
         limpiarModelosMapaAbajo(enemigos);
         limpiarModelosMapaAbajo(disparosHelicopteros);
-       // limpiarModelosMapaAbajo(disparosEnemigos);
+        limpiarModelosMapaAbajo(disparosEnemigos);
         limpiarModelosMapaAbajo(helicopteros);
     }
 
@@ -208,10 +210,12 @@ public class Nivel {
 
     private void moverHelicopteros() {
         Helicoptero helicopteroAEliminar = null;
-        for (Helicoptero helicoptero : helicopteros) {
-            if (helicoptero.x - helicoptero.ancho / 2 <= 0) {
-                helicopteroAEliminar = helicoptero;
-                break;
+        synchronized (helicopteros) {
+            for (Helicoptero helicoptero : helicopteros) {
+                if (helicoptero.x - helicoptero.ancho / 2 <= 0) {
+                    helicopteroAEliminar = helicoptero;
+                    break;
+                }
             }
         }
 
@@ -221,14 +225,16 @@ public class Nivel {
 
         DisparoHelicoptero disparoABorrar = null;
 
-        for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
-            if (!infinito) {
-                if (disparoHelicoptero.y - Nivel.scrollEjeY >= GameView.pantallaAlto) {
-                    disparoABorrar = disparoHelicoptero;
-                }
-            } else {
-                if (disparoHelicoptero.y - Nivel.scrollEjeY >= altoMapaTiles()) {
-                    disparoABorrar = disparoHelicoptero;
+        synchronized (disparosHelicopteros) {
+            for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
+                if (!infinito) {
+                    if (disparoHelicoptero.y - Nivel.scrollEjeY >= GameView.pantallaAlto) {
+                        disparoABorrar = disparoHelicoptero;
+                    }
+                } else {
+                    if (disparoHelicoptero.y - Nivel.scrollEjeY >= altoMapaTiles()) {
+                        disparoABorrar = disparoHelicoptero;
+                    }
                 }
             }
         }
@@ -241,29 +247,31 @@ public class Nivel {
     private void colisionesDisparos() {
 
         DisparoEnemigo aBorrar = null;
-        for (DisparoEnemigo d : disparosEnemigos) {
-            if ((d instanceof DisparoBomba && !((DisparoBomba) d).explotando))
-                continue;
-            if (d.colisiona(nave)) {
-                if (!nave.invulnerable) {
-                    if (!nave.contrataque) {
-                        aBorrar = colisionDisparoNave(d);
-                        break;
-                    } else {
-                        //Matar al enemigo que disparo
-                        enemigos.remove(d.enemigo);
-                        aBorrar = d;
+        synchronized (disparosEnemigos) {
+            for (DisparoEnemigo d : disparosEnemigos) {
+                if ((d instanceof DisparoBomba && !((DisparoBomba) d).explotando))
+                    continue;
+                if (d.colisiona(nave)) {
+                    if (!nave.invulnerable) {
+                        if (!nave.contrataque) {
+                            aBorrar = colisionDisparoNave(d);
+                            break;
+                        } else {
+                            //Matar al enemigo que disparo
+                            enemigos.remove(d.enemigo);
+                            aBorrar = d;
+                        }
                     }
-                }
-            } else {
-                if (d instanceof DisparoBomba) {
-                    DisparoBomba disparoBomba = (DisparoBomba) d;
+                } else {
+                    if (d instanceof DisparoBomba) {
+                        DisparoBomba disparoBomba = (DisparoBomba) d;
 
-                    if (Math.abs(nave.x - disparoBomba.x) <= DisparoBomba.RADIO &&
-                            Math.abs(nave.y - disparoBomba.y) <= DisparoBomba.RADIO) {
-                        aBorrar = colisionDisparoNave(disparoBomba);
-                        Log.d("EXPLOTANDO", "BOMBA EXPLOTA");
-                        break;
+                        if (Math.abs(nave.x - disparoBomba.x) <= DisparoBomba.RADIO &&
+                                Math.abs(nave.y - disparoBomba.y) <= DisparoBomba.RADIO) {
+                            aBorrar = colisionDisparoNave(disparoBomba);
+                            Log.d("EXPLOTANDO", "BOMBA EXPLOTA");
+                            break;
+                        }
                     }
                 }
             }
@@ -276,18 +284,20 @@ public class Nivel {
         }
 
         DisparoHelicoptero disparoHelicopteroBorrar = null;
-        for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
-            if (disparoHelicoptero.colisiona(nave)) {
-                nave.setVida(nave.getVida() - 1);
-                nave.activarInvunerabilidad();
-                Runnable action = new Runnable() {
-                    @Override
-                    public void run() {
-                        nave.desactivarInvunerabilidad();
-                    }
-                };
-                new Hilo(context, 2000, action).start();
-                disparoHelicopteroBorrar = disparoHelicoptero;
+        synchronized (disparosHelicopteros) {
+            for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros) {
+                if (disparoHelicoptero.colisiona(nave)) {
+                    nave.setVida(nave.getVida() - 1);
+                    nave.activarInvunerabilidad();
+                    Runnable action = new Runnable() {
+                        @Override
+                        public void run() {
+                            nave.desactivarInvunerabilidad();
+                        }
+                    };
+                    new Hilo(context, 2000, action).start();
+                    disparoHelicopteroBorrar = disparoHelicoptero;
+                }
             }
         }
 
@@ -324,44 +334,47 @@ public class Nivel {
 
     private void colisionaEnemigos() {
         Enemigo eliminar = null;
-        for (Enemigo e : enemigos) {
-            if (e.colisiona(nave)) {
-                if (!nave.esInvulnerable()) {
-                    if (!nave.contrataque) {
-                        if (coloresCajas.size() > 0) {
-                            int colorCaja = coloresCajas.get(coloresCajas.size() - 1);
-                            int colorEnemigo = e.getColor();
 
-                            if (colorEnemigo == colorCaja && enemigoColorCaja == null) {
-                                nave.sumarPuntos(1);
-                                enemigoColorCaja = e;
+        synchronized (enemigos) {
+            for (Enemigo e : enemigos) {
+                if (e.colisiona(nave)) {
+                    if (!nave.esInvulnerable()) {
+                        if (!nave.contrataque) {
+                            if (coloresCajas.size() > 0) {
+                                int colorCaja = coloresCajas.get(coloresCajas.size() - 1);
+                                int colorEnemigo = e.getColor();
+
+                                if (colorEnemigo == colorCaja && enemigoColorCaja == null) {
+                                    nave.sumarPuntos(1);
+                                    enemigoColorCaja = e;
+                                }
+                            } else {
+                                nave.setVida(nave.getVida() - 1);
+                                nave.activarInvunerabilidad();
+                                Runnable action = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        nave.desactivarInvunerabilidad();
+                                    }
+                                };
+                                new Hilo(context, 5000, action).start();
                             }
                         } else {
-                            nave.setVida(nave.getVida() - 1);
-                            nave.activarInvunerabilidad();
-                            Runnable action = new Runnable() {
-                                @Override
-                                public void run() {
-                                    nave.desactivarInvunerabilidad();
+                            eliminar = e;
+
+                            Iterator<DisparoEnemigo> disparoEnemigoIterator = disparosEnemigos.iterator();
+                            while (disparoEnemigoIterator.hasNext()) {
+                                DisparoEnemigo disparoEnemigo = disparoEnemigoIterator.next();
+
+                                if (disparoEnemigo.enemigo == e) {
+                                    disparoEnemigoIterator.remove();
                                 }
-                            };
-                            new Hilo(context, 5000, action).start();
-                        }
-                    } else {
-                        eliminar = e;
-
-                        Iterator<DisparoEnemigo> disparoEnemigoIterator = disparosEnemigos.iterator();
-                        while (disparoEnemigoIterator.hasNext()) {
-                            DisparoEnemigo disparoEnemigo = disparoEnemigoIterator.next();
-
-                            if (disparoEnemigo.enemigo == e) {
-                                disparoEnemigoIterator.remove();
                             }
                         }
+                    } else {
+                        if (e == enemigoColorCaja)
+                            enemigoColorCaja = null;
                     }
-                } else {
-                    if (e == enemigoColorCaja)
-                        enemigoColorCaja = null;
                 }
             }
         }
@@ -371,10 +384,12 @@ public class Nivel {
 
     private void colisionesPowerUps() {
         PowerUp eliminar = null;
-        for (PowerUp p : powerups) {
-            if (p.colisiona(nave)) {
-                p.efecto(this);
-                eliminar = p;
+        synchronized (powerups) {
+            for (PowerUp p : powerups) {
+                if (p.colisiona(nave)) {
+                    p.efecto(this);
+                    eliminar = p;
+                }
             }
         }
         powerups.remove(eliminar);
@@ -382,51 +397,53 @@ public class Nivel {
 
     public void comprobarDisparos() {
         long tiempo = System.currentTimeMillis();
-        for (Enemigo e : enemigos) {
-            if (e instanceof Disparador) {
-                Disparador disparador = (Disparador) e;
-                final DisparoEnemigo disparo = disparador.disparar(tiempo);
-                if (disparo != null)
-                    disparosEnemigos.add(disparo);
-                if (e instanceof EnemigoVista) {
-                    EnemigoVista vista = (EnemigoVista) e;
-                    int actual = disparosEnemigos.indexOf(vista.actual);
-                    vista.cambiarLadoDisparo();
-                    disparosEnemigos.remove(actual);
-                    disparosEnemigos.add(vista.actual);
+
+        synchronized (enemigos) {
+            for (Enemigo e : enemigos) {
+                if (e instanceof Disparador) {
+                    Disparador disparador = (Disparador) e;
+                    final DisparoEnemigo disparo = disparador.disparar(tiempo);
+                    if (disparo != null)
+                        disparosEnemigos.add(disparo);
+                    if (e instanceof EnemigoVista) {
+                        EnemigoVista vista = (EnemigoVista) e;
+                        int actual = disparosEnemigos.indexOf(vista.actual);
+                        vista.cambiarLadoDisparo();
+                        disparosEnemigos.remove(actual);
+                        disparosEnemigos.add(vista.actual);
+                    }
+                    if (disparo instanceof DisparoBomba) {
+                        Runnable action = new Runnable() {
+                            @Override
+                            public void run() {
+                                DisparoBomba disp = ((DisparoBomba) disparo);
+                                disp.explotando = true;
+                                disp.imagen = CargadorGraficos.cargarDrawable(context, R.drawable.explosion_bomba);
+                                disp.altura = disp.altura + 5;
+                                disp.ancho = disp.ancho + 10;
+                            }
+                        };
+
+                        Runnable timerBomba = new Runnable() {
+                            @Override
+                            public void run() {
+                                disparosEnemigos.remove(disparo);
+                            }
+                        };
+
+                        new Hilo(context, 2000, action).start();
+
+                        new Hilo(context, 4000, timerBomba).start();
+                    }
                 }
-                if (disparo instanceof DisparoBomba) {
-                    Runnable action = new Runnable() {
-                        @Override
-                        public void run() {
-                            DisparoBomba disp = ((DisparoBomba) disparo);
-                            disp.explotando = true;
-                            disp.imagen = CargadorGraficos.cargarDrawable(context, R.drawable.explosion_bomba);
-                            disp.altura = disp.altura + 5;
-                            disp.ancho = disp.ancho + 10;
-                        }
-                    };
 
-                    Runnable timerBomba = new Runnable() {
-                        @Override
-                        public void run() {
-                            disparosEnemigos.remove(disparo);
-                        }
-                    };
-
-                    new Hilo(context, 2000, action).start();
-
-                    new Hilo(context, 4000, timerBomba).start();
+                for (Helicoptero helicoptero : helicopteros) {
+                    DisparoHelicoptero disparoHelicoptero = helicoptero.disparar(tiempo);
+                    if (disparoHelicoptero != null)
+                        disparosHelicopteros.add(disparoHelicoptero);
                 }
-            }
-
-            for (Helicoptero helicoptero : helicopteros) {
-                DisparoHelicoptero disparoHelicoptero = helicoptero.disparar(tiempo);
-                if (disparoHelicoptero != null)
-                    disparosHelicopteros.add(disparoHelicoptero);
             }
         }
-
     }
 
     private void explotar(DisparoEnemigo disparo) {
@@ -445,34 +462,36 @@ public class Nivel {
 
 
     private void moverEnemigos() {
-        for (Enemigo enemigo : enemigos) {
-            enemigo.mover();
-            if (enemigo instanceof EnemigoVista) {
-                return;
-            }
-            int tileXDerecha = (int) ((enemigo.x + enemigo.ancho / 2) / Tile.ancho);
-            int tileXIzquierda = (int) ((enemigo.x - enemigo.ancho / 2) / Tile.ancho);
-
-            if (tileXDerecha < anchoMapaTiles()) {
-                int aux = (int) (enemigo.y / Tile.altura);
-                if (aux >= altoMapaTiles())
-                    aux = altoMapaTiles() - 1;
-                if (mapaTiles[tileXDerecha]
-                        [aux].tipoDeColision
-                        != Tile.PASABLE) {
-                    enemigo.x = enemigo.xAnterior;
-                    enemigo.girar();
+        synchronized (enemigos) {
+            for (Enemigo enemigo : enemigos) {
+                enemigo.mover();
+                if (enemigo instanceof EnemigoVista) {
+                    return;
                 }
-            }
+                int tileXDerecha = (int) ((enemigo.x + enemigo.ancho / 2) / Tile.ancho);
+                int tileXIzquierda = (int) ((enemigo.x - enemigo.ancho / 2) / Tile.ancho);
 
-            if (tileXIzquierda >= 0) {
-                int auxY = (enemigo.y / Tile.altura >=
-                        altoMapaTiles()) ? altoMapaTiles() - 1 : (int) enemigo.y / Tile.altura;
-                if (mapaTiles[tileXIzquierda]
-                        [auxY].tipoDeColision
-                        != Tile.PASABLE) {
-                    enemigo.x = enemigo.xAnterior;
-                    enemigo.girar();
+                if (tileXDerecha < anchoMapaTiles()) {
+                    int aux = (int) (enemigo.y / Tile.altura);
+                    if (aux >= altoMapaTiles())
+                        aux = altoMapaTiles() - 1;
+                    if (mapaTiles[tileXDerecha]
+                            [aux].tipoDeColision
+                            != Tile.PASABLE) {
+                        enemigo.x = enemigo.xAnterior;
+                        enemigo.girar();
+                    }
+                }
+
+                if (tileXIzquierda >= 0) {
+                    int auxY = (enemigo.y / Tile.altura >=
+                            altoMapaTiles()) ? altoMapaTiles() - 1 : (int) enemigo.y / Tile.altura;
+                    if (mapaTiles[tileXIzquierda]
+                            [auxY].tipoDeColision
+                            != Tile.PASABLE) {
+                        enemigo.x = enemigo.xAnterior;
+                        enemigo.girar();
+                    }
                 }
             }
         }
@@ -481,32 +500,34 @@ public class Nivel {
     private void moverDisparos() {
         List<DisparoEnemigo> aBorrar = new ArrayList<>();
 
-        for (DisparoEnemigo d : disparosEnemigos) {
-            d.moverAutomaticamente();
-            int tileXDerecha = (int) ((d.x + d.ancho / 2) / Tile.ancho);
-            int tileXIzquierda = (int) ((d.x - d.ancho / 2) / Tile.ancho);
+        synchronized (disparosEnemigos) {
+            for (DisparoEnemigo d : disparosEnemigos) {
+                d.moverAutomaticamente();
+                int tileXDerecha = (int) ((d.x + d.ancho / 2) / Tile.ancho);
+                int tileXIzquierda = (int) ((d.x - d.ancho / 2) / Tile.ancho);
 
-            if (d.orientacion) {
+                if (d.orientacion) {
 
-                if (tileXDerecha < anchoMapaTiles()) {
-                    if (mapaTiles[tileXDerecha]
-                            [(int) (d.y / Tile.altura)].tipoDeColision
-                            != Tile.PASABLE) {
-                        aBorrar.add(d);
+                    if (tileXDerecha < anchoMapaTiles()) {
+                        if (mapaTiles[tileXDerecha]
+                                [(int) (d.y / Tile.altura)].tipoDeColision
+                                != Tile.PASABLE) {
+                            aBorrar.add(d);
+                        }
+                    }
+                } else {
+                    if (tileXIzquierda >= 0) {
+                        if (mapaTiles[tileXIzquierda]
+                                [(int) (d.y / Tile.altura)].tipoDeColision
+                                != Tile.PASABLE) {
+                            aBorrar.add(d);
+                        }
                     }
                 }
-            } else {
-                if (tileXIzquierda >= 0) {
-                    if (mapaTiles[tileXIzquierda]
-                            [(int) (d.y / Tile.altura)].tipoDeColision
-                            != Tile.PASABLE) {
-                        aBorrar.add(d);
-                    }
-                }
+
+                if (d.x > GameView.pantallaAncho || d.x < 0)
+                    aBorrar.add(d);
             }
-
-            if (d.x > GameView.pantallaAncho || d.x < 0)
-                aBorrar.add(d);
         }
 
         Iterator<DisparoEnemigo> disparoEnemigoIterator = aBorrar.iterator();
@@ -707,20 +728,32 @@ public class Nivel {
             nave.actualizar(tiempo);
             this.aplicarReglasMovimiento();
             this.comprobarDisparos();
-            for (Enemigo e : this.enemigos)
-                e.actualizar(tiempo);
+            synchronized (enemigos) {
+                for (Enemigo e : this.enemigos)
+                    e.actualizar(tiempo);
+            }
             marcadorPuntos.puntos = nave.getPuntos();
-            for (PowerUp p : powerups)
-                if (p instanceof MonedaRecolectable)
-                    p.actualizar(tiempo);
-            for (Helicoptero helicoptero : helicopteros)
-                helicoptero.actualizar(tiempo);
-            for(Avion avion :aviones)
-                avion.actualizar(tiempo);
-            for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
-                disparoHelicoptero.actualizar(tiempo);
-            for (DisparoEnemigo disparoEnemigo : disparosEnemigos) {
-                disparoEnemigo.actualizar(tiempo);
+            synchronized (powerups) {
+                for (PowerUp p : powerups)
+                    if (p instanceof MonedaRecolectable)
+                        p.actualizar(tiempo);
+            }
+            synchronized (helicopteros) {
+                for (Helicoptero helicoptero : helicopteros)
+                    helicoptero.actualizar(tiempo);
+            }
+            synchronized (aviones) {
+                for (Avion avion : aviones)
+                    avion.actualizar(tiempo);
+            }
+            synchronized (disparosHelicopteros) {
+                for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
+                    disparoHelicoptero.actualizar(tiempo);
+            }
+            synchronized (disparosEnemigos) {
+                for (DisparoEnemigo disparoEnemigo : disparosEnemigos) {
+                    disparoEnemigo.actualizar(tiempo);
+                }
             }
 
 
@@ -741,10 +774,12 @@ public class Nivel {
     }
 
     private <T extends Modelo> void eliminarModelosFueraMapa(List<T> modelos) {
-        Iterator<T> iterator = modelos.iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next().y >= altoMapaTiles() * Tile.altura)
-                iterator.remove();
+        synchronized (modelos) {
+            Iterator<T> iterator = modelos.iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().y >= altoMapaTiles() * Tile.altura)
+                    iterator.remove();
+            }
         }
     }
 
@@ -754,21 +789,35 @@ public class Nivel {
             dibujarTiles(canvas);
             nave.dibujar(canvas);
 
-            for (DisparoEnemigo d : disparosEnemigos)
-                d.dibujar(canvas);
+            synchronized (disparosEnemigos) {
+                for (DisparoEnemigo d : disparosEnemigos)
+                    d.dibujar(canvas);
+            }
 
-            for (Enemigo e : enemigos)
-                e.dibujar(canvas);
+            synchronized (enemigos) {
+                for (Enemigo e : enemigos)
+                    e.dibujar(canvas);
+            }
 
-            for (PowerUp p : powerups)
-                p.dibujar(canvas);
+            synchronized (powerups) {
+                for (PowerUp p : powerups)
+                    p.dibujar(canvas);
+            }
 
-            for (Helicoptero helicoptero : helicopteros)
-                helicoptero.dibujar(canvas);
-            for (Avion avion : aviones)
-                avion.dibujar(canvas);
-            for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
-                disparoHelicoptero.dibujar(canvas);
+            synchronized (helicopteros) {
+                for (Helicoptero helicoptero : helicopteros)
+                    helicoptero.dibujar(canvas);
+            }
+
+            synchronized (aviones) {
+                for (Avion avion : aviones)
+                    avion.dibujar(canvas);
+            }
+
+            synchronized (disparosHelicopteros) {
+                for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
+                    disparoHelicoptero.dibujar(canvas);
+            }
             marcadorPuntos.dibujar(canvas);
         }
     }
@@ -885,15 +934,15 @@ public class Nivel {
         int conta = 0;
         for (int y = fromY; y < toY; y++) {
             int x = -1;
-            if (!this.comprobarFilaSinTiles(y) && this.numTilesLibresFila(y) >= 2) {
+           // if (!this.comprobarFilaSinTiles(y) && this.numTilesLibresFila(y) >= 2) {
                 do {
                     x = Utils.randBetween(0, anchoMapaTiles() - 1);
                 }
                 while (mapaTiles[x][y].tipoDeColision == Tile.SOLIDO);
-            } else if (this.comprobarFilaSinTiles(y)) {
-                x = Utils.randBetween(0, anchoMapaTiles() - 2);
+            //} else if (this.comprobarFilaSinTiles(y)) {
+             //   x = Utils.randBetween(0, anchoMapaTiles() - 2);
                 // generarEnemigo(Utils.randBetween(0, 7), x, y);
-            }
+            //}
 
             if (x != -1 && conta < numEnemigosActual) {
                 generarEnemigo(Utils.randBetween(0, 7), x, y);
@@ -988,7 +1037,7 @@ public class Nivel {
     }
 
     private void inicializarMapaTilesAleatorioArriba() {
-        int numeroFilasTile = Utils.randBetween(4, 8);
+        int numeroFilasTile = Utils.randBetween(3, 6);
         int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile, true);
 
         for (int y = 0; y < altoMapaTiles() / 2; ++y) {
@@ -1039,7 +1088,7 @@ public class Nivel {
     }
 
     private void inicializarMapaTilesAleatorioAbajo() {
-        int numeroFilasTile = Utils.randBetween(4, 7);
+        int numeroFilasTile = Utils.randBetween(3, 6);
         int[] posicionesFilaConTile = this.getFilasConTile(numeroFilasTile, false);
         for (int y = altoMapaTiles() / 2; y < altoMapaTiles(); ++y) {
             if (yaExisteFila(posicionesFilaConTile, y)) {
@@ -1074,12 +1123,20 @@ public class Nivel {
             while (yaExisteFila(posicionFilas, pos));
             posicionFilas[i] = pos;
         }
-        Arrays.sort(posicionFilas);
-        for (int i = 0; i < posicionFilas.length - 1; i++) {
-            if (posicionFilas[i + 1] == posicionFilas[i] + 1) {
-                posicionFilas[i + 1] += 2;
+
+        boolean volverAOrdenar = true;
+
+        while (volverAOrdenar) {
+            volverAOrdenar = false;
+            Arrays.sort(posicionFilas);
+            for (int i = 0; i < posicionFilas.length - 1; i++) {
+                if ((posicionFilas[i + 1] == posicionFilas[i] + 1) || (posicionFilas[i + 1] == posicionFilas[i] + 2)) {
+                    posicionFilas[i + 1] += 2;
+                    volverAOrdenar = true;
+                }
             }
         }
+
         return posicionFilas;
     }
 
