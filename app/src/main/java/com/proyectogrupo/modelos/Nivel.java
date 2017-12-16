@@ -14,7 +14,6 @@ import com.proyectogrupo.Utils;
 import com.proyectogrupo.VictoriaActivity;
 import com.proyectogrupo.gestores.CargadorGraficos;
 import com.proyectogrupo.gestores.Utilidades;
-import com.proyectogrupo.modelos.disparos.DisparoAvion;
 import com.proyectogrupo.modelos.disparos.DisparoBomba;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigo;
 import com.proyectogrupo.modelos.disparos.DisparoEnemigoLanzallamas;
@@ -23,14 +22,12 @@ import com.proyectogrupo.modelos.disparos.DisparoHelicoptero;
 import com.proyectogrupo.modelos.disparos.DisparoVista;
 import com.proyectogrupo.modelos.enemigos.Disparador;
 import com.proyectogrupo.modelos.enemigos.Enemigo;
-import com.proyectogrupo.modelos.enemigos.EnemigoBasico;
 import com.proyectogrupo.modelos.enemigos.EnemigoDisparador;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzaBombas;
 import com.proyectogrupo.modelos.enemigos.EnemigoLanzallamas;
 import com.proyectogrupo.modelos.enemigos.EnemigoRalentizador;
 import com.proyectogrupo.modelos.enemigos.EnemigoVista;
 import com.proyectogrupo.powerups.CajaAleatoria;
-import com.proyectogrupo.powerups.CajaAvion;
 import com.proyectogrupo.powerups.CajaBomba;
 import com.proyectogrupo.powerups.CajaColor;
 import com.proyectogrupo.powerups.CajaContraEnemigos;
@@ -49,7 +46,6 @@ import com.proyectogrupo.powerups.Teletransporte;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,12 +68,10 @@ public class Nivel {
     public float orientacionPadY = 0;
     public final List<Enemigo> enemigos = Collections.synchronizedList(new ArrayList<Enemigo>());
     private final List<Helicoptero> helicopteros = Collections.synchronizedList(new ArrayList<Helicoptero>());
-    public final List<Avion> aviones =  Collections.synchronizedList(new ArrayList<Avion>());
     public final List<Integer> coloresCajas =  Collections.synchronizedList(new ArrayList<Integer>());
     private Enemigo enemigoColorCaja;
     private final List<DisparoEnemigo> disparosEnemigos = Collections.synchronizedList(new ArrayList<DisparoEnemigo>());
     private final List<DisparoHelicoptero> disparosHelicopteros = Collections.synchronizedList(new ArrayList<DisparoHelicoptero>());
-    private List<DisparoAvion> disparosAviones;
 
     private MarcadorPuntos marcadorPuntos;
 
@@ -132,7 +126,6 @@ public class Nivel {
                 tileYnaveCentro, tileYnaveSuperior);
         this.moverEnemigos();
         this.moverHelicopteros();
-        this.moverAviones();
         this.moverDisparos();
         this.colisionesPowerUps();
         this.colisionaEnemigos();
@@ -233,7 +226,7 @@ public class Nivel {
                         disparoABorrar = disparoHelicoptero;
                     }
                 } else {
-                    if (disparoHelicoptero.y - Nivel.scrollEjeY >= altoMapaTiles()) {
+                    if (disparoHelicoptero.y - Nivel.scrollEjeY >= altoMapaTiles() * Tile.altura) {
                         disparoABorrar = disparoHelicoptero;
                     }
                 }
@@ -540,16 +533,6 @@ public class Nivel {
         }
     }
 
-    private void moverAviones() {
-        Avion aEliminar = null;
-        for (Avion avion : aviones) {
-            if (avion.x - avion.ancho / 2 <= 0) {
-                aEliminar = avion;
-                break;
-            }
-        }
-    }
-
     private void moverNaveHorizontal(int tileXnaveIzquierda, int tileXnaveDerecha,
                                      int tileYnaveInferior, int tileYnaveCentro, int tileYnaveSuperior) {
         if (nave.velocidadXActual > 0) {
@@ -743,10 +726,6 @@ public class Nivel {
                 for (Helicoptero helicoptero : helicopteros)
                     helicoptero.actualizar(tiempo);
             }
-            synchronized (aviones) {
-                for (Avion avion : aviones)
-                    avion.actualizar(tiempo);
-            }
             synchronized (disparosHelicopteros) {
                 for (DisparoHelicoptero disparoHelicoptero : disparosHelicopteros)
                     disparoHelicoptero.actualizar(tiempo);
@@ -808,11 +787,6 @@ public class Nivel {
             synchronized (helicopteros) {
                 for (Helicoptero helicoptero : helicopteros)
                     helicoptero.dibujar(canvas);
-            }
-
-            synchronized (aviones) {
-                for (Avion avion : aviones)
-                    avion.dibujar(canvas);
             }
 
             synchronized (disparosHelicopteros) {
@@ -1199,9 +1173,6 @@ public class Nivel {
                 this.helicopteros.add(new Helicoptero(
                         context, xCentroAbajoTile, yCentroAbajoTile
                 ));
-                return new Tile(null, Tile.PASABLE);
-            case 'A':
-                powerups.add(new CajaAvion(context, xCentroAbajoTile, yCentroAbajoTile));
                 return new Tile(null, Tile.PASABLE);
             case 'H':
                 powerups.add(new CajaVidaExtra(context, xCentroAbajoTile, yCentroAbajoTile));
